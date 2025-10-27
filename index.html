@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MUST Attendance Portal</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load Inter font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Set Inter as the default font */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-4xl p-8 text-center">
+        
+        <!-- Logo -->
+        <div class="bg-white p-6 rounded-full shadow-xl inline-block mb-6">
+            <img src="https://smartlearning.must.edu.eg/pluginfile.php/1/core_admin/logocompact/300x300/1715171530/logo.png" alt="MUST Logo" class="h-32 w-32">
+        </div>
+
+        <!-- Title & Subtitle -->
+        <h1 class="text-4xl font-bold text-gray-800 mb-4">Welcome to the Attendance System</h1>
+        <p class="text-lg text-gray-600 mb-12">Please select your role to continue.</p>
+
+        <!-- Role Selection Cards -->
+        <div class="grid md:grid-cols-2 gap-8">
+
+            <!-- Student Card -->
+            <!-- 
+                IMPORTANT: Replace this href with your published Google Site URL 
+                for the STUDENT (geo_attendance.html) page.
+            -->
+            <a href="PASTE_YOUR_STUDENT_PAGE_URL_HERE" 
+               class="group block bg-white p-8 rounded-lg shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 ease-in-out">
+                
+                <!-- Icon -->
+                <div class="bg-blue-100 text-blue-600 p-4 rounded-full inline-block mb-4 transition-transform duration-300 group-hover:scale-110">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                    </svg>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-900 mb-2">I am a Student</h2>
+                <p class="text-gray-600">Submit your attendance for the session.</p>
+            </a>
+
+            <!-- Admin Card -->
+            <!-- 
+                IMPORTANT: Replace this href with your published Google Site URL 
+                for the ADMIN (admin_location.html) page.
+            -->
+            <a href="PASTE_YOUR_ADMIN_PAGE_URL_HERE" 
+               class="group block bg-white p-8 rounded-lg shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 ease-in-out">
+                
+                <!-- Icon (using the red from your admin button) -->
+                <div class="bg-red-100 text-red-600 p-4 rounded-full inline-block mb-4 transition-transform duration-300 group-hover:scale-110">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                </div>
+                
+                <h2 class="text-2xl font-semibold text-gray-900 mb-2">I am an Admin</h2>
+                <p class="text-gray-600">Set the location and time for the session.</p>
+            </a>
+            
+        </div>
+        
+        <!-- Footer -->
+        <footer class="mt-12 text-gray-500 text-sm">
+            <p>Misr University for Science and Technology</p>
+        </footer>
+
+    </div>
+</body>
+</html>
