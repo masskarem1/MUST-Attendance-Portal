@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theater Attendance (PHY201)</title>
+    <style>
+        /* [MODIFIED] Reverting to min-height: 100vh for simple centering */
+        html {
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            display: flex;
+            flex-direction: column; 
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* [RESTORED] This will center the form */
+            width: 100%; 
+            margin: 0;
+            padding: 20px 0; /* Add padding for small screens */
+            box-sizing: border-box; /* Include padding in height calculation */
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            width: 90%;
+            max-width: 600px;
+            overflow: hidden;
+        }
+        .banner {
+            background-color: #004a99; /* A professional blue */
+            color: white;
+            padding: 24px;
+            text-align: center;
+        }
+        .logo-container {
+            background-color: #ffffff;
+            display: inline-block;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .banner img {
+            height: 150px;
+            width: auto;
+            display: block;
+        }
+        .banner h1 {
+            margin: 0;
+            font-size: 1.8em;
+            line-height: 1;
+        }
+        .content {
+            padding: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 1em;
+        }
+        .submit-btn {
+            background-color: #0056b3;
+            color: white;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+        .submit-btn:hover {
+            background-color: #004a99;
+        }
+        .submit-btn:disabled {
+            background-color: #aaa;
+            cursor: not-allowed;
+        }
+        #message {
+            text-align: center;
+            font-weight: 600;
+            margin-top: 20px;
+            font-size: 1.1em;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        #message .instructions {
+            font-size: 0.9em;
+            font-weight: 500;
+            text-align: left;
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f8f8f8;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .success {
+            color: #2b7d2b;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            color: #721c24;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+        }
+        .site-footer {
+            text-align: center;
+            color: #777;
+            font-size: 0.9em;
+            font-weight: 500;
+            margin-top: 20px; /* Add space between container and footer */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="banner">
+            <div class="logo-container">
+                <img src="https://smartlearning.must.edu.eg/pluginfile.php/1/core_admin/logocompact/300x300/1715171530/logo.png" alt="MUST Logo">
+            </div>
+            <h1>PHY201 Attendance System</h1>
+        </div>
+        <div class="content">
+            
+            <form id="attendanceForm">
+                <div class="form-group">
+                    <label for="studentID">Student ID (Numbers Only)</label>
+                    <input type="text" id="studentID" name="studentID" 
+                           inputmode="numeric" pattern="[0-9]*" 
+                           title="Please enter numbers only." required>
+                </div>
+                
+                <!-- Student Name Field -->
+                <div class="form-group">
+                    <label for="studentName">Full Name (Text Only)</label>
+                    <input type="text" id="studentName" name="studentName" 
+                           pattern="[A-Za-z\s]+" 
+                           title="Please enter only letters and spaces." required>
+                </div>
+                
+                <button type="submit" id="submitButton" class="submit-btn">Submit Attendance</button>
+            </form>
+            
+            <div id="message"></div>
+        </div>
+    </div>
+    <footer class="site-footer">
+        <p>Misr University for Science and Technology</p>
+    </footer>
+
+    <script>
+        const form = document.getElementById('attendanceForm');
+        const submitButton = document.getElementById('submitButton');
+        const messageDiv = document.getElementById('message');
+
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwCjH23ufU7dh1F1HlgTk_UY8n0wcJxsMJ0TbihPk3zSiIFiX2UdPwmrANHmrjOtm9FKA/exec"; 
+        
+        // [NEW] This will store the active session name, e.g., "2025-10-28 Lecture"
+        let activeSessionName = null;
+
+        // --- [NEW] Dynamic Device Lock Check ---
+        // Runs on page load to check if session is active AND if device is locked
+        document.addEventListener('DOMContentLoaded', () => {
+            // Disable form until we know the session status
+            submitButton.disabled = true;
+            submitButton.textContent = 'Checking session... / جاري فحص الجلسة...';
+
+            // Use GET request to find out the active session
+            fetch(SCRIPT_URL)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.result === 'success') {
+                        activeSessionName = data.data.sessionName;
+                        
+                        // Check local storage for THIS specific session
+                        if (localStorage.getItem(activeSessionName) === 'true') {
+                            showMessage('You have already submitted attendance for this session. / لقد قمت بتسجيل الحضور لهذه الجلسة بالفعل', 'error');
+                            submitButton.textContent = 'Already Submitted / تم التسجيل';
+                            // Keep button disabled
+                        } else {
+                            // Session is active and device is not locked! Enable form.
+                            submitButton.disabled = false;
+                            submitButton.textContent = 'Submit Attendance';
+                        }
+                    } else {
+                        // No active session found, show error
+                        showMessage(data.data.message, 'error');
+                        submitButton.textContent = 'Attendance Closed / الحضور مغلق';
+                    }
+                })
+                .catch(err => {
+                    showMessage('Error: Could not check session status. / خطأ: لا يمكن فحص حالة الجلسة', 'error');
+                    submitButton.textContent = 'Error / خطأ';
+                });
+        });
+
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const studentID = document.getElementById('studentID').value;
+            const studentName = document.getElementById('studentName').value; // Get name
+
+            // Validation for both fields
+            if (!/^\d+$/.test(studentID)) {
+                showMessage('Error: Student ID must contain only numbers. / خطأ: رقم الطالب يجب أن يحتوي على أرقام فقط', 'error');
+                return;
+            }
+            if (!/^[A-Za-z\s]+$/.test(studentName)) {
+                showMessage('Error: Name must contain only letters and spaces. / خطأ: الاسم يجب أن يحتوي على حروف ومسافات فقط', 'error');
+                return;
+            }
+
+            submitButton.disabled = true;
+            submitButton.textContent = 'Getting location... / جاري تحديد الموقع...';
+            showMessage(''); 
+
+            if (!navigator.geolocation) {
+                showMessage('Error: Geolocation is not supported by your browser. / خطأ: المتصفح لا يدعم تحديد الموقع', 'error');
+                submitButton.disabled = false;
+                submitButton.textContent = 'Submit Attendance';
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                geolocationSuccess, 
+                geolocationError,
+                { enableHighAccuracy: true } 
+            );
+        });
+
+        function geolocationSuccess(position) {
+            const userLat = position.coords.latitude;
+            const userLon = position.coords.longitude;
+            const studentID = document.getElementById('studentID').value;
+            const studentName = document.getElementById('studentName').value; // Get name again
+
+            submitButton.textContent = 'Verifying location... / جاري التحقق من الموقع...';
+
+            const formData = new FormData();
+            formData.append("action", "takeAttendance"); 
+            formData.append("studentID", studentID);
+            formData.append("studentName", studentName); // Send name to script
+            formData.append("latitude", userLat);
+            formData.append("longitude", userLon);
+
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.result === "success") {
+                    showMessage(data.data.message, 'success');
+                    form.reset();
+                    
+                    // --- [MODIFIED] Set the device lock flag for this specific session ---
+                    if (activeSessionName) {
+                        localStorage.setItem(activeSessionName, 'true');
+                    }
+                    submitButton.disabled = true;
+                    submitButton.textContent = 'Already Submitted / تم التسجيل';
+                    
+                } else {
+                    throw new Error(data.data.message || 'Unknown server error');
+                }
+            })
+            .catch(error => {
+                showMessage(error.message, 'error');
+                submitButton.disabled = false; // Re-enable button on error
+                submitButton.textContent = 'Submit Attendance';
+            })
+        }
+
+        function geolocationError(error) {
+            let message = '';
+            let instructions = ''; 
+
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    message = "Error: You must allow location access. / خطأ: يجب السماح بالHصول إلى الموقع";
+                    instructions = `
+                        <div class="instructions">
+                            <strong>How to fix:</strong><br>
+                            1. Tap the lock icon (🔒) in your browser's address bar.<br>
+                            2. Go to "Permissions" or "Site settings".<br>
+                            3. Set "Location" to "Allow" for this site.<br>
+                            4. Tap the 'Submit' button again.
+                            <br><br>
+                            <strong>كيفية الإصلاح:</strong><br>
+                            ١. اضغط على علامة القفل (🔒) في شريط العنوان بالمتصفح.<br>
+                            ٢. اذهب إلى "الأذونات" أو "إعدادات الموقع".<br>
+                            ٣. قم بتعيين "الموقع" إلى "سماح" لهذا الموقع.<br>
+                            ٤. اضغط على زر 'Submit' مرة أخرى.
+                        </div>
+                    `;
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    message = "Error: Location information is unavailable. / خطأ: معلومات الموقع غير متاحة";
+                    break;
+                case error.TIMEOUT:
+                    message = "Error: The location request timed out. / خطأ: انتهت مهلة طلب الموقع";
+                    break;
+                default:
+                    message = "Error: An unknown error occurred. / خطأ: حدث خطأ غير معروف";
+                    break;
+            }
+            showMessage(message + instructions, 'error'); 
+            submitButton.disabled = false;
+            submitButton.textContent = 'Submit Attendance';
+        }
+
+        function showMessage(message, type) {
+            messageDiv.innerHTML = message; 
+            messageDiv.className = type;
+        }
+    </script>
+</body>
+</html>
+
