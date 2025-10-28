@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Theater Attendance (PHY201)</title>
+    <title>Course Attendance</title> <!-- Also updated tab title -->
     <style>
-        /* [MODIFIED] Reverting to min-height: 100vh for simple centering */
         html {
             margin: 0;
             padding: 0;
@@ -18,11 +17,12 @@
             flex-direction: column; 
             justify-content: center;
             align-items: center;
-            min-height: 100vh; /* [RESTORED] This will center the form */
+            min-height: 100vh; 
             width: 100%; 
             margin: 0;
-            padding: 20px 0; /* Add padding for small screens */
-            box-sizing: border-box; /* Include padding in height calculation */
+            padding: 20px 0; 
+            box-sizing: border-box; 
+            position: relative; /* Needed for absolute positioning of home button */
         }
         .container {
             background-color: #ffffff;
@@ -31,6 +31,8 @@
             width: 90%;
             max-width: 600px;
             overflow: hidden;
+            margin-top: 4rem; /* Add space below home button */
+            margin-bottom: 1rem;
         }
         .banner {
             background-color: #004a99; /* A professional blue */
@@ -127,17 +129,53 @@
             color: #777;
             font-size: 0.9em;
             font-weight: 500;
-            margin-top: 20px; /* Add space between container and footer */
+            margin-top: 20px; 
         }
+
+        /* --- Home Button Style --- */
+        .home-btn {
+            position: absolute;
+            top: 1rem; 
+            left: 1rem; 
+            display: flex;
+            align-items: center;
+            background-color: #004a99; /* Blue */
+            color: white;
+            padding: 0.5rem 0.75rem; 
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85em; 
+            transition: background-color 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 10; 
+        }
+        .home-btn:hover {
+            background-color: #003366; /* Darker blue */
+        }
+        .home-btn svg {
+            width: 16px; 
+            height: 16px;
+            margin-right: 4px; 
+        }
+        /* --- End Home Button Style --- */
     </style>
 </head>
 <body>
+    <a href="./index.html" class="home-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+        </svg>
+        Home
+    </a>
+
     <div class="container">
         <div class="banner">
             <div class="logo-container">
                 <img src="https://smartlearning.must.edu.eg/pluginfile.php/1/core_admin/logocompact/300x300/1715171530/logo.png" alt="MUST Logo">
             </div>
-            <h1>PHY201 Attendance System</h1>
+            <!-- [MODIFIED] Title changed -->
+            <h1>Course Attendance System</h1>
         </div>
         <div class="content">
             
@@ -174,35 +212,26 @@
 
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwCjH23ufU7dh1F1HlgTk_UY8n0wcJxsMJ0TbihPk3zSiIFiX2UdPwmrANHmrjOtm9FKA/exec"; 
         
-        // [NEW] This will store the active session name, e.g., "2025-10-28 Lecture"
         let activeSessionName = null;
 
-        // --- [NEW] Dynamic Device Lock Check ---
-        // Runs on page load to check if session is active AND if device is locked
         document.addEventListener('DOMContentLoaded', () => {
-            // Disable form until we know the session status
             submitButton.disabled = true;
             submitButton.textContent = 'Checking session... / جاري فحص الجلسة...';
 
-            // Use GET request to find out the active session
             fetch(SCRIPT_URL)
                 .then(response => response.json())
                 .then(data => {
                     if (data.result === 'success') {
                         activeSessionName = data.data.sessionName;
                         
-                        // Check local storage for THIS specific session
                         if (localStorage.getItem(activeSessionName) === 'true') {
                             showMessage('You have already submitted attendance for this session. / لقد قمت بتسجيل الحضور لهذه الجلسة بالفعل', 'error');
                             submitButton.textContent = 'Already Submitted / تم التسجيل';
-                            // Keep button disabled
                         } else {
-                            // Session is active and device is not locked! Enable form.
                             submitButton.disabled = false;
                             submitButton.textContent = 'Submit Attendance';
                         }
                     } else {
-                        // No active session found, show error
                         showMessage(data.data.message, 'error');
                         submitButton.textContent = 'Attendance Closed / الحضور مغلق';
                     }
@@ -218,9 +247,8 @@
             e.preventDefault();
             
             const studentID = document.getElementById('studentID').value;
-            const studentName = document.getElementById('studentName').value; // Get name
+            const studentName = document.getElementById('studentName').value; 
 
-            // Validation for both fields
             if (!/^\d+$/.test(studentID)) {
                 showMessage('Error: Student ID must contain only numbers. / خطأ: رقم الطالب يجب أن يحتوي على أرقام فقط', 'error');
                 return;
@@ -252,14 +280,14 @@
             const userLat = position.coords.latitude;
             const userLon = position.coords.longitude;
             const studentID = document.getElementById('studentID').value;
-            const studentName = document.getElementById('studentName').value; // Get name again
+            const studentName = document.getElementById('studentName').value; 
 
             submitButton.textContent = 'Verifying location... / جاري التحقق من الموقع...';
 
             const formData = new FormData();
             formData.append("action", "takeAttendance"); 
             formData.append("studentID", studentID);
-            formData.append("studentName", studentName); // Send name to script
+            formData.append("studentName", studentName); 
             formData.append("latitude", userLat);
             formData.append("longitude", userLon);
 
@@ -273,7 +301,6 @@
                     showMessage(data.data.message, 'success');
                     form.reset();
                     
-                    // --- [MODIFIED] Set the device lock flag for this specific session ---
                     if (activeSessionName) {
                         localStorage.setItem(activeSessionName, 'true');
                     }
@@ -286,7 +313,7 @@
             })
             .catch(error => {
                 showMessage(error.message, 'error');
-                submitButton.disabled = false; // Re-enable button on error
+                submitButton.disabled = false; 
                 submitButton.textContent = 'Submit Attendance';
             })
         }
