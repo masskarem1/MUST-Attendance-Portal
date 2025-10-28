@@ -11,72 +11,58 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            /* [REMOVED] position: relative; No longer needed */
             min-height: 100vh;
         }
-        /* Style adjustments for consistency */
-        .container {
-            /* Inherits bg-white, max-w-lg, p-8 md:p-12, rounded-xl, shadow-lg from body classes */
-        }
+        .container {} /* Inherits styles */
         #message .instructions {
-            font-size: 0.8em; /* Slightly smaller instructions */
-            font-weight: 500;
-            text-align: left;
-            margin-top: 1rem;
-            padding: 0.75rem;
-            background-color: #f8f8f8;
-            border-radius: 5px;
-            border: 1px solid #ddd;
+            font-size: 0.8em; font-weight: 500; text-align: left;
+            margin-top: 1rem; padding: 0.75rem; background-color: #f8f8f8;
+            border-radius: 5px; border: 1px solid #ddd;
         }
-        #message { /* Ensure message area takes styles */
-             font-weight: 600;
-             margin-top: 1.5rem; /* mt-6 */
-             padding: 0.75rem; /* p-3 */
-             border-radius: 5px; /* rounded-lg */
-             font-size: 0.9em;
+        #message {
+             font-weight: 600; margin-top: 1.5rem; padding: 0.75rem;
+             border-radius: 5px; font-size: 0.9em;
         }
-        .success {
-            color: #2b7d2b;
-            background-color: #d4edda;
-            border: 1px solid #c3e6cb;
-        }
-        .error {
-            color: #721c24;
-            background-color: #f8d7da;
-            border: 1px solid #f5c6cb;
-        }
-        /* [REMOVED] Home button styles deleted */
-        /* .home-btn { ... } */
-        /* .home-btn:hover { ... } */
-        /* .home-btn svg { ... } */
-
-        /* Specific input styling */
+        .success { color: #2b7d2b; background-color: #d4edda; border: 1px solid #c3e6cb; }
+        .error { color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; }
         input {
-             width: 100%;
-             padding: 0.75rem; /* p-3 */
-             border: 1px solid #D1D5DB; /* border-gray-300 */
-             border-radius: 0.5rem; /* rounded-lg */
-             font-size: 0.875rem; /* text-sm */
-             box-sizing: border-box;
+             width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB;
+             border-radius: 0.5rem; font-size: 0.875rem; box-sizing: border-box;
         }
         label {
-             display: block;
-             font-size: 0.875rem; /* text-sm */
-             font-weight: 500; /* font-medium */
-             color: #374151; /* text-gray-700 */
-             margin-bottom: 0.25rem; /* mb-1 */
+             display: block; font-size: 0.875rem; font-weight: 500;
+             color: #374151; margin-bottom: 0.25rem;
         }
+        /* [NEW] Styles for newcomer buttons */
+        .newcomer-actions {
+            display: none; /* Hidden by default */
+            margin-top: 1rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+        .newcomer-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border: none;
+            font-size: 0.9em;
+        }
+        .newcomer-yes { background-color: #28a745; color: white; } /* Green */
+        .newcomer-yes:hover { background-color: #218838; }
+        .newcomer-no { background-color: #ffc107; color: #333; } /* Yellow */
+        .newcomer-no:hover { background-color: #e0a800; }
+        .newcomer-yes:disabled { background-color: #aaa; }
+
     </style>
 </head>
 <body class="bg-gray-50 flex flex-col items-center justify-center min-h-screen p-6">
 
-    <!-- [REMOVED] Home button link deleted -->
-    <!-- <a href="./index.html" class="home-btn"> ... </a> -->
-
     <div class="container bg-white w-full max-w-lg p-8 md:p-12 rounded-xl shadow-lg text-center">
         <!-- Logo -->
         <div class="mb-8">
-            <!-- [NEW] Logo is now a link -->
             <a href="./index.html" class="inline-block">
                 <img src="https://admission.must.edu.eg/lovable-uploads/a51bf950-39e9-4502-bf1f-fcc9e958e555.png" alt="MUST Logo" class="h-28 w-28 mx-auto">
             </a>
@@ -87,26 +73,32 @@
         <p class="text-gray-500 mb-8">Misr University for Science & Technology</p>
 
         <form id="attendanceForm" class="text-left">
-            <div class="mb-4"> <!-- Adjusted margin -->
+            <div class="mb-4"> 
                 <label for="studentID">Student ID (Numbers Only)</label>
                 <input type="text" id="studentID" name="studentID"
                        inputmode="numeric" pattern="[0-9]*"
                        title="Please enter numbers only." required>
             </div>
 
-            <div class="mb-6"> <!-- Adjusted margin -->
+            <div class="mb-6"> 
                 <label for="studentName">Full Name (Text Only)</label>
                 <input type="text" id="studentName" name="studentName"
                        pattern="[A-Za-z\s]+"
                        title="Please enter only letters and spaces." required>
             </div>
 
-            <button type="submit" id="submitButton" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-base disabled:bg-gray-400"> <!-- Adjusted padding/size -->
+            <button type="submit" id="submitButton" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-base disabled:bg-gray-400"> 
                 Submit Attendance
             </button>
         </form>
 
-        <div id="message"></div> <!-- Message div uses classes from style block -->
+        <div id="message"></div> 
+
+        <!-- [NEW] Newcomer action buttons (hidden initially) -->
+        <div id="newcomerActions" class="newcomer-actions">
+            <button id="newcomerYesBtn" class="newcomer-btn newcomer-yes">Yes, I'm New / نعم، أنا جديد</button>
+            <button id="newcomerNoBtn" class="newcomer-btn newcomer-no">No, Re-enter ID / لا، سأعيد الإدخال</button>
+        </div>
     </div>
 
     <footer class="mt-8 text-gray-500 text-xs md:text-sm">
@@ -117,23 +109,28 @@
         const form = document.getElementById('attendanceForm');
         const submitButton = document.getElementById('submitButton');
         const messageDiv = document.getElementById('message');
+        const newcomerActionsDiv = document.getElementById('newcomerActions'); // [NEW]
+        const newcomerYesBtn = document.getElementById('newcomerYesBtn');     // [NEW]
+        const newcomerNoBtn = document.getElementById('newcomerNoBtn');       // [NEW]
 
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwCjH23ufU7dh1F1HlgTk_UY8n0wcJxsMJ0TbihPk3zSiIFiX2UdPwmrANHmrjOtm9FKA/exec";
-
         let activeSessionName = null;
 
         document.addEventListener('DOMContentLoaded', () => {
             submitButton.disabled = true;
             submitButton.textContent = 'Checking session... / جاري فحص الجلسة...';
+            newcomerActionsDiv.style.display = 'none'; // Ensure hidden
 
             fetch(SCRIPT_URL)
                 .then(response => response.json())
                 .then(data => {
                     if (data.result === 'success') {
                         activeSessionName = data.data.sessionName;
+                        // Use session name for dynamic device lock key
+                        const deviceLockKey = activeSessionName; 
 
-                        if (localStorage.getItem(activeSessionName) === 'true') {
-                            showMessage('You have already submitted attendance for this session. / لقد قمت بتسجيل الحضور لهذه الجلسة بالفعل', 'error');
+                        if (localStorage.getItem(deviceLockKey) === 'true') {
+                            showMessage('You have already submitted attendance for this session or registered as a newcomer. / لقد قمت بتسجيل الحضور لهذه الجلسة أو سجلت كطالب جديد بالفعل', 'error');
                             submitButton.textContent = 'Already Submitted / تم التسجيل';
                         } else {
                             submitButton.disabled = false;
@@ -152,9 +149,10 @@
 
         form.addEventListener('submit', function(e) {
             e.preventDefault();
+            hideNewcomerButtons(); // Hide newcomer buttons if they were visible
 
             const studentID = document.getElementById('studentID').value;
-            const studentName = document.getElementById('studentName').value;
+            const studentName = document.getElementById('studentName').value; 
 
             if (!/^\d+$/.test(studentID)) {
                 showMessage('Error: Student ID must contain only numbers. / خطأ: رقم الطالب يجب أن يحتوي على أرقام فقط', 'error');
@@ -167,7 +165,7 @@
 
             submitButton.disabled = true;
             submitButton.textContent = 'Getting location... / جاري تحديد الموقع...';
-            showMessage('');
+            showMessage(''); 
 
             if (!navigator.geolocation) {
                 showMessage('Error: Geolocation is not supported by your browser. / خطأ: المتصفح لا يدعم تحديد الموقع', 'error');
@@ -189,7 +187,7 @@
             const studentID = document.getElementById('studentID').value;
             const studentName = document.getElementById('studentName').value;
 
-            submitButton.textContent = 'Verifying location... / جاري التحقق من الموقع...';
+            submitButton.textContent = 'Verifying ID & location... / جاري التحقق من الرقم والموقع...';
 
             const formData = new FormData();
             formData.append("action", "takeAttendance");
@@ -204,31 +202,51 @@
             })
             .then(response => response.json())
             .then(data => {
+                // --- [MODIFIED] Handle different results ---
                 if (data.result === "success") {
-                    showMessage(data.data.message, 'success');
-                    form.reset();
-
-                    if (activeSessionName) {
-                        localStorage.setItem(activeSessionName, 'true');
-                    }
-                    submitButton.disabled = true;
-                    submitButton.textContent = 'Already Submitted / تم التسجيل';
-
-                } else {
+                    handleSuccess(data.data.message);
+                } else if (data.result === "invalid_id") {
+                    handleInvalidId(data.data.message);
+                } else { // Generic error
                     throw new Error(data.data.message || 'Unknown server error');
                 }
+                //-----------------------------------------
             })
             .catch(error => {
-                showMessage(error.message, 'error');
-                submitButton.disabled = false;
-                submitButton.textContent = 'Submit Attendance';
+                handleError(error.message);
             })
         }
+        
+        // --- [NEW] Function to handle successful attendance ---
+        function handleSuccess(message) {
+            showMessage(message, 'success');
+            form.reset();
+            if (activeSessionName) {
+                localStorage.setItem(activeSessionName, 'true'); // Set device lock
+            }
+            submitButton.disabled = true;
+            submitButton.textContent = 'Already Submitted / تم التسجيل';
+        }
+
+        // --- [NEW] Function to handle invalid ID result ---
+        function handleInvalidId(message) {
+            showMessage(message, 'error'); // Show the "ID not found" message
+            showNewcomerButtons();          // Show the Yes/No buttons
+            submitButton.style.display = 'none'; // Hide the original submit button
+        }
+
+        // --- [NEW] Function to handle generic errors ---
+        function handleError(message) {
+             showMessage(message, 'error');
+             submitButton.disabled = false;
+             submitButton.textContent = 'Submit Attendance';
+        }
+
 
         function geolocationError(error) {
             let message = '';
             let instructions = '';
-
+            // ...(unchanged code for specific geo errors)...
             switch(error.code) {
                 case error.PERMISSION_DENIED:
                     message = "Error: You must allow location access. / خطأ: يجب السماح بالHصول إلى الموقع";
@@ -258,16 +276,85 @@
                     message = "Error: An unknown error occurred. / خطأ: حدث خطأ غير معروف";
                     break;
             }
-            showMessage(message + instructions, 'error');
+            showMessage(message + instructions, 'error'); 
             submitButton.disabled = false;
             submitButton.textContent = 'Submit Attendance';
         }
 
         function showMessage(message, type) {
-            messageDiv.innerHTML = message; // Use innerHTML to render instructions
-            // Apply the correct class (success or error) to the message div itself
+            messageDiv.innerHTML = message; 
             messageDiv.className = type;
         }
+
+        // --- [NEW] Functions to manage button visibility ---
+        function showNewcomerButtons() {
+            newcomerActionsDiv.style.display = 'flex';
+            newcomerYesBtn.disabled = false;
+            newcomerYesBtn.textContent = "Yes, I'm New / نعم، أنا جديد";
+        }
+        function hideNewcomerButtons() {
+            newcomerActionsDiv.style.display = 'none';
+        }
+
+        // --- [NEW] Event listener for "No, Re-enter" button ---
+        newcomerNoBtn.addEventListener('click', () => {
+            hideNewcomerButtons();
+            submitButton.style.display = 'block'; // Show original submit button
+            submitButton.disabled = false;
+            submitButton.textContent = 'Submit Attendance';
+            showMessage(''); // Clear error message
+            document.getElementById('studentID').focus(); // Focus on ID field
+        });
+
+        // --- [NEW] Event listener for "Yes, I'm New" button ---
+        newcomerYesBtn.addEventListener('click', () => {
+            const studentID = document.getElementById('studentID').value;
+            const studentName = document.getElementById('studentName').value;
+
+            if (!/^\d+$/.test(studentID) || !/^[A-Za-z\s]+$/.test(studentName)) {
+                showMessage('Please ensure ID (numbers only) and Name (text only) are entered correctly before registering.', 'error');
+                showNewcomerButtons(); // Re-show buttons if validation fails here
+                return;
+            }
+
+            newcomerYesBtn.disabled = true;
+            newcomerYesBtn.textContent = 'Registering... / جاري التسجيل...';
+            showMessage('Registering your details...', ''); // Indicate progress
+
+            const formData = new FormData();
+            formData.append("action", "registerNewcomer");
+            formData.append("studentID", studentID);
+            formData.append("studentName", studentName);
+
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.result === 'success') {
+                    showMessage(data.data.message, 'success');
+                    hideNewcomerButtons(); // Hide buttons on success
+                    form.reset();
+                    // Also lock the device for this session after successful registration
+                     if (activeSessionName) {
+                        localStorage.setItem(activeSessionName, 'true'); 
+                    }
+                    submitButton.style.display = 'block'; // Show original button again
+                    submitButton.disabled = true;        // But keep it disabled
+                    submitButton.textContent = 'Already Submitted / تم التسجيل';
+                } else {
+                    throw new Error(data.data.message || 'Registration failed.');
+                }
+            })
+            .catch(error => {
+                showMessage(error.message, 'error');
+                // Re-enable Yes button on error
+                newcomerYesBtn.disabled = false; 
+                newcomerYesBtn.textContent = "Yes, I'm New / نعم، أنا جديد";
+            });
+        });
+
     </script>
 </body>
 </html>
