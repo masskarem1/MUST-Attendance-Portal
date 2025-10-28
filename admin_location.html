@@ -27,29 +27,40 @@
         .form-group { margin-bottom: 20px; text-align: left; }
         label { display: block; font-weight: 600; margin-bottom: 5px; }
         input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-        .btn { background-color: #d9534f; color: white; padding: 12px 20px; border: none; border-radius: 5px; cursor: pointer; width: 100%; font-size: 1em; font-weight: 600; transition: background-color 0.3s; }
-        .btn:hover { background-color: #c9302c; }
+        .btn { background-color: #0056b3; /* Blue for verify */ color: white; padding: 12px 20px; border: none; border-radius: 5px; cursor: pointer; width: 100%; font-size: 1em; font-weight: 600; transition: background-color 0.3s; }
+        .btn-set { background-color: #d9534f; /* Red for set location */ } /* Keep red for Set Location */
+        .btn:hover { opacity: 0.9; }
         .btn:disabled { background-color: #aaa; }
         #message { font-weight: 600; margin-top: 20px; padding: 10px; border-radius: 5px; }
         .success { color: #2b7d2b; background-color: #d4edda; }
         .error { color: #721c24; background-color: #f8d7da; }
+        /* [NEW] Class to hide session details initially */
+        .hidden-details { display: none; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Set Class Location</h1>
-        <p>Set the location and time window for the attendance session.</p>
         
-        <form id="adminForm">
+        <!-- Password Section (Always Visible) -->
+        <form id="passwordForm">
             <div class="form-group">
                 <label for="adminPassword">Admin Password</label>
                 <input type="password" id="adminPassword" required>
             </div>
+            <button type="submit" id="verifyBtn" class="btn">Verify Password</button>
+        </form>
+        
+        <!-- Session Details Section (Initially Hidden) -->
+        <form id="sessionForm" class="hidden-details">
+            <p style="margin-top: 30px; font-weight: 600; color: #333;">Password Verified. Set session details:</p>
+            
             <div class="form-group">
                 <label for="sessionName">Session Name (for new sheet tab)</label>
                 <input type="text" id="sessionName" required>
             </div>
-            <div classs="form-group" style="display: flex; justify-content: space-between; gap: 10px;">
+            
+            <div class="form-group" style="display: flex; justify-content: space-between; gap: 10px;">
                 <div style="width: 50%;">
                     <label for="startTime">Start Time</label>
                     <input type="datetime-local" id="startTime" required>
@@ -60,20 +71,25 @@
                 </div>
             </div>
             <br>
-            <button type="submit" id="setLocationBtn" class="btn">Set Location & Open Attendance</button>
+            
+            <button type="submit" id="setLocationBtn" class="btn btn-set">Set Location & Open Attendance</button>
         </form>
         
         <div id="message"></div>
     </div>
 
     <script>
-        const form = document.getElementById('adminForm');
-        const setButton = document.getElementById('setLocationBtn');
+        const passwordForm = document.getElementById('passwordForm');
+        const sessionForm = document.getElementById('sessionForm');
+        const verifyBtn = document.getElementById('verifyBtn');
+        const setLocationBtn = document.getElementById('setLocationBtn');
         const messageDiv = document.getElementById('message');
+        const adminPasswordField = document.getElementById('adminPassword');
         
-        // --- [IMPORTANT] You will get a NEW URL in Step 2 ---
+        // --- This MUST be the same URL used on the student page ---
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwCjH23ufU7dh1F1HlgTk_UY8n0wcJxsMJ0TbihPk3zSiIFiX2UdPwmrANHmrjOtm9FKA/exec"; 
         
+        // --- Set default times for session form ---
         function getLocalDateTimeString(date) {
             const year = date.getFullYear();
             const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -82,7 +98,6 @@
             const minutes = date.getMinutes().toString().padStart(2, '0');
             return `${year}-${month}-${day}T${hours}:${minutes}`;
         }
-
         document.addEventListener('DOMContentLoaded', () => {
             const now = new Date();
             const fifteenMinutesLater = new Date(now.getTime() + 15 * 60000);
@@ -91,41 +106,78 @@
             const dateStr = now.toISOString().split('T')[0];
             document.getElementById('sessionName').value = `${dateStr} Lecture`;
         });
+        
+        // --- [NEW] Handle Password Verification ---
+        passwordForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const password = adminPasswordField.value;
 
-        form.addEventListener('submit', function(e) {
+            if (!password) {
+                showMessage('Please enter the password.', 'error');
+                return;
+            }
+
+            verifyBtn.disabled = true;
+            verifyBtn.textContent = 'Verifying...';
+            showMessage('');
+
+            const formData = new FormData();
+            formData.append("action", "verifyPassword"); // New action
+            formData.append("password", password);
+
+            fetch(SCRIPT_URL, { method: 'POST', body: formData })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.result === "success") {
+                        // Password correct! Hide password form, show session form
+                        passwordForm.style.display = 'none';
+                        sessionForm.classList.remove('hidden-details');
+                        showMessage(''); // Clear any previous error
+                    } else {
+                        throw new Error(data.data.message || "Verification failed");
+                    }
+                })
+                .catch(error => {
+                    showMessage(error.message, 'error');
+                    verifyBtn.disabled = false; // Re-enable button on error
+                    verifyBtn.textContent = 'Verify Password';
+                });
+        });
+
+        // --- Handle Session Setting (Mostly unchanged, but uses password again) ---
+        sessionForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const password = document.getElementById('adminPassword').value;
+            const password = adminPasswordField.value; // Get password again for security
             const startTime = document.getElementById('startTime').value;
             const endTime = document.getElementById('endTime').value;
-            const sessionName = document.getElementById('sessionName').value;
+            const sessionName = document.getElementById('sessionName').value; 
 
             if (!password || !startTime || !endTime || !sessionName) {
                 showMessage('Please fill in all fields.', 'error');
                 return;
             }
 
-            setButton.disabled = true;
-            setButton.textContent = 'Getting location...';
+            setLocationBtn.disabled = true;
+            setLocationBtn.textContent = 'Getting location...';
             showMessage('');
 
             navigator.geolocation.getCurrentPosition(
                 function(position) {
-                    setButton.textContent = 'Setting location...';
+                    setLocationBtn.textContent = 'Setting location...';
                     
                     const formData = new FormData();
                     formData.append("action", "setLocation");
-                    formData.append("password", password);
+                    formData.append("password", password); // Still send password for server-side check
                     formData.append("latitude", position.coords.latitude);
                     formData.append("longitude", position.coords.longitude);
                     formData.append("startTime", startTime); 
                     formData.append("endTime", endTime);     
-                    formData.append("sessionName", sessionName);
+                    formData.append("sessionName", sessionName); 
 
                     fetch(SCRIPT_URL, { method: 'POST', body: formData })
                         .then(response => response.json())
                         .then(data => {
-                            // [FIXED] Reads data.data.message
                             if (data.result === "success") {
                                 showMessage(data.data.message, 'success');
                             } else {
@@ -134,14 +186,14 @@
                         })
                         .catch(error => showMessage(error.message, 'error'))
                         .finally(() => {
-                            setButton.disabled = false;
-                            setButton.textContent = 'Set Location & Open Attendance';
+                            setLocationBtn.disabled = false;
+                            setLocationBtn.textContent = 'Set Location & Open Attendance';
                         });
                 },
                 function(error) {
                     showMessage('Error: Could not get location. Please allow access.', 'error');
-                    setButton.disabled = false;
-                    setButton.textContent = 'Set Location & Open Attendance';
+                    setLocationBtn.disabled = false;
+                    setLocationBtn.textContent = 'Set Location & Open Attendance';
                 },
                 { enableHighAccuracy: true }
             );
