@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Course Attendance</title>
+    <!-- [MODIFIED] Corrected comment -->
+    <title id="pageTitle">Course Attendance</title> <!-- [NEW] ID added -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,6 +13,7 @@
         body {
             font-family: 'Inter', sans-serif;
             min-height: 100vh;
+            position: relative; /* For lang button positioning */
         }
         .container {} /* Inherits styles */
         #message .instructions {
@@ -33,145 +35,306 @@
              display: block; font-size: 0.875rem; font-weight: 500;
              color: #374151; margin-bottom: 0.25rem;
         }
-        /* Styles for newcomer buttons */
         .newcomer-actions {
-            display: none; /* Hidden by default */
-            margin-top: 1rem;
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
+            display: none; margin-top: 1rem; display: flex;
+            gap: 1rem; justify-content: center;
         }
         .newcomer-btn {
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            border: none;
-            font-size: 0.9em;
+            padding: 0.5rem 1rem; border-radius: 5px; font-weight: 600;
+            cursor: pointer; transition: background-color 0.3s;
+            border: none; font-size: 0.9em;
         }
-        .newcomer-yes { background-color: #28a745; color: white; } /* Green */
+        .newcomer-yes { background-color: #28a745; color: white; }
         .newcomer-yes:hover { background-color: #218838; }
-        .newcomer-no { background-color: #ffc107; color: #333; } /* Yellow */
+        .newcomer-no { background-color: #ffc107; color: #333; }
         .newcomer-no:hover { background-color: #e0a800; }
         .newcomer-yes:disabled { background-color: #aaa; }
+
+        /* Language Switch Button Style */
+        .lang-switch-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background-color: #6B7280; /* gray-500 */
+            color: white;
+            padding: 0.5rem 0.75rem;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 0.85em;
+            cursor: pointer;
+            z-index: 10;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .lang-switch-btn:hover { background-color: #4B5563; /* gray-600 */ }
+
+        /* Arabic Font Styling */
+        body[lang="ar"] { font-family: 'Tahoma', sans-serif; /* Example Arabic font */ }
+        body[lang="ar"] label,
+        body[lang="ar"] p,
+        body[lang="ar"] button,
+        body[lang="ar"] #message { text-align: right; }
+        body[lang="ar"] .instructions { text-align: right; }
 
     </style>
 </head>
 <body class="bg-gray-50 flex flex-col items-center justify-center min-h-screen p-6">
 
+    <!-- [NEW] Language Switch Button -->
+    <button id="langSwitchBtn" class="lang-switch-btn">En / ع</button>
+
     <div class="container bg-white w-full max-w-lg p-8 md:p-12 rounded-xl shadow-lg text-center">
         <!-- Logo -->
         <div class="mb-8">
             <a href="./index.html" class="inline-block">
-                <!-- [MODIFIED] Changed the image src -->
                 <img src="https://admission.must.edu.eg/lovable-uploads/a51bf950-39e9-4502-bf1f-fcc9e958e555.png" alt="MUST Logo" class="h-28 w-28 mx-auto">
             </a>
         </div>
 
         <!-- Title & Subtitle -->
-        <h1 class="text-2xl font-bold text-gray-800 mb-2">Course Attendance System</h1>
-        <p class="text-gray-500 mb-8">Misr University for Science & Technology</p>
+        <!-- [MODIFIED] Corrected comment -->
+        <h1 id="mainTitle" class="text-2xl font-bold text-gray-800 mb-2">Course Attendance System</h1> <!-- [NEW] ID added -->
+        <!-- [MODIFIED] Corrected comment -->
+        <p id="subTitle" class="text-gray-500 mb-8">Misr University for Science & Technology</p> <!-- [NEW] ID added -->
 
         <form id="attendanceForm" class="text-left">
             <div class="mb-4">
-                <label for="studentID">Student ID (Numbers Only)</label>
+                <!-- [MODIFIED] Corrected comment -->
+                <label id="labelStudentID" for="studentID">Student ID (Numbers Only)</label> <!-- [NEW] ID added -->
                 <input type="text" id="studentID" name="studentID"
                        inputmode="numeric" pattern="[0-9]*"
-                       title="Please enter numbers only." required>
+                       required> <!-- [MODIFIED] Corrected comment: Removed title attribute -->
             </div>
 
             <div class="mb-6">
-                <label for="studentName">Full Name (Text Only)</label>
+                 <!-- [MODIFIED] Corrected comment -->
+                <label id="labelStudentName" for="studentName">Full Name (Text Only)</label> <!-- [NEW] ID added -->
                 <input type="text" id="studentName" name="studentName"
                        pattern="[A-Za-z\s]+"
-                       title="Please enter only letters and spaces." required>
+                       required> <!-- [MODIFIED] Corrected comment: Removed title attribute -->
             </div>
 
             <button type="submit" id="submitButton" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-base disabled:bg-gray-400">
-                Submit Attendance
+                Submit Attendance <!-- Default text -->
             </button>
         </form>
 
         <div id="message"></div>
 
-        <!-- Newcomer action buttons (hidden initially) -->
+        <!-- Newcomer action buttons -->
         <div id="newcomerActions" class="newcomer-actions">
-            <button id="newcomerYesBtn" class="newcomer-btn newcomer-yes">Yes, I'm New / نعم، أنا جديد</button>
-            <button id="newcomerNoBtn" class="newcomer-btn newcomer-no">No, Re-enter ID / لا، سأعيد الإدخال</button>
+            <!-- [MODIFIED] Corrected comment -->
+            <button id="newcomerYesBtn" class="newcomer-btn newcomer-yes">Yes, I'm New</button> <!-- Default text -->
+             <!-- [MODIFIED] Corrected comment -->
+            <button id="newcomerNoBtn" class="newcomer-btn newcomer-no">No, Re-enter ID</button> <!-- Default text -->
         </div>
     </div>
 
     <footer class="mt-8 text-gray-500 text-xs md:text-sm">
-        <p>&copy; Misr University for Science and Technology</p>
+        <!-- [MODIFIED] Corrected comment -->
+        <p id="footerText">&copy; Misr University for Science and Technology</p> <!-- [NEW] ID added -->
     </footer>
 
     <script>
+        // --- [NEW] Translation Data ---
+        const translations = {
+            en: {
+                pageTitle: "Course Attendance",
+                mainTitle: "Course Attendance System",
+                subTitle: "Misr University for Science & Technology",
+                labelStudentID: "Student ID (Numbers Only)",
+                labelStudentName: "Full Name (Text Only)",
+                submitButton_submit: "Submit Attendance",
+                submitButton_checking: "Checking session...",
+                submitButton_gettingLocation: "Getting location...",
+                submitButton_verifying: "Verifying ID & location...",
+                submitButton_submitted: "Already Submitted",
+                submitButton_closed: "Attendance Closed",
+                submitButton_error: "Error",
+                newcomerYesBtn_yes: "Yes, I'm New",
+                newcomerYesBtn_registering: "Registering...",
+                newcomerNoBtn: "No, Re-enter ID",
+                footerText: "© Misr University for Science and Technology",
+                // --- Messages (Keys) ---
+                alreadySubmittedDevice: "You have already submitted attendance for this session or registered as a newcomer.",
+                sessionCheckError: "Error: Could not check session status.",
+                idNumbersOnly: "Error: Student ID must contain only numbers.",
+                nameLettersOnly: "Error: Name must contain only letters and spaces.",
+                geolocationNotSupported: "Error: Geolocation is not supported by your browser.",
+                permissionDenied: "Error: You must allow location access.",
+                positionUnavailable: "Error: Location information is unavailable.",
+                timeout: "Error: The location request timed out.",
+                unknownGeoError: "Error: An unknown error occurred getting location.",
+                fixInstructions: `
+                    <strong>How to fix:</strong><br>
+                    1. Tap the lock icon (🔒) in your browser's address bar.<br>
+                    2. Go to "Permissions" or "Site settings".<br>
+                    3. Set "Location" to "Allow" for this site.<br>
+                    4. Tap the 'Submit' button again.`,
+                registerConfirm: "Please ensure ID (numbers only) and Name (text only) are entered correctly before registering.",
+                registering: "Registering your details...",
+                // --- Server Messages (Keys derived from script output) ---
+                sessionNotActive: "Attendance is not currently active. Check the session times.", // Includes admin not opened
+                invalidId_askNew: "Student ID not found in the list. Are you a new student?",
+                duplicateId_session: "This Student ID has already been recorded for this session.",
+                locationDenied: "Attendance Denied: You are {distance} meters away. You must be inside the class.", // Placeholder
+                success: "Attendance Recorded Successfully!",
+                newcomerSuccess: "Your information has been recorded as a new student. Please follow up with the administration.",
+                newcomerDuplicate: "This ID has already been registered as a newcomer. Please contact admin.",
+                unknownServerError: "An unknown server error occurred."
+            },
+            ar: {
+                pageTitle: "تسجيل حضور المادة",
+                mainTitle: "نظام تسجيل الحضور",
+                subTitle: "جامعة مصر للعلوم والتكنولوجيا",
+                labelStudentID: "رقم الطالب (أرقام فقط)",
+                labelStudentName: "الاسم بالكامل (حروف فقط)",
+                submitButton_submit: "تسجيل الحضور",
+                submitButton_checking: "جاري فحص الجلسة...",
+                submitButton_gettingLocation: "جاري تحديد الموقع...",
+                submitButton_verifying: "جاري التحقق من الرقم والموقع...",
+                submitButton_submitted: "تم التسجيل",
+                submitButton_closed: "الحضور مغلق",
+                submitButton_error: "خطأ",
+                newcomerYesBtn_yes: "نعم، أنا جديد",
+                newcomerYesBtn_registering: "جاري التسجيل...",
+                newcomerNoBtn: "لا، سأعيد الإدخال",
+                footerText: "© جامعة مصر للعلوم والتكنولوجيا",
+                // --- Messages (Keys) ---
+                alreadySubmittedDevice: "لقد قمت بتسجيل الحضور لهذه الجلسة أو سجلت كطالب جديد بالفعل.",
+                sessionCheckError: "خطأ: لا يمكن فحص حالة الجلسة.",
+                idNumbersOnly: "خطأ: رقم الطالب يجب أن يحتوي على أرقام فقط.",
+                nameLettersOnly: "خطأ: الاسم يجب أن يحتوي على حروف ومسافات فقط.",
+                geolocationNotSupported: "خطأ: المتصفح لا يدعم تحديد الموقع.",
+                permissionDenied: "خطأ: يجب السماح بالوصول إلى الموقع.",
+                positionUnavailable: "خطأ: معلومات الموقع غير متاحة.",
+                timeout: "خطأ: انتهت مهلة طلب الموقع.",
+                unknownGeoError: "خطأ: حدث خطأ غير معروف أثناء تحديد الموقع.",
+                 fixInstructions: `
+                    <strong>كيفية الإصلاح:</strong><br>
+                    ١. اضغط على علامة القفل (🔒) في شريط العنوان بالمتصفح.<br>
+                    ٢. اذهب إلى "الأذونات" أو "إعدادات الموقع".<br>
+                    ٣. قم بتعيين "الموقع" إلى "سماح" لهذا الموقع.<br>
+                    ٤. اضغط على زر 'Submit' مرة أخرى.`,
+                registerConfirm: "يرجى التأكد من إدخال الرقم (أرقام فقط) والاسم (حروف فقط) بشكل صحيح قبل التسجيل.",
+                registering: "جاري تسجيل بياناتك...",
+                 // --- Server Messages (Keys derived from script output) ---
+                sessionNotActive: "الحضور غير مفعل حالياً. تأكد من مواعيد الجلسة.", // Includes admin not opened
+                invalidId_askNew: "رقم الطالب غير موجود بالقائمة. هل أنت طالب جديد؟",
+                duplicateId_session: "تم تسجيل هذا الرقم الطلابي من قبل في هذه الجلسة.",
+                locationDenied: "تم رفض الحضور: أنت على بعد {distance} متر. يجب أن تكون داخل القاعة.", // Placeholder
+                success: "تم تسجيل الحضور بنجاح!",
+                newcomerSuccess: "تم تسجيل بياناتك كطالب جديد. يرجى المتابعة مع الإدارة.",
+                newcomerDuplicate: "تم تسجيل هذا الرقم كطالب جديد من قبل. يرجى التواصل مع المسؤول.",
+                unknownServerError: "حدث خطأ غير معروف في الخادم."
+            }
+        };
+        // --- End Translation Data ---
+
         const form = document.getElementById('attendanceForm');
         const submitButton = document.getElementById('submitButton');
         const messageDiv = document.getElementById('message');
         const newcomerActionsDiv = document.getElementById('newcomerActions');
         const newcomerYesBtn = document.getElementById('newcomerYesBtn');
         const newcomerNoBtn = document.getElementById('newcomerNoBtn');
+        const langSwitchBtn = document.getElementById('langSwitchBtn');
 
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwCjH23ufU7dh1F1HlgTk_UY8n0wcJxsMJ0TbihPk3zSiIFiX2UdPwmrANHmrjOtm9FKA/exec";
         let activeSessionName = null;
+        let currentLang = localStorage.getItem('attendanceLang') || 'en';
+
+        // Function to update UI text
+        function updateUI(lang) {
+            const t = translations[lang];
+            document.documentElement.lang = lang;
+            document.body.lang = lang;
+
+            document.getElementById('pageTitle').textContent = t.pageTitle;
+            document.getElementById('mainTitle').textContent = t.mainTitle;
+            document.getElementById('subTitle').textContent = t.subTitle;
+            document.getElementById('labelStudentID').textContent = t.labelStudentID;
+            document.getElementById('labelStudentName').textContent = t.labelStudentName;
+            document.getElementById('newcomerYesBtn').textContent = t.newcomerYesBtn_yes;
+            document.getElementById('newcomerNoBtn').textContent = t.newcomerNoBtn;
+            document.getElementById('footerText').textContent = t.footerText;
+            
+             const currentSubmitTextKey = submitButton.dataset.textKey || 'submitButton_submit';
+             submitButton.textContent = t[currentSubmitTextKey];
+
+            langSwitchBtn.textContent = lang === 'en' ? 'ع' : 'En';
+        }
+
+        // Event listener for language switch
+        langSwitchBtn.addEventListener('click', () => {
+            currentLang = currentLang === 'en' ? 'ar' : 'en';
+            localStorage.setItem('attendanceLang', currentLang);
+            updateUI(currentLang);
+            if (messageDiv.dataset.messageKey) {
+                 showMessage(messageDiv.dataset.messageKey, messageDiv.className, messageDiv.dataset.messageParams ? JSON.parse(messageDiv.dataset.messageParams) : null);
+            }
+        });
 
         document.addEventListener('DOMContentLoaded', () => {
+            updateUI(currentLang); // Set initial language
+
             submitButton.disabled = true;
-            submitButton.textContent = 'Checking session... / جاري فحص الجلسة...';
-            newcomerActionsDiv.style.display = 'none'; // Ensure hidden
+            submitButton.dataset.textKey = 'submitButton_checking';
+            updateUI(currentLang);
+            newcomerActionsDiv.style.display = 'none';
 
             fetch(SCRIPT_URL)
                 .then(response => response.json())
                 .then(data => {
                     if (data.result === 'success') {
                         activeSessionName = data.data.sessionName;
-                        // Use session name for dynamic device lock key
                         const deviceLockKey = activeSessionName;
 
                         if (localStorage.getItem(deviceLockKey) === 'true') {
-                            showMessage('You have already submitted attendance for this session or registered as a newcomer. / لقد قمت بتسجيل الحضور لهذه الجلسة أو سجلت كطالب جديد بالفعل', 'error');
-                            submitButton.textContent = 'Already Submitted / تم التسجيل';
+                            showMessage('alreadySubmittedDevice', 'error');
+                            submitButton.dataset.textKey = 'submitButton_submitted';
                         } else {
                             submitButton.disabled = false;
-                            submitButton.textContent = 'Submit Attendance';
+                            submitButton.dataset.textKey = 'submitButton_submit';
                         }
                     } else {
-                        showMessage(data.data.message, 'error');
-                        submitButton.textContent = 'Attendance Closed / الحضور مغلق';
+                        showMessageFromServer(data.data.message); // Try to translate server msg
+                        submitButton.dataset.textKey = 'submitButton_closed';
                     }
+                    updateUI(currentLang); // Update button text again
                 })
                 .catch(err => {
-                    showMessage('Error: Could not check session status. / خطأ: لا يمكن فحص حالة الجلسة', 'error');
-                    submitButton.textContent = 'Error / خطأ';
+                    showMessage('sessionCheckError', 'error');
+                    submitButton.dataset.textKey = 'submitButton_error';
+                    updateUI(currentLang);
                 });
         });
 
         form.addEventListener('submit', function(e) {
             e.preventDefault();
-            hideNewcomerButtons(); // Hide newcomer buttons if they were visible
+            hideNewcomerButtons();
 
             const studentID = document.getElementById('studentID').value;
             const studentName = document.getElementById('studentName').value;
 
             if (!/^\d+$/.test(studentID)) {
-                showMessage('Error: Student ID must contain only numbers. / خطأ: رقم الطالب يجب أن يحتوي على أرقام فقط', 'error');
+                showMessage('idNumbersOnly', 'error');
                 return;
             }
             if (!/^[A-Za-z\s]+$/.test(studentName)) {
-                showMessage('Error: Name must contain only letters and spaces. / خطأ: الاسم يجب أن يحتوي على حروف ومسافات فقط', 'error');
+                showMessage('nameLettersOnly', 'error');
                 return;
             }
 
             submitButton.disabled = true;
-            submitButton.textContent = 'Getting location... / جاري تحديد الموقع...';
-            showMessage('');
+            submitButton.dataset.textKey = 'submitButton_gettingLocation';
+            updateUI(currentLang);
+            showMessage(''); // Clear message
 
             if (!navigator.geolocation) {
-                showMessage('Error: Geolocation is not supported by your browser. / خطأ: المتصفح لا يدعم تحديد الموقع', 'error');
+                showMessage('geolocationNotSupported', 'error');
                 submitButton.disabled = false;
-                submitButton.textContent = 'Submit Attendance';
+                 submitButton.dataset.textKey = 'submitButton_submit';
+                 updateUI(currentLang);
                 return;
             }
 
@@ -188,7 +351,8 @@
             const studentID = document.getElementById('studentID').value;
             const studentName = document.getElementById('studentName').value;
 
-            submitButton.textContent = 'Verifying ID & location... / جاري التحقق من الرقم والموقع...';
+            submitButton.dataset.textKey = 'submitButton_verifying';
+            updateUI(currentLang);
 
             const formData = new FormData();
             formData.append("action", "takeAttendance");
@@ -203,90 +367,127 @@
             })
             .then(response => response.json())
             .then(data => {
-                // Handle different results
                 if (data.result === "success") {
-                    handleSuccess(data.data.message);
+                    handleSuccessFromServer(data.data.message);
                 } else if (data.result === "invalid_id") {
-                    handleInvalidId(data.data.message);
-                } else { // Generic error
-                    throw new Error(data.data.message || 'Unknown server error');
+                    handleInvalidIdFromServer(data.data.message);
+                } else {
+                    handleErrorFromServer(data.data.message || 'unknownServerError');
                 }
             })
             .catch(error => {
-                handleError(error.message);
+                handleError('unknownServerError'); // Assume unknown error on fetch fail
             })
         }
 
-        function handleSuccess(message) {
-            showMessage(message, 'success');
+        // Handlers now use server messages
+        function handleSuccessFromServer(serverMessage) {
+            const key = findKeyByEnglishValue(serverMessage, translations.en);
+            showMessage(key || 'success', 'success'); // Fallback to generic key
             form.reset();
             if (activeSessionName) {
-                localStorage.setItem(activeSessionName, 'true'); // Set device lock
+                localStorage.setItem(activeSessionName, 'true');
             }
             submitButton.disabled = true;
-            submitButton.textContent = 'Already Submitted / تم التسجيل';
+            submitButton.dataset.textKey = 'submitButton_submitted';
+            updateUI(currentLang);
         }
 
-        function handleInvalidId(message) {
-            showMessage(message, 'error'); // Show the "ID not found" message
-            showNewcomerButtons();          // Show the Yes/No buttons
-            submitButton.style.display = 'none'; // Hide the original submit button
+        function handleInvalidIdFromServer(serverMessage) {
+            const key = findKeyByEnglishValue(serverMessage, translations.en);
+            showMessage(key || 'invalidId_askNew', 'error'); // Fallback to generic key
+            showNewcomerButtons();
+            submitButton.style.display = 'none';
         }
 
-        function handleError(message) {
-             showMessage(message, 'error');
+        function handleErrorFromServer(serverMessage) {
+             const key = findKeyByEnglishValue(serverMessage, translations.en);
+             let params = null;
+             if (key === 'locationDenied') {
+                 const distanceMatch = serverMessage.match(/(\d+)\s+meters/);
+                 if (distanceMatch) {
+                     params = { distance: distanceMatch[1] };
+                 }
+             }
+             showMessage(key || 'unknownServerError', 'error', params); // Fallback to generic key
              submitButton.disabled = false;
-             submitButton.textContent = 'Submit Attendance';
+             submitButton.dataset.textKey = 'submitButton_submit';
+             updateUI(currentLang);
+        }
+        
+        // Helper to find translation key from English server message
+        function findKeyByEnglishValue(value, englishTranslations) {
+            if (!value) return null;
+            if (value.includes("meters away")) {
+                return 'locationDenied';
+            }
+            for (const key in englishTranslations) {
+                if (englishTranslations[key] === value) {
+                    return key;
+                }
+            }
+             // Try partial match for common errors from script
+            if (value.includes("already been recorded for this session")) return 'duplicateId_session';
+            if (value.includes("not currently active")) return 'sessionNotActive';
+            if (value.includes("already been registered as a newcomer")) return 'newcomerDuplicate';
+
+            return null; // Key not found
         }
 
 
         function geolocationError(error) {
-            let message = '';
-            let instructions = '';
-            // ...(unchanged code for specific geo errors)...
+            let messageKey = '';
+            let includeInstructions = false;
+
             switch(error.code) {
                 case error.PERMISSION_DENIED:
-                    message = "Error: You must allow location access. / خطأ: يجب السماح بالHصول إلى الموقع";
-                    instructions = `
-                        <div class="instructions">
-                            <strong>How to fix:</strong><br>
-                            1. Tap the lock icon (🔒) in your browser's address bar.<br>
-                            2. Go to "Permissions" or "Site settings".<br>
-                            3. Set "Location" to "Allow" for this site.<br>
-                            4. Tap the 'Submit' button again.
-                            <br><br>
-                            <strong>كيفية الإصلاح:</strong><br>
-                            ١. اضغط على علامة القفل (🔒) في شريط العنوان بالمتصفح.<br>
-                            ٢. اذهب إلى "الأذونات" أو "إعدادات الموقع".<br>
-                            ٣. قم بتعيين "الموقع" إلى "سماح" لهذا الموقع.<br>
-                            ٤. اضغط على زر 'Submit' مرة أخرى.
-                        </div>
-                    `;
+                    messageKey = 'permissionDenied';
+                    includeInstructions = true;
                     break;
                 case error.POSITION_UNAVAILABLE:
-                    message = "Error: Location information is unavailable. / خطأ: معلومات الموقع غير متاحة";
+                    messageKey = 'positionUnavailable';
                     break;
                 case error.TIMEOUT:
-                    message = "Error: The location request timed out. / خطأ: انتهت مهلة طلب الموقع";
+                    messageKey = 'timeout';
                     break;
                 default:
-                    message = "Error: An unknown error occurred. / خطأ: حدث خطأ غير معروف";
+                    messageKey = 'unknownGeoError';
                     break;
             }
-            showMessage(message + instructions, 'error');
+            showMessage(messageKey, 'error', null, includeInstructions);
             submitButton.disabled = false;
-            submitButton.textContent = 'Submit Attendance';
+            submitButton.dataset.textKey = 'submitButton_submit';
+            updateUI(currentLang);
         }
 
-        function showMessage(message, type) {
-            messageDiv.innerHTML = message;
+        // showMessage to use keys and handle params/instructions
+        function showMessage(key, type, params = null, includeInstructions = false) {
+            let messageText = translations[currentLang][key] || translations['en'][key] || key; // Fallback logic
+
+            if (params) {
+                for (const pKey in params) {
+                    messageText = messageText.replace(`{${pKey}}`, params[pKey]);
+                }
+            }
+
+            let finalHtml = messageText;
+            if (includeInstructions) {
+                finalHtml += `<div class="instructions">${translations[currentLang]['fixInstructions']}</div>`;
+            }
+
+            messageDiv.innerHTML = finalHtml;
             messageDiv.className = type;
+            // Store key and params for language switching
+            messageDiv.dataset.messageKey = key;
+            messageDiv.dataset.messageParams = params ? JSON.stringify(params) : "";
         }
+
 
         function showNewcomerButtons() {
             newcomerActionsDiv.style.display = 'flex';
             newcomerYesBtn.disabled = false;
-            newcomerYesBtn.textContent = "Yes, I'm New / نعم، أنا جديد";
+            newcomerYesBtn.textContent = translations[currentLang].newcomerYesBtn_yes; // Use translation
+            newcomerNoBtn.textContent = translations[currentLang].newcomerNoBtn; // Use translation
         }
         function hideNewcomerButtons() {
             newcomerActionsDiv.style.display = 'none';
@@ -294,11 +495,12 @@
 
         newcomerNoBtn.addEventListener('click', () => {
             hideNewcomerButtons();
-            submitButton.style.display = 'block'; // Show original submit button
+            submitButton.style.display = 'block';
             submitButton.disabled = false;
-            submitButton.textContent = 'Submit Attendance';
-            showMessage(''); // Clear error message
-            document.getElementById('studentID').focus(); // Focus on ID field
+            submitButton.dataset.textKey = 'submitButton_submit';
+            updateUI(currentLang);
+            showMessage('');
+            document.getElementById('studentID').focus();
         });
 
         newcomerYesBtn.addEventListener('click', () => {
@@ -306,14 +508,14 @@
             const studentName = document.getElementById('studentName').value;
 
             if (!/^\d+$/.test(studentID) || !/^[A-Za-z\s]+$/.test(studentName)) {
-                showMessage('Please ensure ID (numbers only) and Name (text only) are entered correctly before registering.', 'error');
-                showNewcomerButtons(); // Re-show buttons if validation fails here
+                showMessage('registerConfirm', 'error');
+                showNewcomerButtons();
                 return;
             }
 
             newcomerYesBtn.disabled = true;
-            newcomerYesBtn.textContent = 'Registering... / جاري التسجيل...';
-            showMessage('Registering your details...', ''); // Indicate progress
+            newcomerYesBtn.textContent = translations[currentLang].newcomerYesBtn_registering; // Use translation
+            showMessage('registering', ''); // Use key
 
             const formData = new FormData();
             formData.append("action", "registerNewcomer");
@@ -327,25 +529,26 @@
             .then(response => response.json())
             .then(data => {
                 if (data.result === 'success') {
-                    showMessage(data.data.message, 'success');
-                    hideNewcomerButtons(); // Hide buttons on success
+                    const key = findKeyByEnglishValue(data.data.message, translations.en)
+                    showMessage(key || 'newcomerSuccess', 'success');
+                    hideNewcomerButtons();
                     form.reset();
-                    // Also lock the device for this session after successful registration
-                     if (activeSessionName) {
+                    if (activeSessionName) {
                         localStorage.setItem(activeSessionName, 'true');
                     }
-                    submitButton.style.display = 'block'; // Show original button again
-                    submitButton.disabled = true;        // But keep it disabled
-                    submitButton.textContent = 'Already Submitted / تم التسجيل';
+                    submitButton.style.display = 'block';
+                    submitButton.disabled = true;
+                    submitButton.dataset.textKey = 'submitButton_submitted';
+                    updateUI(currentLang);
                 } else {
-                    throw new Error(data.data.message || 'Registration failed.');
+                     const key = findKeyByEnglishValue(data.data.message, translations.en)
+                    throw new Error(key || 'unknownServerError');
                 }
             })
-            .catch(error => {
-                showMessage(error.message, 'error');
-                // Re-enable Yes button on error
+            .catch(errorKey => { // Catch the key
+                showMessage(errorKey, 'error');
                 newcomerYesBtn.disabled = false;
-                newcomerYesBtn.textContent = "Yes, I'm New / نعم، أنا جديد";
+                newcomerYesBtn.textContent = translations[currentLang].newcomerYesBtn_yes;
             });
         });
 
