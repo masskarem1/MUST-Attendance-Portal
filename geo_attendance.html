@@ -3,116 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Course Attendance</title> <!-- Also updated tab title -->
+    <title>Course Attendance</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        html {
-            margin: 0;
-            padding: 0;
-        }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f4f7f6;
-            color: #333;
-            display: flex;
-            flex-direction: column; 
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh; 
-            width: 100%; 
-            margin: 0;
-            padding: 20px 0; 
-            box-sizing: border-box; 
-            position: relative; /* Needed for absolute positioning of home button */
+            font-family: 'Inter', sans-serif;
+            /* [REMOVED] position: relative; No longer needed */
+            min-height: 100vh;
         }
+        /* Style adjustments for consistency */
         .container {
-            background-color: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-            width: 90%;
-            max-width: 600px;
-            overflow: hidden;
-            margin-top: 4rem; /* Add space below home button */
-            margin-bottom: 1rem;
-        }
-        .banner {
-            background-color: #004a99; /* A professional blue */
-            color: white;
-            padding: 24px;
-            text-align: center;
-        }
-        .logo-container {
-            background-color: #ffffff;
-            display: inline-block;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        .banner img {
-            height: 150px;
-            width: auto;
-            display: block;
-        }
-        .banner h1 {
-            margin: 0;
-            font-size: 1.8em;
-            line-height: 1;
-        }
-        .content {
-            padding: 30px;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-group label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-            font-size: 1em;
-        }
-        .submit-btn {
-            background-color: #0056b3;
-            color: white;
-            padding: 14px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 100%;
-            font-size: 1.1em;
-            font-weight: 600;
-            transition: background-color 0.3s ease;
-        }
-        .submit-btn:hover {
-            background-color: #004a99;
-        }
-        .submit-btn:disabled {
-            background-color: #aaa;
-            cursor: not-allowed;
-        }
-        #message {
-            text-align: center;
-            font-weight: 600;
-            margin-top: 20px;
-            font-size: 1.1em;
-            padding: 10px;
-            border-radius: 5px;
+            /* Inherits bg-white, max-w-lg, p-8 md:p-12, rounded-xl, shadow-lg from body classes */
         }
         #message .instructions {
-            font-size: 0.9em;
+            font-size: 0.8em; /* Slightly smaller instructions */
             font-weight: 500;
             text-align: left;
-            margin-top: 15px;
-            padding: 10px;
+            margin-top: 1rem;
+            padding: 0.75rem;
             background-color: #f8f8f8;
             border-radius: 5px;
             border: 1px solid #ddd;
+        }
+        #message { /* Ensure message area takes styles */
+             font-weight: 600;
+             margin-top: 1.5rem; /* mt-6 */
+             padding: 0.75rem; /* p-3 */
+             border-radius: 5px; /* rounded-lg */
+             font-size: 0.9em;
         }
         .success {
             color: #2b7d2b;
@@ -124,85 +45,72 @@
             background-color: #f8d7da;
             border: 1px solid #f5c6cb;
         }
-        .site-footer {
-            text-align: center;
-            color: #777;
-            font-size: 0.9em;
-            font-weight: 500;
-            margin-top: 20px; 
-        }
+        /* [REMOVED] Home button styles deleted */
+        /* .home-btn { ... } */
+        /* .home-btn:hover { ... } */
+        /* .home-btn svg { ... } */
 
-        /* --- Home Button Style --- */
-        .home-btn {
-            position: absolute;
-            top: 1rem; 
-            left: 1rem; 
-            display: flex;
-            align-items: center;
-            background-color: #004a99; /* Blue */
-            color: white;
-            padding: 0.5rem 0.75rem; 
-            border-radius: 5px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.85em; 
-            transition: background-color 0.3s;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            z-index: 10; 
+        /* Specific input styling */
+        input {
+             width: 100%;
+             padding: 0.75rem; /* p-3 */
+             border: 1px solid #D1D5DB; /* border-gray-300 */
+             border-radius: 0.5rem; /* rounded-lg */
+             font-size: 0.875rem; /* text-sm */
+             box-sizing: border-box;
         }
-        .home-btn:hover {
-            background-color: #003366; /* Darker blue */
+        label {
+             display: block;
+             font-size: 0.875rem; /* text-sm */
+             font-weight: 500; /* font-medium */
+             color: #374151; /* text-gray-700 */
+             margin-bottom: 0.25rem; /* mb-1 */
         }
-        .home-btn svg {
-            width: 16px; 
-            height: 16px;
-            margin-right: 4px; 
-        }
-        /* --- End Home Button Style --- */
     </style>
 </head>
-<body>
-    <a href="./index.html" class="home-btn">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
-        </svg>
-        Home
-    </a>
+<body class="bg-gray-50 flex flex-col items-center justify-center min-h-screen p-6">
 
-    <div class="container">
-        <div class="banner">
-            <div class="logo-container">
-                <img src="https://smartlearning.must.edu.eg/pluginfile.php/1/core_admin/logocompact/300x300/1715171530/logo.png" alt="MUST Logo">
+    <!-- [REMOVED] Home button link deleted -->
+    <!-- <a href="./index.html" class="home-btn"> ... </a> -->
+
+    <div class="container bg-white w-full max-w-lg p-8 md:p-12 rounded-xl shadow-lg text-center">
+        <!-- Logo -->
+        <div class="mb-8">
+            <!-- [NEW] Logo is now a link -->
+            <a href="./index.html" class="inline-block">
+                <img src="https://admission.must.edu.eg/lovable-uploads/a51bf950-39e9-4502-bf1f-fcc9e958e555.png" alt="MUST Logo" class="h-28 w-28 mx-auto">
+            </a>
+        </div>
+
+        <!-- Title & Subtitle -->
+        <h1 class="text-2xl font-bold text-gray-800 mb-2">Course Attendance System</h1>
+        <p class="text-gray-500 mb-8">Misr University for Science & Technology</p>
+
+        <form id="attendanceForm" class="text-left">
+            <div class="mb-4"> <!-- Adjusted margin -->
+                <label for="studentID">Student ID (Numbers Only)</label>
+                <input type="text" id="studentID" name="studentID"
+                       inputmode="numeric" pattern="[0-9]*"
+                       title="Please enter numbers only." required>
             </div>
-            <!-- [MODIFIED] Title changed -->
-            <h1>Course Attendance System</h1>
-        </div>
-        <div class="content">
-            
-            <form id="attendanceForm">
-                <div class="form-group">
-                    <label for="studentID">Student ID (Numbers Only)</label>
-                    <input type="text" id="studentID" name="studentID" 
-                           inputmode="numeric" pattern="[0-9]*" 
-                           title="Please enter numbers only." required>
-                </div>
-                
-                <!-- Student Name Field -->
-                <div class="form-group">
-                    <label for="studentName">Full Name (Text Only)</label>
-                    <input type="text" id="studentName" name="studentName" 
-                           pattern="[A-Za-z\s]+" 
-                           title="Please enter only letters and spaces." required>
-                </div>
-                
-                <button type="submit" id="submitButton" class="submit-btn">Submit Attendance</button>
-            </form>
-            
-            <div id="message"></div>
-        </div>
+
+            <div class="mb-6"> <!-- Adjusted margin -->
+                <label for="studentName">Full Name (Text Only)</label>
+                <input type="text" id="studentName" name="studentName"
+                       pattern="[A-Za-z\s]+"
+                       title="Please enter only letters and spaces." required>
+            </div>
+
+            <button type="submit" id="submitButton" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-base disabled:bg-gray-400"> <!-- Adjusted padding/size -->
+                Submit Attendance
+            </button>
+        </form>
+
+        <div id="message"></div> <!-- Message div uses classes from style block -->
     </div>
-    <footer class="site-footer">
-        <p>Misr University for Science and Technology</p>
+
+    <footer class="mt-8 text-gray-500 text-xs md:text-sm">
+        <p>&copy; Misr University for Science and Technology</p>
     </footer>
 
     <script>
@@ -210,8 +118,8 @@
         const submitButton = document.getElementById('submitButton');
         const messageDiv = document.getElementById('message');
 
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwCjH23ufU7dh1F1HlgTk_UY8n0wcJxsMJ0TbihPk3zSiIFiX2UdPwmrANHmrjOtm9FKA/exec"; 
-        
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwCjH23ufU7dh1F1HlgTk_UY8n0wcJxsMJ0TbihPk3zSiIFiX2UdPwmrANHmrjOtm9FKA/exec";
+
         let activeSessionName = null;
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -223,7 +131,7 @@
                 .then(data => {
                     if (data.result === 'success') {
                         activeSessionName = data.data.sessionName;
-                        
+
                         if (localStorage.getItem(activeSessionName) === 'true') {
                             showMessage('You have already submitted attendance for this session. / لقد قمت بتسجيل الحضور لهذه الجلسة بالفعل', 'error');
                             submitButton.textContent = 'Already Submitted / تم التسجيل';
@@ -242,12 +150,11 @@
                 });
         });
 
-
         form.addEventListener('submit', function(e) {
             e.preventDefault();
-            
+
             const studentID = document.getElementById('studentID').value;
-            const studentName = document.getElementById('studentName').value; 
+            const studentName = document.getElementById('studentName').value;
 
             if (!/^\d+$/.test(studentID)) {
                 showMessage('Error: Student ID must contain only numbers. / خطأ: رقم الطالب يجب أن يحتوي على أرقام فقط', 'error');
@@ -260,7 +167,7 @@
 
             submitButton.disabled = true;
             submitButton.textContent = 'Getting location... / جاري تحديد الموقع...';
-            showMessage(''); 
+            showMessage('');
 
             if (!navigator.geolocation) {
                 showMessage('Error: Geolocation is not supported by your browser. / خطأ: المتصفح لا يدعم تحديد الموقع', 'error');
@@ -270,9 +177,9 @@
             }
 
             navigator.geolocation.getCurrentPosition(
-                geolocationSuccess, 
+                geolocationSuccess,
                 geolocationError,
-                { enableHighAccuracy: true } 
+                { enableHighAccuracy: true }
             );
         });
 
@@ -280,14 +187,14 @@
             const userLat = position.coords.latitude;
             const userLon = position.coords.longitude;
             const studentID = document.getElementById('studentID').value;
-            const studentName = document.getElementById('studentName').value; 
+            const studentName = document.getElementById('studentName').value;
 
             submitButton.textContent = 'Verifying location... / جاري التحقق من الموقع...';
 
             const formData = new FormData();
-            formData.append("action", "takeAttendance"); 
+            formData.append("action", "takeAttendance");
             formData.append("studentID", studentID);
-            formData.append("studentName", studentName); 
+            formData.append("studentName", studentName);
             formData.append("latitude", userLat);
             formData.append("longitude", userLon);
 
@@ -300,27 +207,27 @@
                 if (data.result === "success") {
                     showMessage(data.data.message, 'success');
                     form.reset();
-                    
+
                     if (activeSessionName) {
                         localStorage.setItem(activeSessionName, 'true');
                     }
                     submitButton.disabled = true;
                     submitButton.textContent = 'Already Submitted / تم التسجيل';
-                    
+
                 } else {
                     throw new Error(data.data.message || 'Unknown server error');
                 }
             })
             .catch(error => {
                 showMessage(error.message, 'error');
-                submitButton.disabled = false; 
+                submitButton.disabled = false;
                 submitButton.textContent = 'Submit Attendance';
             })
         }
 
         function geolocationError(error) {
             let message = '';
-            let instructions = ''; 
+            let instructions = '';
 
             switch(error.code) {
                 case error.PERMISSION_DENIED:
@@ -351,13 +258,14 @@
                     message = "Error: An unknown error occurred. / خطأ: حدث خطأ غير معروف";
                     break;
             }
-            showMessage(message + instructions, 'error'); 
+            showMessage(message + instructions, 'error');
             submitButton.disabled = false;
             submitButton.textContent = 'Submit Attendance';
         }
 
         function showMessage(message, type) {
-            messageDiv.innerHTML = message; 
+            messageDiv.innerHTML = message; // Use innerHTML to render instructions
+            // Apply the correct class (success or error) to the message div itself
             messageDiv.className = type;
         }
     </script>
