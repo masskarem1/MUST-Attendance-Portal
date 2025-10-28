@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- [MODIFIED] Corrected comment -->
-    <title id="pageTitle">Course Attendance</title> <!-- [NEW] ID added -->
+    <title id="pageTitle">Course Attendance</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -80,7 +79,7 @@
 </head>
 <body class="bg-gray-50 flex flex-col items-center justify-center min-h-screen p-6">
 
-    <!-- [NEW] Language Switch Button -->
+    <!-- Language Switch Button -->
     <button id="langSwitchBtn" class="lang-switch-btn">En / ع</button>
 
     <div class="container bg-white w-full max-w-lg p-8 md:p-12 rounded-xl shadow-lg text-center">
@@ -92,26 +91,22 @@
         </div>
 
         <!-- Title & Subtitle -->
-        <!-- [MODIFIED] Corrected comment -->
-        <h1 id="mainTitle" class="text-2xl font-bold text-gray-800 mb-2">Course Attendance System</h1> <!-- [NEW] ID added -->
-        <!-- [MODIFIED] Corrected comment -->
-        <p id="subTitle" class="text-gray-500 mb-8">Misr University for Science & Technology</p> <!-- [NEW] ID added -->
+        <h1 id="mainTitle" class="text-2xl font-bold text-gray-800 mb-2">Course Attendance System</h1> <!-- ID added -->
+        <p id="subTitle" class="text-gray-500 mb-8">Misr University for Science & Technology</p> <!-- ID added -->
 
         <form id="attendanceForm" class="text-left">
             <div class="mb-4">
-                <!-- [MODIFIED] Corrected comment -->
-                <label id="labelStudentID" for="studentID">Student ID (Numbers Only)</label> <!-- [NEW] ID added -->
+                <label id="labelStudentID" for="studentID">Student ID (Numbers Only)</label> <!-- ID added -->
                 <input type="text" id="studentID" name="studentID"
                        inputmode="numeric" pattern="[0-9]*"
-                       required> <!-- [MODIFIED] Corrected comment: Removed title attribute -->
+                       required> <!-- Removed title attribute -->
             </div>
 
             <div class="mb-6">
-                 <!-- [MODIFIED] Corrected comment -->
-                <label id="labelStudentName" for="studentName">Full Name (Text Only)</label> <!-- [NEW] ID added -->
+                 <label id="labelStudentName" for="studentName">Full Name (Text Only)</label> <!-- ID added -->
                 <input type="text" id="studentName" name="studentName"
                        pattern="[A-Za-z\s]+"
-                       required> <!-- [MODIFIED] Corrected comment: Removed title attribute -->
+                       required> <!-- Removed title attribute -->
             </div>
 
             <button type="submit" id="submitButton" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-base disabled:bg-gray-400">
@@ -123,20 +118,17 @@
 
         <!-- Newcomer action buttons -->
         <div id="newcomerActions" class="newcomer-actions">
-            <!-- [MODIFIED] Corrected comment -->
             <button id="newcomerYesBtn" class="newcomer-btn newcomer-yes">Yes, I'm New</button> <!-- Default text -->
-             <!-- [MODIFIED] Corrected comment -->
             <button id="newcomerNoBtn" class="newcomer-btn newcomer-no">No, Re-enter ID</button> <!-- Default text -->
         </div>
     </div>
 
     <footer class="mt-8 text-gray-500 text-xs md:text-sm">
-        <!-- [MODIFIED] Corrected comment -->
-        <p id="footerText">&copy; Misr University for Science and Technology</p> <!-- [NEW] ID added -->
+        <p id="footerText">&copy; Misr University for Science and Technology</p> <!-- ID added -->
     </footer>
 
     <script>
-        // --- [NEW] Translation Data ---
+        // --- Translation Data ---
         const translations = {
             en: {
                 pageTitle: "Course Attendance",
@@ -179,7 +171,9 @@
                 duplicateId_session: "This Student ID has already been recorded for this session.",
                 locationDenied: "Attendance Denied: You are {distance} meters away. You must be inside the class.", // Placeholder
                 success: "Attendance Recorded Successfully!",
-                newcomerSuccess: "Your information has been recorded as a new student. Please follow up with the administration.", // Kept original English
+                // --- [MODIFIED] Updated English translation ---
+                newcomerSuccess: "Your information has been recorded as a new student. Please follow up with the doctor.",
+                // ------------------------------------------
                 newcomerDuplicate: "This ID has already been registered as a newcomer. Please contact admin.",
                 unknownServerError: "An unknown server error occurred."
             },
@@ -224,9 +218,7 @@
                 duplicateId_session: "تم تسجيل هذا الرقم الطلابي من قبل في هذه الجلسة.",
                 locationDenied: "تم رفض الحضور: أنت على بعد {distance} متر. يجب أن تكون داخل القاعة.", // Placeholder
                 success: "تم تسجيل الحضور بنجاح!",
-                // --- [MODIFIED] Updated Arabic translation ---
-                newcomerSuccess: "تم تسجيل بياناتك كطالب جديد. يرجى المتابعة مع الدكتور.", 
-                // ------------------------------------------
+                newcomerSuccess: "تم تسجيل بياناتك كطالب جديد. يرجى المتابعة مع الدكتور.",
                 newcomerDuplicate: "تم تسجيل هذا الرقم كطالب جديد من قبل. يرجى التواصل مع المسؤول.",
                 unknownServerError: "حدث خطأ غير معروف في الخادم."
             }
@@ -259,7 +251,7 @@
             document.getElementById('newcomerYesBtn').textContent = t.newcomerYesBtn_yes;
             document.getElementById('newcomerNoBtn').textContent = t.newcomerNoBtn;
             document.getElementById('footerText').textContent = t.footerText;
-            
+
              const currentSubmitTextKey = submitButton.dataset.textKey || 'submitButton_submit';
              submitButton.textContent = t[currentSubmitTextKey];
 
@@ -416,7 +408,7 @@
              submitButton.dataset.textKey = 'submitButton_submit';
              updateUI(currentLang);
         }
-        
+
         // Helper to find translation key from English server message
         function findKeyByEnglishValue(value, englishTranslations) {
             if (!value) return null;
@@ -557,4 +549,3 @@
     </script>
 </body>
 </html>
-
