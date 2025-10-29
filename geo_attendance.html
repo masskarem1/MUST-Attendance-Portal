@@ -14,9 +14,11 @@
         /* Set Inter as the default font */
         body {
             font-family: 'Inter', sans-serif;
+            position: relative;
+            min-height: 100vh;
         }
         
-        /* [NEW] Glassmorphism card effect (from index.html) */
+        /* Glassmorphism card effect */
         .glass-card {
             background: rgba(255, 255, 255, 0.6);
             border-radius: 16px;
@@ -51,10 +53,10 @@
             }
         }
         
-        /* Message & Instruction Styles (from geo_attendance.html) */
+        /* Message & Instruction Styles */
         #message .instructions {
             font-size: 0.8em; font-weight: 500; text-align: left;
-            margin-top: 1rem; padding: 0.75rem; background-color: rgba(248, 248, 248, 0.8); /* Slightly transparent */
+            margin-top: 1rem; padding: 0.75rem; background-color: rgba(248, 248, 248, 0.8);
             border-radius: 5px; border: 1px solid rgba(221, 221, 221, 0.8);
         }
         #message {
@@ -68,7 +70,7 @@
         input {
              width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB;
              border-radius: 0.5rem; font-size: 0.875rem; box-sizing: border-box;
-             background-color: rgba(255, 255, 255, 0.5); /* Slightly transparent input */
+             background-color: rgba(255, 255, 255, 0.5);
         }
         label {
              display: block; font-size: 0.875rem; font-weight: 500;
@@ -96,7 +98,7 @@
             position: absolute;
             top: 1rem;
             right: 1rem;
-            background-color: rgba(107, 114, 128, 0.8); /* gray-500, slightly transparent */
+            background-color: rgba(107, 114, 128, 0.8);
             color: white;
             padding: 0.5rem 0.75rem;
             border-radius: 5px;
@@ -107,24 +109,37 @@
             border: none;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        .lang-switch-btn:hover { background-color: #4B5563; /* gray-600 */ }
+        .lang-switch-btn:hover { background-color: #4B5563; }
 
-        /* Arabic Font Styling */
-        body[lang="ar"] { font-family: 'Tahoma', sans-serif; }
-        body[lang="ar"] label,
-        body[lang="ar"] p,
-        body[lang="ar"] button,
-        body[lang="ar"] #message { text-align: right; }
-        body[lang="ar"] .instructions { text-align: right; }
+        /* --- [MODIFIED] Arabic Font Styling --- */
+        body[lang="ar"] { 
+            font-family: 'Tahoma', sans-serif; 
+            direction: rtl; /* Add Right-to-Left direction */
+        }
+        /* [FIXED] Only align labels to the right */
+        body[lang="ar"] label { 
+            text-align: right; 
+        }
+        /* Make newcomer instruction text right-aligned */
+        body[lang="ar"] .instructions { 
+            text-align: right; 
+        } 
+        /* Override Tailwind's text-left for forms */
+        body[lang="ar"] .text-left {
+            text-align: right;
+        }
+        /* Make sure input text is also right-aligned */
+        body[lang="ar"] input {
+            text-align: right;
+        }
+        /* --- End of modifications --- */
     </style>
 </head>
-<!-- [MODIFIED] Using same body as index.html -->
 <body class="bg-gradient-to-br from-blue-100 via-indigo-200 to-blue-200 flex flex-col items-center justify-center min-h-screen p-0">
 
     <!-- Language Switch Button -->
     <button id="langSwitchBtn" class="lang-switch-btn">En / ع</button>
 
-    <!-- [MODIFIED] Using glass-card div from index.html -->
     <div class="glass-card w-full max-w-lg p-8 md:p-12 text-center">
         <!-- Logo -->
         <div class="mb-8">
@@ -185,7 +200,7 @@
                 submitButton_verifying: "Verifying ID & location...",
                 submitButton_submitted: "Already Submitted",
                 submitButton_closed: "Attendance Closed",
-                submitButton_error: "No Session", // [MODIFIED]
+                submitButton_error: "No Session", // Changed from "Error"
                 newcomerYesBtn_yes: "Yes, I'm New",
                 newcomerYesBtn_gettingLocation: "Getting Location...",
                 newcomerYesBtn_registering: "Registering...",
@@ -193,8 +208,7 @@
                 footerText: "© Misr University for Science and Technology",
                 // --- Messages (Keys) ---
                 alreadySubmittedDevice: "You have already submitted attendance for this session or registered as a newcomer.",
-                // [MODIFIED] Updated English text
-                sessionCheckError: "There is no session available Now",
+                sessionCheckError: "There is no session available Now", // Changed from "Error: Could not check session status."
                 idNumbersOnly: "Error: Student ID must contain only numbers.",
                 nameLettersOnly: "Error: Name must contain only letters and spaces.",
                 geolocationNotSupported: "Error: Geolocation is not supported by your browser.",
@@ -233,7 +247,7 @@
                 submitButton_verifying: "جاري التحقق من الرقم والموقع...",
                 submitButton_submitted: "تم التسجيل",
                 submitButton_closed: "الحضور مغلق",
-                submitButton_error: "لا توجد جلسة", // [MODIFIED]
+                submitButton_error: "لا توجد جلسة", // Changed from "خطأ"
                 newcomerYesBtn_yes: "نعم، أنا جديد",
                 newcomerYesBtn_gettingLocation: "جاري تحديد الموقع...", 
                 newcomerYesBtn_registering: "جاري التسجيل...",
@@ -241,8 +255,7 @@
                 footerText: "© جامعة مصر للعلوم والتكنولوجيا",
                 // --- Messages (Keys) ---
                 alreadySubmittedDevice: "لقد قمت بتسجيل الحضور لهذه الجلسة أو سجلت كطالب جديد بالفعل.",
-                // [MODIFIED] Updated Arabic text
-                sessionCheckError: "لا توجد جلسة متاحة حالياً",
+                sessionCheckError: "لا توجد جلسة متاحة حالياً", // Changed
                 idNumbersOnly: "خطأ: رقم الطالب يجب أن يحتوي على أرقام فقط.",
                 nameLettersOnly: "خطأ: الاسم يجب أن يحتوي على حروف ومسافات فقط.",
                 geolocationNotSupported: "خطأ: المتصفح لا يدعم تحديد الموقع.",
@@ -609,5 +622,3 @@ Done
     </script>
 </body>
 </html>
-
-
