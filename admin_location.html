@@ -5,95 +5,125 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Set Attendance Location</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            /* [REMOVED] position: relative; */
-            min-height: 100vh;
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            position: relative; 
         }
-        .container {
-            /* Inherits styles from body classes */
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100%; 
+            background-color: #f0f2f5; 
+            width: 100%;
+            box-sizing: border-box;
+            padding: 1rem 0; 
         }
-        #message {
-             font-weight: 600;
-             margin-top: 1.5rem; /* mt-6 */
-             padding: 0.75rem; /* p-3 */
-             border-radius: 5px; /* rounded-lg */
-             font-size: 0.9em;
+        .container { 
+            background-color: #fff; 
+            padding: 1.5rem; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+            text-align: center; 
+            width: 90%; 
+            max-width: 600px; 
+            margin-top: 4rem; 
+            margin-bottom: 1rem;
         }
-        .success {
-            color: #2b7d2b;
-            background-color: #d4edda;
-            border: 1px solid #c3e6cb;
+        h1 { 
+            margin-top: 0; 
+            margin-bottom: 1rem; 
+            color: #d9534f; /* Red title */
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 8px; 
+            font-size: 1.5em; 
         }
-        .error {
-            color: #721c24;
-            background-color: #f8d7da;
-            border: 1px solid #f5c6cb;
+        h1 svg { 
+            width: 1.5rem;
+            height: 1.5rem;
         }
-        /* [REMOVED] Home button styles */
-        /* .home-btn { ... } */
-
-        input {
-             width: 100%;
-             padding: 0.75rem; /* p-3 */
-             border: 1px solid #D1D5DB; /* border-gray-300 */
-             border-radius: 0.5rem; /* rounded-lg */
-             font-size: 0.875rem; /* text-sm */
-             box-sizing: border-box;
-        }
-        label {
-             display: block;
-             font-size: 0.875rem; /* text-sm */
-             font-weight: 500; /* font-medium */
-             color: #374151; /* text-gray-700 */
-             margin-bottom: 0.25rem; /* mb-1 */
-             text-align: left; /* Align labels left */
-        }
+        .form-group { margin-bottom: 1rem; text-align: left; }
+        label { display: block; font-weight: 600; margin-bottom: 0.25rem; font-size: 0.9em; }
+        input { width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        .btn { background-color: #d9534f; /* Red */ color: white; padding: 0.75rem 1rem; border: none; border-radius: 5px; cursor: pointer; width: 100%; font-size: 1em; font-weight: 600; transition: background-color 0.3s; }
+        .btn:hover { opacity: 0.9; }
+        .btn:disabled { background-color: #aaa; }
+        #message { font-weight: 600; margin-top: 1rem; padding: 0.75rem; border-radius: 5px; font-size: 0.9em; }
+        .success { color: #2b7d2b; background-color: #d4edda; }
+        .error { color: #721c24; background-color: #f8d7da; }
         .hidden-details { display: none; }
+
+        .home-btn {
+            position: absolute;
+            top: 1rem; 
+            left: 1rem; 
+            display: flex;
+            align-items: center;
+            background-color: #d9534f; /* Red */
+            color: white;
+            padding: 0.5rem 0.75rem; 
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85em; 
+            transition: background-color 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 10; 
+        }
+        .home-btn:hover {
+            opacity: 0.9; 
+        }
+        .home-btn svg {
+            width: 16px; 
+            height: 16px;
+            margin-right: 4px; 
+        }
     </style>
 </head>
-<body class="bg-gray-50 flex flex-col items-center justify-center min-h-screen p-6">
+<body>
+    <a href="./index.html" class="home-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+        </svg>
+        Home
+    </a>
 
-    <!-- [REMOVED] Home Button -->
-
-    <div class="container bg-white w-full max-w-lg p-8 md:p-12 rounded-xl shadow-lg text-center">
-        <!-- Logo -->
-        <div class="mb-8">
-             <!-- [NEW] Logo is now a link -->
-            <a href="./index.html" class="inline-block">
-                <img src="https://admission.must.edu.eg/lovable-uploads/a51bf950-39e9-4502-bf1f-fcc9e958e555.png" alt="MUST Logo" class="h-28 w-28 mx-auto">
-            </a>
-        </div>
-
-        <!-- Title & Subtitle -->
-        <h1 class="text-2xl font-bold text-gray-800 mb-2">Admin: Set Session</h1>
-        <p class="text-gray-500 mb-8">Misr University for Science & Technology</p>
-
+    <div class="container">
+        <h1>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            Go to Admin Page
+        </h1>
+        
         <!-- Password Section -->
-        <form id="passwordForm" class="text-left">
-            <div class="mb-4">
+        <form id="passwordForm">
+            <div class="form-group">
                 <label for="adminPassword">Admin Password</label>
                 <input type="password" id="adminPassword" required>
             </div>
-            <button type="submit" id="verifyBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-base disabled:bg-gray-400">
-                Verify Password
-            </button>
+            <button type="submit" id="verifyBtn" class="btn">Verify Password</button>
         </form>
-
-        <!-- Session Details Section (Initially Hidden) -->
-        <form id="sessionForm" class="hidden-details text-left">
-            <p class="text-center mt-6 mb-4 font-medium text-gray-700">Password Verified. Set session details:</p>
-
-            <div class="mb-4">
+        
+        <!-- Session Details Section -->
+        <form id="sessionForm" class="hidden-details">
+            <p style="margin-top: 1.5rem; font-weight: 600; color: #333;">Password Verified. Set session details:</p>
+            
+            <div class="form-group">
                 <label for="sessionName">Session Name (for new sheet tab)</label>
                 <input type="text" id="sessionName" required>
             </div>
-
-            <div class="mb-6 flex flex-col sm:flex-row gap-4">
+            
+            <div class="form-group flex flex-col sm:flex-row sm:justify-between gap-4">
                 <div class="w-full sm:w-1/2">
                     <label for="startTime">Start Time</label>
                     <input type="datetime-local" id="startTime" required>
@@ -103,18 +133,12 @@
                     <input type="datetime-local" id="endTime" required>
                 </div>
             </div>
-
-            <button type="submit" id="setLocationBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-base disabled:bg-gray-400">
-                Set Location & Open Attendance
-            </button>
+            
+            <button type="submit" id="setLocationBtn" class="btn mt-4">Set Location & Open Attendance</button>
         </form>
-
+        
         <div id="message"></div>
     </div>
-
-     <footer class="mt-8 text-gray-500 text-xs md:text-sm">
-        <p>&copy; Misr University for Science and Technology</p>
-    </footer>
 
     <script>
         const passwordForm = document.getElementById('passwordForm');
@@ -123,9 +147,10 @@
         const setLocationBtn = document.getElementById('setLocationBtn');
         const messageDiv = document.getElementById('message');
         const adminPasswordField = document.getElementById('adminPassword');
-
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwCjH23ufU7dh1F1HlgTk_UY8n0wcJxsMJ0TbihPk3zSiIFiX2UdPwmrANHmrjOtm9FKA/exec";
-
+        const sessionNameField = document.getElementById('sessionName'); // Get session name input
+        
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwCjH23ufU7dh1F1HlgTk_UY8n0wcJxsMJ0TbihPk3zSiIFiX2UdPwmrANHmrjOtm9FKA/exec"; 
+        
         function getLocalDateTimeString(date) {
             const year = date.getFullYear();
             const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -134,15 +159,46 @@
             const minutes = date.getMinutes().toString().padStart(2, '0');
             return `${year}-${month}-${day}T${hours}:${minutes}`;
         }
+
+        // --- [MODIFIED] DOMContentLoaded ---
         document.addEventListener('DOMContentLoaded', () => {
+            // Set default times immediately
             const now = new Date();
             const fifteenMinutesLater = new Date(now.getTime() + 15 * 60000);
             document.getElementById('startTime').value = getLocalDateTimeString(now);
             document.getElementById('endTime').value = getLocalDateTimeString(fifteenMinutesLater);
-            const dateStr = now.toISOString().split('T')[0];
-            document.getElementById('sessionName').value = `${dateStr} Lecture`;
-        });
 
+            // Fetch sheet names to suggest a unique session name
+            fetch(SCRIPT_URL + "?action=getSheetNames") // Add action parameter
+                .then(response => response.json())
+                .then(data => {
+                    if (data.result === "success" && data.data.sheetNames) {
+                        const existingNames = data.data.sheetNames;
+                        const dateStr = now.toISOString().split('T')[0];
+                        const baseName = `${dateStr} Lecture`;
+                        let uniqueName = baseName;
+                        let counter = 2;
+                        // Keep adding _X until the name is unique
+                        while (existingNames.includes(uniqueName)) {
+                            uniqueName = `${baseName}_${counter}`;
+                            counter++;
+                        }
+                        sessionNameField.value = uniqueName; // Set the unique name
+                    } else {
+                        // Fallback if fetching names fails
+                        const dateStr = now.toISOString().split('T')[0];
+                        sessionNameField.value = `${dateStr} Lecture`; 
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching sheet names:", error);
+                    // Fallback on error
+                    const dateStr = now.toISOString().split('T')[0];
+                    sessionNameField.value = `${dateStr} Lecture`;
+                });
+        });
+        // --- End DOMContentLoaded ---
+        
         passwordForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const password = adminPasswordField.value;
@@ -154,7 +210,7 @@
             verifyBtn.textContent = 'Verifying...';
             showMessage('');
             const formData = new FormData();
-            formData.append("action", "verifyPassword");
+            formData.append("action", "verifyPassword"); 
             formData.append("password", password);
             fetch(SCRIPT_URL, { method: 'POST', body: formData })
                 .then(response => response.json())
@@ -162,24 +218,24 @@
                     if (data.result === "success") {
                         passwordForm.style.display = 'none';
                         sessionForm.classList.remove('hidden-details');
-                        showMessage('');
+                        showMessage(''); 
                     } else {
                         throw new Error(data.data.message || "Verification failed");
                     }
                 })
                 .catch(error => {
                     showMessage(error.message, 'error');
-                    verifyBtn.disabled = false;
+                    verifyBtn.disabled = false; 
                     verifyBtn.textContent = 'Verify Password';
                 });
         });
 
         sessionForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            const password = adminPasswordField.value;
+            const password = adminPasswordField.value; 
             const startTime = document.getElementById('startTime').value;
             const endTime = document.getElementById('endTime').value;
-            const sessionName = document.getElementById('sessionName').value;
+            const sessionName = sessionNameField.value; // Use the (potentially edited) value
             if (!password || !startTime || !endTime || !sessionName) {
                 showMessage('Please fill in all fields.', 'error');
                 return;
@@ -192,12 +248,12 @@
                     setLocationBtn.textContent = 'Setting location...';
                     const formData = new FormData();
                     formData.append("action", "setLocation");
-                    formData.append("password", password);
+                    formData.append("password", password); 
                     formData.append("latitude", position.coords.latitude);
                     formData.append("longitude", position.coords.longitude);
-                    formData.append("startTime", startTime);
-                    formData.append("endTime", endTime);
-                    formData.append("sessionName", sessionName);
+                    formData.append("startTime", startTime); 
+                    formData.append("endTime", endTime);     
+                    formData.append("sessionName", sessionName); 
                     fetch(SCRIPT_URL, { method: 'POST', body: formData })
                         .then(response => response.json())
                         .then(data => {
@@ -224,7 +280,6 @@
 
         function showMessage(message, type) {
             messageDiv.textContent = message;
-            // Apply the correct class (success or error) to the message div itself
             messageDiv.className = type;
         }
     </script>
