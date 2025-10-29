@@ -144,6 +144,7 @@
                 submitButton_closed: "Attendance Closed",
                 submitButton_error: "Error",
                 newcomerYesBtn_yes: "Yes, I'm New",
+                newcomerYesBtn_gettingLocation: "Getting Location...", // [NEW]
                 newcomerYesBtn_registering: "Registering...",
                 newcomerNoBtn: "No, Re-enter ID",
                 footerText: "© Misr University for Science and Technology",
@@ -164,16 +165,16 @@
                     3. Set "Location" to "Allow" for this site.<br>
                     4. Tap the 'Submit' button again.`,
                 registerConfirm: "Please ensure ID (numbers only) and Name (text only) are entered correctly before registering.",
-                registering: "Registering your details...",
+                registering: "Registering your details...", // Used when sending data
                 // --- Server Messages (Keys derived from script output) ---
-                sessionNotActive: "Attendance is not currently active. Check the session times.", // Includes admin not opened
+                sessionNotActive: "Attendance is not currently active. Check the session times.",
                 invalidId_askNew: "Student ID not found in the list. Are you a new student?",
                 duplicateId_session: "This Student ID has already been recorded for this session.",
-                locationDenied: "Attendance Denied: You are {distance} meters away. You must be inside the class.", // Placeholder
+                locationDenied: "Attendance Denied: You are {distance} meters away. You must be inside the class.",
+                locationDenied_newcomer: "Attendance Denied (Newcomer): You are {distance} meters away.", // [NEW]
                 success: "Attendance Recorded Successfully!",
-                // --- [MODIFIED] Updated English translation ---
-                newcomerSuccess: "Your information has been recorded as a new student. Please follow up with the doctor.",
-                // ------------------------------------------
+                // [MODIFIED] New key for combined success
+                newcomerSuccessAndAttendance: "Attendance Recorded & Registered as New Student. Please follow up with the doctor.", 
                 newcomerDuplicate: "This ID has already been registered as a newcomer. Please contact admin.",
                 unknownServerError: "An unknown server error occurred."
             },
@@ -191,6 +192,7 @@
                 submitButton_closed: "الحضور مغلق",
                 submitButton_error: "خطأ",
                 newcomerYesBtn_yes: "نعم، أنا جديد",
+                newcomerYesBtn_gettingLocation: "جاري تحديد الموقع...", // [NEW]
                 newcomerYesBtn_registering: "جاري التسجيل...",
                 newcomerNoBtn: "لا، سأعيد الإدخال",
                 footerText: "© جامعة مصر للعلوم والتكنولوجيا",
@@ -213,12 +215,14 @@
                 registerConfirm: "يرجى التأكد من إدخال الرقم (أرقام فقط) والاسم (حروف فقط) بشكل صحيح قبل التسجيل.",
                 registering: "جاري تسجيل بياناتك...",
                  // --- Server Messages (Keys derived from script output) ---
-                sessionNotActive: "الحضور غير مفعل حالياً. تأكد من مواعيد الجلسة.", // Includes admin not opened
+                sessionNotActive: "الحضور غير مفعل حالياً. تأكد من مواعيد الجلسة.",
                 invalidId_askNew: "رقم الطالب غير موجود بالقائمة. هل أنت طالب جديد؟",
                 duplicateId_session: "تم تسجيل هذا الرقم الطلابي من قبل في هذه الجلسة.",
-                locationDenied: "تم رفض الحضور: أنت على بعد {distance} متر. يجب أن تكون داخل القاعة.", // Placeholder
+                locationDenied: "تم رفض الحضور: أنت على بعد {distance} متر. يجب أن تكون داخل القاعة.",
+                locationDenied_newcomer: "تم رفض الحضور (طالب جديد): أنت على بعد {distance} متر.", // [NEW]
                 success: "تم تسجيل الحضور بنجاح!",
-                newcomerSuccess: "تم تسجيل بياناتك كطالب جديد. يرجى المتابعة مع الدكتور.",
+                // [MODIFIED] New key for combined success
+                newcomerSuccessAndAttendance: "تم تسجيل الحضور وبياناتك كطالب جديد. يرجى المتابعة مع الدكتور.", 
                 newcomerDuplicate: "تم تسجيل هذا الرقم كطالب جديد من قبل. يرجى التواصل مع المسؤول.",
                 unknownServerError: "حدث خطأ غير معروف في الخادم."
             }
@@ -238,265 +242,121 @@
         let currentLang = localStorage.getItem('attendanceLang') || 'en';
 
         // Function to update UI text
-        function updateUI(lang) {
-            const t = translations[lang];
-            document.documentElement.lang = lang;
-            document.body.lang = lang;
-
-            document.getElementById('pageTitle').textContent = t.pageTitle;
-            document.getElementById('mainTitle').textContent = t.mainTitle;
-            document.getElementById('subTitle').textContent = t.subTitle;
-            document.getElementById('labelStudentID').textContent = t.labelStudentID;
-            document.getElementById('labelStudentName').textContent = t.labelStudentName;
-            document.getElementById('newcomerYesBtn').textContent = t.newcomerYesBtn_yes;
-            document.getElementById('newcomerNoBtn').textContent = t.newcomerNoBtn;
-            document.getElementById('footerText').textContent = t.footerText;
-
-             const currentSubmitTextKey = submitButton.dataset.textKey || 'submitButton_submit';
-             submitButton.textContent = t[currentSubmitTextKey];
-
+        function updateUI(lang) { /* ... (unchanged) ... */ 
+            const t = translations[lang]; document.documentElement.lang = lang; document.body.lang = lang;
+            document.getElementById('pageTitle').textContent = t.pageTitle; document.getElementById('mainTitle').textContent = t.mainTitle;
+            document.getElementById('subTitle').textContent = t.subTitle; document.getElementById('labelStudentID').textContent = t.labelStudentID;
+            document.getElementById('labelStudentName').textContent = t.labelStudentName; document.getElementById('newcomerYesBtn').textContent = t.newcomerYesBtn_yes;
+            document.getElementById('newcomerNoBtn').textContent = t.newcomerNoBtn; document.getElementById('footerText').textContent = t.footerText;
+            const currentSubmitTextKey = submitButton.dataset.textKey || 'submitButton_submit'; submitButton.textContent = t[currentSubmitTextKey];
             langSwitchBtn.textContent = lang === 'en' ? 'ع' : 'En';
         }
 
         // Event listener for language switch
-        langSwitchBtn.addEventListener('click', () => {
-            currentLang = currentLang === 'en' ? 'ar' : 'en';
-            localStorage.setItem('attendanceLang', currentLang);
-            updateUI(currentLang);
-            if (messageDiv.dataset.messageKey) {
-                 showMessage(messageDiv.dataset.messageKey, messageDiv.className, messageDiv.dataset.messageParams ? JSON.parse(messageDiv.dataset.messageParams) : null);
-            }
+        langSwitchBtn.addEventListener('click', () => { /* ... (unchanged) ... */ 
+            currentLang = currentLang === 'en' ? 'ar' : 'en'; localStorage.setItem('attendanceLang', currentLang); updateUI(currentLang);
+            if (messageDiv.dataset.messageKey) { showMessage(messageDiv.dataset.messageKey, messageDiv.className, messageDiv.dataset.messageParams ? JSON.parse(messageDiv.dataset.messageParams) : null); }
         });
 
-        document.addEventListener('DOMContentLoaded', () => {
-            updateUI(currentLang); // Set initial language
-
-            submitButton.disabled = true;
-            submitButton.dataset.textKey = 'submitButton_checking';
-            updateUI(currentLang);
-            newcomerActionsDiv.style.display = 'none';
-
-            fetch(SCRIPT_URL)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.result === 'success') {
-                        activeSessionName = data.data.sessionName;
-                        const deviceLockKey = activeSessionName;
-
-                        if (localStorage.getItem(deviceLockKey) === 'true') {
-                            showMessage('alreadySubmittedDevice', 'error');
-                            submitButton.dataset.textKey = 'submitButton_submitted';
-                        } else {
-                            submitButton.disabled = false;
-                            submitButton.dataset.textKey = 'submitButton_submit';
-                        }
-                    } else {
-                        showMessageFromServer(data.data.message); // Try to translate server msg
-                        submitButton.dataset.textKey = 'submitButton_closed';
-                    }
-                    updateUI(currentLang); // Update button text again
-                })
-                .catch(err => {
-                    showMessage('sessionCheckError', 'error');
-                    submitButton.dataset.textKey = 'submitButton_error';
-                    updateUI(currentLang);
-                });
+        document.addEventListener('DOMContentLoaded', () => { /* ... (unchanged) ... */ 
+            updateUI(currentLang); submitButton.disabled = true; submitButton.dataset.textKey = 'submitButton_checking'; updateUI(currentLang); newcomerActionsDiv.style.display = 'none';
+            fetch(SCRIPT_URL).then(response => response.json()).then(data => {
+                if (data.result === 'success') {
+                    activeSessionName = data.data.sessionName; const deviceLockKey = activeSessionName;
+                    if (localStorage.getItem(deviceLockKey) === 'true') { showMessage('alreadySubmittedDevice', 'error'); submitButton.dataset.textKey = 'submitButton_submitted'; } else { submitButton.disabled = false; submitButton.dataset.textKey = 'submitButton_submit'; }
+                } else { showMessageFromServer(data.data.message); submitButton.dataset.textKey = 'submitButton_closed'; }
+                updateUI(currentLang);
+            }).catch(err => { showMessage('sessionCheckError', 'error'); submitButton.dataset.textKey = 'submitButton_error'; updateUI(currentLang); });
         });
 
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            hideNewcomerButtons();
-
-            const studentID = document.getElementById('studentID').value;
-            const studentName = document.getElementById('studentName').value;
-
-            if (!/^\d+$/.test(studentID)) {
-                showMessage('idNumbersOnly', 'error');
-                return;
-            }
-            if (!/^[A-Za-z\s]+$/.test(studentName)) {
-                showMessage('nameLettersOnly', 'error');
-                return;
-            }
-
-            submitButton.disabled = true;
-            submitButton.dataset.textKey = 'submitButton_gettingLocation';
-            updateUI(currentLang);
-            showMessage(''); // Clear message
-
-            if (!navigator.geolocation) {
-                showMessage('geolocationNotSupported', 'error');
-                submitButton.disabled = false;
-                 submitButton.dataset.textKey = 'submitButton_submit';
-                 updateUI(currentLang);
-                return;
-            }
-
-            navigator.geolocation.getCurrentPosition(
-                geolocationSuccess,
-                geolocationError,
-                { enableHighAccuracy: true }
-            );
+        form.addEventListener('submit', function(e) { /* ... (unchanged validation) ... */ 
+            e.preventDefault(); hideNewcomerButtons();
+            const studentID = document.getElementById('studentID').value; const studentName = document.getElementById('studentName').value;
+            if (!/^\d+$/.test(studentID)) { showMessage('idNumbersOnly', 'error'); return; }
+            if (!/^[A-Za-z\s]+$/.test(studentName)) { showMessage('nameLettersOnly', 'error'); return; }
+            submitButton.disabled = true; submitButton.dataset.textKey = 'submitButton_gettingLocation'; updateUI(currentLang); showMessage('');
+            if (!navigator.geolocation) { showMessage('geolocationNotSupported', 'error'); submitButton.disabled = false; submitButton.dataset.textKey = 'submitButton_submit'; updateUI(currentLang); return; }
+            navigator.geolocation.getCurrentPosition( geolocationSuccess, geolocationError, { enableHighAccuracy: true } );
         });
 
-        function geolocationSuccess(position) {
-            const userLat = position.coords.latitude;
-            const userLon = position.coords.longitude;
-            const studentID = document.getElementById('studentID').value;
-            const studentName = document.getElementById('studentName').value;
-
-            submitButton.dataset.textKey = 'submitButton_verifying';
-            updateUI(currentLang);
-
-            const formData = new FormData();
-            formData.append("action", "takeAttendance");
-            formData.append("studentID", studentID);
-            formData.append("studentName", studentName);
-            formData.append("latitude", userLat);
-            formData.append("longitude", userLon);
-
-            fetch(SCRIPT_URL, {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.result === "success") {
-                    handleSuccessFromServer(data.data.message);
-                } else if (data.result === "invalid_id") {
-                    handleInvalidIdFromServer(data.data.message);
-                } else {
-                    handleErrorFromServer(data.data.message || 'unknownServerError');
-                }
-            })
-            .catch(error => {
-                handleError('unknownServerError'); // Assume unknown error on fetch fail
-            })
+        function geolocationSuccess(position) { /* ... (unchanged until fetch) ... */ 
+            const userLat = position.coords.latitude; const userLon = position.coords.longitude;
+            const studentID = document.getElementById('studentID').value; const studentName = document.getElementById('studentName').value;
+            submitButton.dataset.textKey = 'submitButton_verifying'; updateUI(currentLang);
+            const formData = new FormData(); formData.append("action", "takeAttendance"); formData.append("studentID", studentID);
+            formData.append("studentName", studentName); formData.append("latitude", userLat); formData.append("longitude", userLon);
+            fetch(SCRIPT_URL, { method: 'POST', body: formData }).then(response => response.json()).then(data => {
+                if (data.result === "success") { handleSuccessFromServer(data.data.message); } 
+                else if (data.result === "invalid_id") { handleInvalidIdFromServer(data.data.message); } 
+                else { handleErrorFromServer(data.data.message || 'unknownServerError'); }
+            }).catch(error => { handleError('unknownServerError'); })
         }
 
         // Handlers now use server messages
-        function handleSuccessFromServer(serverMessage) {
-            const key = findKeyByEnglishValue(serverMessage, translations.en);
-            showMessage(key || 'success', 'success'); // Fallback to generic key
-            form.reset();
-            if (activeSessionName) {
-                localStorage.setItem(activeSessionName, 'true');
-            }
-            submitButton.disabled = true;
-            submitButton.dataset.textKey = 'submitButton_submitted';
-            updateUI(currentLang);
+        function handleSuccessFromServer(serverMessage) { /* ... (unchanged) ... */ 
+            const key = findKeyByEnglishValue(serverMessage, translations.en); showMessage(key || 'success', 'success'); form.reset();
+            if (activeSessionName) { localStorage.setItem(activeSessionName, 'true'); }
+            submitButton.disabled = true; submitButton.dataset.textKey = 'submitButton_submitted'; updateUI(currentLang);
         }
 
-        function handleInvalidIdFromServer(serverMessage) {
-            const key = findKeyByEnglishValue(serverMessage, translations.en);
-            showMessage(key || 'invalidId_askNew', 'error'); // Fallback to generic key
-            showNewcomerButtons();
-            submitButton.style.display = 'none';
+        function handleInvalidIdFromServer(serverMessage) { /* ... (unchanged) ... */ 
+            const key = findKeyByEnglishValue(serverMessage, translations.en); showMessage(key || 'invalidId_askNew', 'error'); showNewcomerButtons(); submitButton.style.display = 'none';
         }
 
-        function handleErrorFromServer(serverMessage) {
-             const key = findKeyByEnglishValue(serverMessage, translations.en);
-             let params = null;
-             if (key === 'locationDenied') {
+        function handleErrorFromServer(serverMessage) { /* ... (unchanged, handles locationDenied with distance) ... */ 
+             const key = findKeyByEnglishValue(serverMessage, translations.en); let params = null;
+             if (key === 'locationDenied' || key === 'locationDenied_newcomer') { // [MODIFIED] Check for newcomer location denial too
                  const distanceMatch = serverMessage.match(/(\d+)\s+meters/);
-                 if (distanceMatch) {
-                     params = { distance: distanceMatch[1] };
-                 }
+                 if (distanceMatch) { params = { distance: distanceMatch[1] }; }
              }
-             showMessage(key || 'unknownServerError', 'error', params); // Fallback to generic key
-             submitButton.disabled = false;
-             submitButton.dataset.textKey = 'submitButton_submit';
-             updateUI(currentLang);
+             showMessage(key || 'unknownServerError', 'error', params); submitButton.disabled = false; submitButton.dataset.textKey = 'submitButton_submit'; updateUI(currentLang);
         }
-
+        
         // Helper to find translation key from English server message
-        function findKeyByEnglishValue(value, englishTranslations) {
+        function findKeyByEnglishValue(value, englishTranslations) { /* ... (unchanged logic, added newcomer location denial key) ... */ 
             if (!value) return null;
-            if (value.includes("meters away")) {
-                return 'locationDenied';
+            if (value.includes("meters away")) { // Check for both denial messages
+                 return value.includes("Newcomer") ? 'locationDenied_newcomer' : 'locationDenied';
             }
-            for (const key in englishTranslations) {
-                if (englishTranslations[key] === value) {
-                    return key;
-                }
-            }
-             // Try partial match for common errors from script
+            for (const key in englishTranslations) { if (englishTranslations[key] === value) { return key; } }
             if (value.includes("already been recorded for this session")) return 'duplicateId_session';
             if (value.includes("not currently active")) return 'sessionNotActive';
             if (value.includes("already been registered as a newcomer")) return 'newcomerDuplicate';
-
-            return null; // Key not found
+            if (value.includes("Attendance Recorded & Registered as New Student")) return 'newcomerSuccessAndAttendance'; // [MODIFIED] Match new success message
+            return null; 
         }
 
-
-        function geolocationError(error) {
-            let messageKey = '';
-            let includeInstructions = false;
-
+        function geolocationError(error) { /* ... (unchanged) ... */ 
+            let messageKey = ''; let includeInstructions = false;
             switch(error.code) {
-                case error.PERMISSION_DENIED:
-                    messageKey = 'permissionDenied';
-                    includeInstructions = true;
-                    break;
-                case error.POSITION_UNAVAILABLE:
-                    messageKey = 'positionUnavailable';
-                    break;
-                case error.TIMEOUT:
-                    messageKey = 'timeout';
-                    break;
-                default:
-                    messageKey = 'unknownGeoError';
-                    break;
+                case error.PERMISSION_DENIED: messageKey = 'permissionDenied'; includeInstructions = true; break;
+                case error.POSITION_UNAVAILABLE: messageKey = 'positionUnavailable'; break;
+                case error.TIMEOUT: messageKey = 'timeout'; break;
+                default: messageKey = 'unknownGeoError'; break;
             }
-            showMessage(messageKey, 'error', null, includeInstructions);
-            submitButton.disabled = false;
-            submitButton.dataset.textKey = 'submitButton_submit';
-            updateUI(currentLang);
+            showMessage(messageKey, 'error', null, includeInstructions); submitButton.disabled = false; submitButton.dataset.textKey = 'submitButton_submit'; updateUI(currentLang);
         }
 
         // showMessage to use keys and handle params/instructions
-        function showMessage(key, type, params = null, includeInstructions = false) {
-            let messageText = translations[currentLang][key] || translations['en'][key] || key; // Fallback logic
-
-            if (params) {
-                for (const pKey in params) {
-                    messageText = messageText.replace(`{${pKey}}`, params[pKey]);
-                }
-            }
-
-            let finalHtml = messageText;
-            if (includeInstructions) {
-                finalHtml += `<div class="instructions">${translations[currentLang]['fixInstructions']}</div>`;
-            }
-
-            messageDiv.innerHTML = finalHtml;
-            messageDiv.className = type;
-            // Store key and params for language switching
-            messageDiv.dataset.messageKey = key;
-            messageDiv.dataset.messageParams = params ? JSON.stringify(params) : "";
+        function showMessage(key, type, params = null, includeInstructions = false) { /* ... (unchanged) ... */ 
+            let messageText = translations[currentLang][key] || translations['en'][key] || key;
+            if (params) { for (const pKey in params) { messageText = messageText.replace(`{${pKey}}`, params[pKey]); } }
+            let finalHtml = messageText; if (includeInstructions) { finalHtml += `<div class="instructions">${translations[currentLang]['fixInstructions']}</div>`; }
+            messageDiv.innerHTML = finalHtml; messageDiv.className = type; messageDiv.dataset.messageKey = key; messageDiv.dataset.messageParams = params ? JSON.stringify(params) : "";
         }
 
-
-        function showNewcomerButtons() {
-            newcomerActionsDiv.style.display = 'flex';
-            newcomerYesBtn.disabled = false;
-            newcomerYesBtn.textContent = translations[currentLang].newcomerYesBtn_yes; // Use translation
-            newcomerNoBtn.textContent = translations[currentLang].newcomerNoBtn; // Use translation
+        function showNewcomerButtons() { /* ... (unchanged) ... */ 
+            newcomerActionsDiv.style.display = 'flex'; newcomerYesBtn.disabled = false; newcomerYesBtn.textContent = translations[currentLang].newcomerYesBtn_yes; newcomerNoBtn.textContent = translations[currentLang].newcomerNoBtn; 
         }
-        function hideNewcomerButtons() {
-            newcomerActionsDiv.style.display = 'none';
+        function hideNewcomerButtons() { /* ... (unchanged) ... */ 
+            newcomerActionsDiv.style.display = 'none'; 
         }
 
-        newcomerNoBtn.addEventListener('click', () => {
-            hideNewcomerButtons();
-            submitButton.style.display = 'block';
-            submitButton.disabled = false;
-            submitButton.dataset.textKey = 'submitButton_submit';
-            updateUI(currentLang);
-            showMessage('');
-            document.getElementById('studentID').focus();
+        newcomerNoBtn.addEventListener('click', () => { /* ... (unchanged) ... */ 
+            hideNewcomerButtons(); submitButton.style.display = 'block'; submitButton.disabled = false; submitButton.dataset.textKey = 'submitButton_submit'; updateUI(currentLang); showMessage(''); document.getElementById('studentID').focus(); 
         });
 
+        // --- [MODIFIED] Event listener for "Yes, I'm New" button ---
         newcomerYesBtn.addEventListener('click', () => {
             const studentID = document.getElementById('studentID').value;
             const studentName = document.getElementById('studentName').value;
@@ -507,45 +367,75 @@
                 return;
             }
 
+            // --- Get location FIRST ---
             newcomerYesBtn.disabled = true;
-            newcomerYesBtn.textContent = translations[currentLang].newcomerYesBtn_registering; // Use translation
-            showMessage('registering', ''); // Use key
+            newcomerYesBtn.textContent = translations[currentLang].newcomerYesBtn_gettingLocation; // Getting location text
+            showMessage(''); // Clear previous error
 
-            const formData = new FormData();
-            formData.append("action", "registerNewcomer");
-            formData.append("studentID", studentID);
-            formData.append("studentName", studentName);
-
-            fetch(SCRIPT_URL, {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.result === 'success') {
-                    const key = findKeyByEnglishValue(data.data.message, translations.en)
-                    showMessage(key || 'newcomerSuccess', 'success');
-                    hideNewcomerButtons();
-                    form.reset();
-                    if (activeSessionName) {
-                        localStorage.setItem(activeSessionName, 'true');
-                    }
-                    submitButton.style.display = 'block';
-                    submitButton.disabled = true;
-                    submitButton.dataset.textKey = 'submitButton_submitted';
-                    updateUI(currentLang);
-                } else {
-                     const key = findKeyByEnglishValue(data.data.message, translations.en)
-                    throw new Error(key || 'unknownServerError');
-                }
-            })
-            .catch(errorKey => { // Catch the key
-                showMessage(errorKey, 'error');
-                newcomerYesBtn.disabled = false;
+            if (!navigator.geolocation) {
+                showMessage('geolocationNotSupported', 'error');
+                newcomerYesBtn.disabled = false; // Re-enable on error
                 newcomerYesBtn.textContent = translations[currentLang].newcomerYesBtn_yes;
-            });
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                function(position) { // --- On Location Success ---
+                    newcomerYesBtn.textContent = translations[currentLang].newcomerYesBtn_registering; // Registering text
+                    showMessage('registering', ''); // Show 'Registering...' message
+
+                    const formData = new FormData();
+                    formData.append("action", "registerNewcomer");
+                    formData.append("studentID", studentID);
+                    formData.append("studentName", studentName);
+                    formData.append("latitude", position.coords.latitude); // Send location
+                    formData.append("longitude", position.coords.longitude);// Send location
+
+                    fetch(SCRIPT_URL, {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.result === 'success') {
+                            const key = findKeyByEnglishValue(data.data.message, translations.en)
+                            showMessage(key || 'newcomerSuccessAndAttendance', 'success'); // Use new combined key
+                            hideNewcomerButtons();
+                            form.reset();
+                            if (activeSessionName) {
+                                localStorage.setItem(activeSessionName, 'true'); // Lock device
+                            }
+                            submitButton.style.display = 'block';
+                            submitButton.disabled = true;
+                            submitButton.dataset.textKey = 'submitButton_submitted';
+                            updateUI(currentLang);
+                        } else {
+                            // Handle specific errors like location denied for newcomer
+                            handleErrorFromServer(data.data.message || 'unknownServerError');
+                            // Re-enable Yes button on server error
+                            newcomerYesBtn.disabled = false;
+                            newcomerYesBtn.textContent = translations[currentLang].newcomerYesBtn_yes;
+
+                        }
+                    })
+                    .catch(error => { // Catch fetch error
+                         showMessage('unknownServerError', 'error');
+                         newcomerYesBtn.disabled = false;
+                         newcomerYesBtn.textContent = translations[currentLang].newcomerYesBtn_yes;
+                    });
+
+                },
+                function(error) { // --- On Location Error ---
+                    geolocationError(error); // Use existing geo error handler
+                    newcomerYesBtn.disabled = false; // Re-enable button
+                    newcomerYesBtn.textContent = translations[currentLang].newcomerYesBtn_yes;
+                },
+                { enableHighAccuracy: true }
+            );
+            // --- End location getting ---
         });
 
     </script>
 </body>
 </html>
+
