@@ -3,153 +3,209 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Set Attendance Location</title>
+    <title id="pageTitle">Admin - Set Session</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-            position: relative; 
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            position: relative;
         }
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100%; 
-            background-color: #f0f2f5; 
-            width: 100%;
-            box-sizing: border-box;
-            padding: 1rem 0; 
+        #message {
+             font-weight: 600; margin-top: 1.5rem; padding: 0.75rem;
+             border-radius: 5px; font-size: 0.9em;
         }
-        .container { 
-            background-color: #fff; 
-            padding: 1.5rem; 
-            border-radius: 10px; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
-            text-align: center; 
-            width: 90%; 
-            max-width: 600px; 
-            margin-top: 4rem; 
-            margin-bottom: 1rem;
+        .success { color: #2b7d2b; background-color: #d4edda; border: 1px solid #c3e6cb; }
+        .error { color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; }
+        input {
+             width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB;
+             border-radius: 0.5rem; font-size: 0.875rem; box-sizing: border-box;
         }
-        h1 { 
-            margin-top: 0; 
-            margin-bottom: 1rem; 
-            color: #d9534f; /* Red title */
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 8px; 
-            font-size: 1.5em; 
+        label {
+             display: block; font-size: 0.875rem; font-weight: 500;
+             color: #374151; margin-bottom: 0.25rem;
         }
-        h1 svg { 
-            width: 1.5rem;
-            height: 1.5rem;
-        }
-        .form-group { margin-bottom: 1rem; text-align: left; }
-        label { display: block; font-weight: 600; margin-bottom: 0.25rem; font-size: 0.9em; }
-        input { width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-        .btn { background-color: #d9534f; /* Red */ color: white; padding: 0.75rem 1rem; border: none; border-radius: 5px; cursor: pointer; width: 100%; font-size: 1em; font-weight: 600; transition: background-color 0.3s; }
-        .btn:hover { opacity: 0.9; }
-        .btn:disabled { background-color: #aaa; }
-        #message { font-weight: 600; margin-top: 1rem; padding: 0.75rem; border-radius: 5px; font-size: 0.9em; }
-        .success { color: #2b7d2b; background-color: #d4edda; }
-        .error { color: #721c24; background-color: #f8d7da; }
-        .hidden-details { display: none; }
-
-        .home-btn {
-            position: absolute;
-            top: 1rem; 
-            left: 1rem; 
-            display: flex;
-            align-items: center;
-            background-color: #d9534f; /* Red */
-            color: white;
-            padding: 0.5rem 0.75rem; 
-            border-radius: 5px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.85em; 
-            transition: background-color 0.3s;
+        .lang-switch-btn {
+            position: absolute; top: 1rem; right: 1rem;
+            background-color: #6B7280; color: white; padding: 0.5rem 0.75rem;
+            border-radius: 5px; font-weight: 600; font-size: 0.85em;
+            cursor: pointer; z-index: 10; border: none;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            z-index: 10; 
         }
-        .home-btn:hover {
-            opacity: 0.9; 
-        }
-        .home-btn svg {
-            width: 16px; 
-            height: 16px;
-            margin-right: 4px; 
-        }
+        .lang-switch-btn:hover { background-color: #4B5563; }
+        body[lang="ar"] { font-family: 'Tahoma', sans-serif; }
+        body[lang="ar"] label,
+        body[lang="ar"] p,
+        body[lang="ar"] button,
+        body[lang="ar"] #message { text-align: right; }
+        .hidden-details { display: none; }
     </style>
 </head>
-<body>
-    <a href="./index.html" class="home-btn">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
-        </svg>
-        Home
-    </a>
+<body class="bg-gray-50 flex flex-col items-center justify-center min-h-screen p-6">
 
-    <div class="container">
-        <h1>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-            Go to Admin Page
-        </h1>
-        
-        <!-- Password Section -->
-        <form id="passwordForm">
-            <div class="form-group">
-                <label for="adminPassword">Admin Password</label>
+    <!-- Language Switch Button -->
+    <button id="langSwitchBtn" class="lang-switch-btn">En / ع</button>
+
+    <div class="container bg-white w-full max-w-lg p-8 md:p-12 rounded-xl shadow-lg text-center">
+        <!-- Logo -->
+        <div class="mb-8">
+            <a href="./index.html" class="inline-block">
+                <img src="https://admission.must.edu.eg/lovable-uploads/a51bf950-39e9-4502-bf1f-fcc9e958e555.png" alt="MUST Logo" class="h-28 w-28 mx-auto">
+            </a>
+        </div>
+
+        <!-- Title & Subtitle -->
+        <h1 id="mainTitle" class="text-2xl font-bold text-gray-800 mb-2">Set Class Session</h1>
+        <p id="subTitle" class="text-gray-500 mb-8">Misr University for Science & Technology</p>
+
+        <!-- Password Section (Always Visible) -->
+        <form id="passwordForm" class="text-left">
+            <div class="mb-4">
+                <label id="labelPassword" for="adminPassword">Admin Password</label>
                 <input type="password" id="adminPassword" required>
             </div>
-            <button type="submit" id="verifyBtn" class="btn">Verify Password</button>
+            <!-- [MODIFIED] Changed button color to red -->
+            <button type="submit" id="verifyBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-base disabled:bg-gray-400">
+                Verify Password
+            </button>
         </form>
         
-        <!-- Session Details Section -->
-        <form id="sessionForm" class="hidden-details">
-            <p style="margin-top: 1.5rem; font-weight: 600; color: #333;">Password Verified. Set session details:</p>
+        <!-- Session Details Section (Initially Hidden) -->
+        <form id="sessionForm" class="hidden-details text-left">
+            <p id="verifiedText" style="margin-top: 1.5rem; font-weight: 600; color: #333; text-align: center; margin-bottom: 1.5rem;">Password Verified. Set session details:</p>
             
-            <div class="form-group">
-                <label for="sessionName">Session Name (for new sheet tab)</label>
+            <div class="mb-4">
+                <label id="labelSessionName" for="sessionName">Session Name (for new sheet tab)</label>
                 <input type="text" id="sessionName" required>
             </div>
             
-            <div class="form-group flex flex-col sm:flex-row sm:justify-between gap-4">
+            <div class="flex flex-col sm:flex-row sm:justify-between gap-4 mb-6">
                 <div class="w-full sm:w-1/2">
-                    <label for="startTime">Start Time</label>
+                    <label id="labelStartTime" for="startTime">Start Time</label>
                     <input type="datetime-local" id="startTime" required>
                 </div>
                 <div class="w-full sm:w-1/2">
-                    <label for="endTime">End Time</label>
+                    <label id="labelEndTime" for="endTime">End Time</label>
                     <input type="datetime-local" id="endTime" required>
                 </div>
             </div>
             
-            <button type="submit" id="setLocationBtn" class="btn mt-4">Set Location & Open Attendance</button>
+            <button type="submit" id="setLocationBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-base disabled:bg-gray-400">
+                Set Location & Open Attendance
+            </button>
         </form>
         
         <div id="message"></div>
     </div>
 
+    <footer class="mt-8 text-gray-500 text-xs md:text-sm">
+        <p id="footerText">&copy; Misr University for Science and Technology</p>
+    </footer>
+
     <script>
+        // --- [NEW] Translation Data for Admin Page ---
+        const translations = {
+            en: {
+                pageTitle: "Admin - Set Session",
+                mainTitle: "Set Class Session",
+                subTitle: "Misr University for Science & Technology",
+                labelPassword: "Admin Password",
+                verifyBtn_verify: "Verify Password",
+                verifyBtn_verifying: "Verifying...",
+                verifiedText: "Password Verified. Set session details:",
+                labelSessionName: "Session Name (for new sheet tab)",
+                labelStartTime: "Start Time",
+                labelEndTime: "End Time",
+                setLocationBtn_set: "Set Location & Open Attendance",
+                setLocationBtn_getting: "Getting location...",
+                setLocationBtn_setting: "Setting location...",
+                footerText: "© Misr University for Science and Technology",
+                // --- Messages (Keys) ---
+                fillFields: "Please fill in all fields.",
+                getLocError: "Error: Could not get location. Please allow access.",
+                // --- Server Messages (Keys derived from script output) ---
+                invalidPassword: "Invalid password.",
+                sheetExists: "A sheet with the name '{sessionName}' already exists. Please use a unique name.",
+                sessionCreated: "Session '{sessionName}' created and is now active!",
+                unknownError: "An unknown error occurred."
+            },
+            ar: {
+                pageTitle: "المشرف - إعداد الجلسة",
+                mainTitle: "إعداد جلسة الحضور",
+                subTitle: "جامعة مصر للعلوم والتكنولوجيا",
+                labelPassword: "كلمة مرور المشرف",
+                verifyBtn_verify: "التحقق من كلمة المرور",
+                verifyBtn_verifying: "جاري التحقق...",
+                verifiedText: "تم التحقق. يرجى إدخال تفاصيل الجلسة:",
+                labelSessionName: "اسم الجلسة (لصفحة جديدة)",
+                labelStartTime: "وقت البدء",
+                labelEndTime: "وقت الانتهاء",
+                setLocationBtn_set: "تحديد الموقع وفتح الحضور",
+                setLocationBtn_getting: "جاري تحديد الموقع...",
+                setLocationBtn_setting: "جاري إعداد الموقع...",
+                footerText: "© جامعة مصر للعلوم والتكنولوجيا",
+                // --- Messages (Keys) ---
+                fillFields: "يرجى ملء جميع الحقول.",
+                getLocError: "خطأ: تعذر الحصول على الموقع. يرجى السماح بالوصول.",
+                // --- Server Messages (Keys derived from script output) ---
+                invalidPassword: "كلمة المرور غير صحيحة.",
+                sheetExists: "توجد صفحة بهذا الاسم '{sessionName}' بالفعل. الرجاء استخدام اسم فريد.",
+                sessionCreated: "تم إنشاء الجلسة '{sessionName}' وهي نشطة الآن!",
+                unknownError: "حدث خطأ غير معروف."
+            }
+        };
+        // --- End Translation Data ---
+
         const passwordForm = document.getElementById('passwordForm');
         const sessionForm = document.getElementById('sessionForm');
         const verifyBtn = document.getElementById('verifyBtn');
         const setLocationBtn = document.getElementById('setLocationBtn');
         const messageDiv = document.getElementById('message');
         const adminPasswordField = document.getElementById('adminPassword');
-        const sessionNameField = document.getElementById('sessionName'); // Get session name input
+        const sessionNameField = document.getElementById('sessionName');
+        const langSwitchBtn = document.getElementById('langSwitchBtn');
         
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwCjH23ufU7dh1F1HlgTk_UY8n0wcJxsMJ0TbihPk3zSiIFiX2UdPwmrANHmrjOtm9FKA/exec"; 
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwCjH23ufU7dh1F1HlgTk_UY8n0wcJxsMJ0TbihPk3zSiIFiX2UdPwmrANHmrjOtm9FKA/exec";
+        let currentLang = localStorage.getItem('attendanceLang') || 'en';
+
+        // --- [NEW] Function to update UI text ---
+        function updateUI(lang) {
+            const t = translations[lang];
+            document.documentElement.lang = lang;
+            document.body.lang = lang;
+
+            document.getElementById('pageTitle').textContent = t.pageTitle;
+            document.getElementById('mainTitle').textContent = t.mainTitle;
+            document.getElementById('subTitle').textContent = t.subTitle;
+            document.getElementById('labelPassword').textContent = t.labelPassword;
+            document.getElementById('verifiedText').textContent = t.verifiedText;
+            document.getElementById('labelSessionName').textContent = t.labelSessionName;
+            document.getElementById('labelStartTime').textContent = t.labelStartTime;
+            document.getElementById('labelEndTime').textContent = t.labelEndTime;
+            document.getElementById('footerText').textContent = t.footerText;
+            
+            const verifyTextKey = verifyBtn.dataset.textKey || 'verifyBtn_verify';
+            verifyBtn.textContent = t[verifyTextKey];
+            
+            const setTextKey = setLocationBtn.dataset.textKey || 'setLocationBtn_set';
+            setLocationBtn.textContent = t[setTextKey];
+
+            langSwitchBtn.textContent = lang === 'en' ? 'ع' : 'En';
+        }
+
+        // --- [NEW] Event listener for language switch ---
+        langSwitchBtn.addEventListener('click', () => {
+            currentLang = currentLang === 'en' ? 'ar' : 'en';
+            localStorage.setItem('attendanceLang', currentLang);
+            updateUI(currentLang);
+            if (messageDiv.dataset.messageKey) {
+                 showMessage(messageDiv.dataset.messageKey, messageDiv.className, messageDiv.dataset.messageParams ? JSON.parse(messageDiv.dataset.messageParams) : null);
+            }
+        });
+
         
         function getLocalDateTimeString(date) {
             const year = date.getFullYear();
@@ -162,14 +218,20 @@
 
         // --- [MODIFIED] DOMContentLoaded ---
         document.addEventListener('DOMContentLoaded', () => {
-            // Set default times immediately
+            updateUI(currentLang); // Set initial language
+
+            // Set default times
             const now = new Date();
             const fifteenMinutesLater = new Date(now.getTime() + 15 * 60000);
             document.getElementById('startTime').value = getLocalDateTimeString(now);
             document.getElementById('endTime').value = getLocalDateTimeString(fifteenMinutesLater);
 
             // Fetch sheet names to suggest a unique session name
-            fetch(SCRIPT_URL + "?action=getSheetNames") // Add action parameter
+            verifyBtn.disabled = true; // Disable verify button while fetching
+            verifyBtn.dataset.textKey = 'verifyBtn_verifying';
+            updateUI(currentLang);
+
+            fetch(SCRIPT_URL + "?action=getSheetNames") 
                 .then(response => response.json())
                 .then(data => {
                     if (data.result === "success" && data.data.sheetNames) {
@@ -178,36 +240,36 @@
                         const baseName = `${dateStr} Lecture`;
                         let uniqueName = baseName;
                         let counter = 2;
-                        // Keep adding _X until the name is unique
                         while (existingNames.includes(uniqueName)) {
                             uniqueName = `${baseName}_${counter}`;
                             counter++;
                         }
-                        sessionNameField.value = uniqueName; // Set the unique name
+                        sessionNameField.value = uniqueName; 
                     } else {
-                        // Fallback if fetching names fails
-                        const dateStr = now.toISOString().split('T')[0];
-                        sessionNameField.value = `${dateStr} Lecture`; 
+                        throw new Error(data.data.message || "Failed to fetch sheet names");
                     }
                 })
                 .catch(error => {
                     console.error("Error fetching sheet names:", error);
-                    // Fallback on error
-                    const dateStr = now.toISOString().split('T')[0];
-                    sessionNameField.value = `${dateStr} Lecture`;
+                    showMessage('unknownError', 'error'); // Show generic error
+                })
+                .finally(() => {
+                    verifyBtn.disabled = false; // Re-enable verify button
+                    verifyBtn.dataset.textKey = 'verifyBtn_verify';
+                    updateUI(currentLang);
                 });
         });
-        // --- End DOMContentLoaded ---
         
         passwordForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const password = adminPasswordField.value;
             if (!password) {
-                showMessage('Please enter the password.', 'error');
+                showMessage('fillFields', 'error');
                 return;
             }
             verifyBtn.disabled = true;
-            verifyBtn.textContent = 'Verifying...';
+            verifyBtn.dataset.textKey = 'verifyBtn_verifying';
+            updateUI(currentLang);
             showMessage('');
             const formData = new FormData();
             formData.append("action", "verifyPassword"); 
@@ -224,9 +286,11 @@
                     }
                 })
                 .catch(error => {
-                    showMessage(error.message, 'error');
+                    const key = findKeyByEnglishValue(error.message, translations.en) || 'invalidPassword';
+                    showMessage(key, 'error');
                     verifyBtn.disabled = false; 
-                    verifyBtn.textContent = 'Verify Password';
+                    verifyBtn.dataset.textKey = 'verifyBtn_verify';
+                    updateUI(currentLang);
                 });
         });
 
@@ -235,17 +299,20 @@
             const password = adminPasswordField.value; 
             const startTime = document.getElementById('startTime').value;
             const endTime = document.getElementById('endTime').value;
-            const sessionName = sessionNameField.value; // Use the (potentially edited) value
+            const sessionName = sessionNameField.value; 
             if (!password || !startTime || !endTime || !sessionName) {
-                showMessage('Please fill in all fields.', 'error');
+                showMessage('fillFields', 'error');
                 return;
             }
             setLocationBtn.disabled = true;
-            setLocationBtn.textContent = 'Getting location...';
+            setLocationBtn.dataset.textKey = 'setLocationBtn_getting';
+            updateUI(currentLang);
             showMessage('');
             navigator.geolocation.getCurrentPosition(
                 function(position) {
-                    setLocationBtn.textContent = 'Setting location...';
+                    setLocationBtn.dataset.textKey = 'setLocationBtn_setting';
+                    updateUI(currentLang);
+                    
                     const formData = new FormData();
                     formData.append("action", "setLocation");
                     formData.append("password", password); 
@@ -258,29 +325,61 @@
                         .then(response => response.json())
                         .then(data => {
                             if (data.result === "success") {
-                                showMessage(data.data.message, 'success');
+                                const key = findKeyByEnglishValue(data.data.message, translations.en) || 'sessionCreated';
+                                showMessage(key, 'success', { sessionName: sessionName });
                             } else {
-                                throw new Error(data.data.message);
+                                const key = findKeyByEnglishValue(data.data.message, translations.en) || 'sheetExists';
+                                throw new Error(key); // Throw key
                             }
                         })
-                        .catch(error => showMessage(error.message, 'error'))
+                        .catch(errorKey => { // Catch key
+                            showMessage(errorKey, 'error', { sessionName: sessionName });
+                        })
                         .finally(() => {
                             setLocationBtn.disabled = false;
-                            setLocationBtn.textContent = 'Set Location & Open Attendance';
+                            setLocationBtn.dataset.textKey = 'setLocationBtn_set';
+                            updateUI(currentLang);
                         });
                 },
                 function(error) {
-                    showMessage('Error: Could not get location. Please allow access.', 'error');
+                    showMessage('getLocError', 'error');
                     setLocationBtn.disabled = false;
-                    setLocationBtn.textContent = 'Set Location & Open Attendance';
+                    setLocationBtn.dataset.textKey = 'setLocationBtn_set';
+                    updateUI(currentLang);
                 },
                 { enableHighAccuracy: true }
             );
         });
-
-        function showMessage(message, type) {
-            messageDiv.textContent = message;
+        
+        // Helper to find translation key from English server message
+        function findKeyByEnglishValue(value, englishTranslations) {
+            if (!value) return null;
+            for (const key in englishTranslations) {
+                // Use .includes for partial matching of error messages
+                if (value.includes(englishTranslations[key])) { 
+                    return key;
+                }
+            }
+            // Specific partial matches
+            if (value.includes("Invalid password")) return 'invalidPassword';
+            if (value.includes("already exists")) return 'sheetExists';
+            if (value.includes("created and is now active")) return 'sessionCreated';
+            
+            return null; // Key not found
+        }
+        
+        // --- [NEW] showMessage to use keys ---
+        function showMessage(key, type, params = null) {
+            let messageText = translations[currentLang][key] || translations['en'][key] || key;
+            if (params) {
+                for (const pKey in params) {
+                    messageText = messageText.replace(`{${pKey}}`, params[pKey]);
+                }
+            }
+            messageDiv.textContent = messageText;
             messageDiv.className = type;
+            messageDiv.dataset.messageKey = key;
+            messageDiv.dataset.messageParams = params ? JSON.stringify(params) : "";
         }
     </script>
 </body>
