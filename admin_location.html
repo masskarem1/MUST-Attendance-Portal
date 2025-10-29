@@ -11,9 +11,45 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
+            position: relative; /* For lang button positioning */
             min-height: 100vh;
-            position: relative;
         }
+        
+        /* [NEW] Glassmorphism card effect */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 16px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        /* Mobile-first: Full-screen card on mobile */
+        .glass-card {
+            width: 100%;
+            height: 100vh;
+            border-radius: 0;
+            border: none;
+            box-shadow: none;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.75);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        /* On screens 'sm' and larger, it becomes a card again */
+        @media (min-width: 640px) {
+            .glass-card {
+                width: auto;
+                height: auto;
+                border-radius: 16px;
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+                background: rgba(255, 255, 255, 0.6);
+            }
+        }
+
         #message {
              font-weight: 600; margin-top: 1.5rem; padding: 0.75rem;
              border-radius: 5px; font-size: 0.9em;
@@ -23,6 +59,7 @@
         input {
              width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB;
              border-radius: 0.5rem; font-size: 0.875rem; box-sizing: border-box;
+             background-color: rgba(255, 255, 255, 0.5); /* Slightly transparent input */
         }
         label {
              display: block; font-size: 0.875rem; font-weight: 500;
@@ -30,26 +67,44 @@
         }
         .lang-switch-btn {
             position: absolute; top: 1rem; right: 1rem;
-            background-color: #6B7280; color: white; padding: 0.5rem 0.75rem;
+            background-color: rgba(107, 114, 128, 0.8);
+            color: white; padding: 0.5rem 0.75rem;
             border-radius: 5px; font-weight: 600; font-size: 0.85em;
             cursor: pointer; z-index: 10; border: none;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .lang-switch-btn:hover { background-color: #4B5563; }
-        body[lang="ar"] { font-family: 'Tahoma', sans-serif; }
-        body[lang="ar"] label,
-        body[lang="ar"] p,
-        body[lang="ar"] button,
-        body[lang="ar"] #message { text-align: right; }
+        
+        /* --- [MODIFIED] Arabic Font Styling --- */
+        body[lang="ar"] { 
+            font-family: 'Tahoma', sans-serif; 
+            direction: rtl; /* Add Right-to-Left direction */
+        }
+        /* [FIXED] Only align labels to the right */
+        body[lang="ar"] label { 
+            text-align: right; 
+        }
+        /* Override Tailwind's text-left for forms */
+        body[lang="ar"] .text-left {
+            text-align: right;
+        }
+        /* Make sure input text is also right-aligned */
+        body[lang="ar"] input {
+            text-align: right;
+        }
+        /* --- End of modifications --- */
+
         .hidden-details { display: none; }
     </style>
 </head>
-<body class="bg-gray-50 flex flex-col items-center justify-center min-h-screen p-6">
+<!-- [MODIFIED] Using same body as index.html -->
+<body class="bg-gradient-to-br from-blue-100 via-indigo-200 to-blue-200 flex flex-col items-center justify-center min-h-screen p-0">
 
     <!-- Language Switch Button -->
     <button id="langSwitchBtn" class="lang-switch-btn">En / ع</button>
 
-    <div class="container bg-white w-full max-w-lg p-8 md:p-12 rounded-xl shadow-lg text-center">
+    <!-- [MODIFIED] Using glass-card div from index.html -->
+    <div class="glass-card w-full max-w-lg p-8 md:p-12 text-center">
         <!-- Logo -->
         <div class="mb-8">
             <a href="./index.html" class="inline-block">
@@ -58,23 +113,22 @@
         </div>
 
         <!-- Title & Subtitle -->
-        <h1 id="mainTitle" class="text-2xl font-bold text-gray-800 mb-2">Set Class Session</h1>
-        <p id="subTitle" class="text-gray-500 mb-8">Misr University for Science & Technology</p>
+        <h1 id="mainTitle" class="text-2xl font-bold text-gray-900 mb-2">Set Class Session</h1>
+        <p id="subTitle" class="text-gray-700 mb-8">Misr University for Science & Technology</p>
 
         <!-- Password Section (Always Visible) -->
-        <form id="passwordForm" class="text-left">
+        <form id="passwordForm" class="text-left px-4 sm:px-0">
             <div class="mb-4">
                 <label id="labelPassword" for="adminPassword">Admin Password</label>
                 <input type="password" id="adminPassword" required>
             </div>
-            <!-- [MODIFIED] Changed button color to red -->
-            <button type="submit" id="verifyBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-base disabled:bg-gray-400">
+            <button type="submit" id="verifyBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-base disabled:bg-gray-400 shadow-md hover:shadow-lg">
                 Verify Password
             </button>
         </form>
         
         <!-- Session Details Section (Initially Hidden) -->
-        <form id="sessionForm" class="hidden-details text-left">
+        <form id="sessionForm" class="hidden-details text-left px-4 sm:px-0">
             <p id="verifiedText" style="margin-top: 1.5rem; font-weight: 600; color: #333; text-align: center; margin-bottom: 1.5rem;">Password Verified. Set session details:</p>
             
             <div class="mb-4">
@@ -85,15 +139,15 @@
             <div class="flex flex-col sm:flex-row sm:justify-between gap-4 mb-6">
                 <div class="w-full sm:w-1/2">
                     <label id="labelStartTime" for="startTime">Start Time</label>
-                    <input type="datetime-local" id="startTime" required>
+                    <input type="datetime-local" id="startTime" class="text-gray-700" required>
                 </div>
                 <div class="w-full sm:w-1/2">
                     <label id="labelEndTime" for="endTime">End Time</label>
-                    <input type="datetime-local" id="endTime" required>
+                    <input type="datetime-local" id="endTime" class="text-gray-700" required>
                 </div>
             </div>
             
-            <button type="submit" id="setLocationBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-base disabled:bg-gray-400">
+            <button type="submit" id="setLocationBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-base disabled:bg-gray-400 shadow-md hover:shadow-lg">
                 Set Location & Open Attendance
             </button>
         </form>
@@ -101,12 +155,12 @@
         <div id="message"></div>
     </div>
 
-    <footer class="mt-8 text-gray-500 text-xs md:text-sm">
+    <footer class="mt-8 text-gray-700 text-xs md:text-sm absolute bottom-4">
         <p id="footerText">&copy; Misr University for Science and Technology</p>
     </footer>
 
     <script>
-        // --- [NEW] Translation Data for Admin Page ---
+        // --- Translation Data for Admin Page ---
         const translations = {
             en: {
                 pageTitle: "Admin - Set Session",
@@ -123,10 +177,8 @@
                 setLocationBtn_getting: "Getting location...",
                 setLocationBtn_setting: "Setting location...",
                 footerText: "© Misr University for Science and Technology",
-                // --- Messages (Keys) ---
                 fillFields: "Please fill in all fields.",
                 getLocError: "Error: Could not get location. Please allow access.",
-                // --- Server Messages (Keys derived from script output) ---
                 invalidPassword: "Invalid password.",
                 sheetExists: "A sheet with the name '{sessionName}' already exists. Please use a unique name.",
                 sessionCreated: "Session '{sessionName}' created and is now active!",
@@ -147,10 +199,8 @@
                 setLocationBtn_getting: "جاري تحديد الموقع...",
                 setLocationBtn_setting: "جاري إعداد الموقع...",
                 footerText: "© جامعة مصر للعلوم والتكنولوجيا",
-                // --- Messages (Keys) ---
                 fillFields: "يرجى ملء جميع الحقول.",
                 getLocError: "خطأ: تعذر الحصول على الموقع. يرجى السماح بالوصول.",
-                // --- Server Messages (Keys derived from script output) ---
                 invalidPassword: "كلمة المرور غير صحيحة.",
                 sheetExists: "توجد صفحة بهذا الاسم '{sessionName}' بالفعل. الرجاء استخدام اسم فريد.",
                 sessionCreated: "تم إنشاء الجلسة '{sessionName}' وهي نشطة الآن!",
@@ -171,12 +221,11 @@
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwCjH23ufU7dh1F1HlgTk_UY8n0wcJxsMJ0TbihPk3zSiIFiX2UdPwmrANHmrjOtm9FKA/exec";
         let currentLang = localStorage.getItem('attendanceLang') || 'en';
 
-        // --- [NEW] Function to update UI text ---
+        // Function to update UI text
         function updateUI(lang) {
             const t = translations[lang];
             document.documentElement.lang = lang;
             document.body.lang = lang;
-
             document.getElementById('pageTitle').textContent = t.pageTitle;
             document.getElementById('mainTitle').textContent = t.mainTitle;
             document.getElementById('subTitle').textContent = t.subTitle;
@@ -186,17 +235,14 @@
             document.getElementById('labelStartTime').textContent = t.labelStartTime;
             document.getElementById('labelEndTime').textContent = t.labelEndTime;
             document.getElementById('footerText').textContent = t.footerText;
-            
             const verifyTextKey = verifyBtn.dataset.textKey || 'verifyBtn_verify';
             verifyBtn.textContent = t[verifyTextKey];
-            
             const setTextKey = setLocationBtn.dataset.textKey || 'setLocationBtn_set';
             setLocationBtn.textContent = t[setTextKey];
-
             langSwitchBtn.textContent = lang === 'en' ? 'ع' : 'En';
         }
 
-        // --- [NEW] Event listener for language switch ---
+        // Event listener for language switch
         langSwitchBtn.addEventListener('click', () => {
             currentLang = currentLang === 'en' ? 'ar' : 'en';
             localStorage.setItem('attendanceLang', currentLang);
@@ -216,18 +262,16 @@
             return `${year}-${month}-${day}T${hours}:${minutes}`;
         }
 
-        // --- [MODIFIED] DOMContentLoaded ---
+        // DOMContentLoaded
         document.addEventListener('DOMContentLoaded', () => {
             updateUI(currentLang); // Set initial language
 
-            // Set default times
             const now = new Date();
             const fifteenMinutesLater = new Date(now.getTime() + 15 * 60000);
             document.getElementById('startTime').value = getLocalDateTimeString(now);
             document.getElementById('endTime').value = getLocalDateTimeString(fifteenMinutesLater);
 
-            // Fetch sheet names to suggest a unique session name
-            verifyBtn.disabled = true; // Disable verify button while fetching
+            verifyBtn.disabled = true; 
             verifyBtn.dataset.textKey = 'verifyBtn_verifying';
             updateUI(currentLang);
 
@@ -251,10 +295,10 @@
                 })
                 .catch(error => {
                     console.error("Error fetching sheet names:", error);
-                    showMessage('unknownError', 'error'); // Show generic error
+                    showMessage('unknownError', 'error'); 
                 })
                 .finally(() => {
-                    verifyBtn.disabled = false; // Re-enable verify button
+                    verifyBtn.disabled = false; 
                     verifyBtn.dataset.textKey = 'verifyBtn_verify';
                     updateUI(currentLang);
                 });
@@ -355,20 +399,18 @@
         function findKeyByEnglishValue(value, englishTranslations) {
             if (!value) return null;
             for (const key in englishTranslations) {
-                // Use .includes for partial matching of error messages
                 if (value.includes(englishTranslations[key])) { 
                     return key;
                 }
             }
-            // Specific partial matches
             if (value.includes("Invalid password")) return 'invalidPassword';
             if (value.includes("already exists")) return 'sheetExists';
             if (value.includes("created and is now active")) return 'sessionCreated';
             
-            return null; // Key not found
+            return 'unknownError'; // Fallback key
         }
         
-        // --- [NEW] showMessage to use keys ---
+        // showMessage to use keys
         function showMessage(key, type, params = null) {
             let messageText = translations[currentLang][key] || translations['en'][key] || key;
             if (params) {
