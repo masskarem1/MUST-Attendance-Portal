@@ -67,15 +67,13 @@
         body[lang="ar"] input { text-align: right; }
         .hidden-details { display: none; }
 
-        /* --- [NEW] Styles for the toggle switch --- */
+        /* --- [MODIFIED] Styles for the toggle switch --- */
         .switch-container {
             display: flex;
             align-items: center;
             justify-content: space-between;
             width: 100%;
-            padding: 0.5rem;
-            background-color: rgba(255, 255, 255, 0.4);
-            border-radius: 0.5rem;
+            /* [REMOVED] Removed padding, background-color, and border-radius */
         }
         .switch-label {
             font-size: 0.875rem;
@@ -83,12 +81,12 @@
             color: #374151;
         }
         body[lang="ar"] .switch-label {
-            text-align: right; /* Ensure toggle label is right-aligned in AR */
+            text-align: right; 
         }
         .switch-toggle {
             position: relative;
             display: inline-block;
-            width: 100px; /* Width for two labels */
+            width: 60px; /* Standard toggle width */
             height: 34px;
         }
         .switch-toggle input {
@@ -111,51 +109,27 @@
             position: absolute;
             content: "";
             height: 26px;
-            width: 46px; /* Half width minus margin */
+            width: 26px; /* Standard circle */
             left: 4px;
             bottom: 4px;
             background-color: white;
             transition: .4s;
-            border-radius: 34px;
-        }
-        input:checked + .slider {
-            background-color: #4A5568; /* Gray for static */
-        }
-        input:not(:checked) + .slider {
-            background-color: #DC2626; /* Red for dynamic */
-        }
-        input:checked + .slider:before {
-            transform: translateX(46px); /* Move slider to the right */
-        }
-        .slider-text {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: space-around;
-            color: white;
-            font-size: 0.75rem;
-            font-weight: 600;
-            z-index: 1;
-            pointer-events: none; /* Allow clicks to pass through to the input */
+            border-radius: 50%; /* Make it a circle */
         }
         
-        /* --- [NEW CSS FIX] --- */
-        /* Make inactive text slightly transparent */
-        .slider-text span {
-            color: rgba(255, 255, 255, 0.7);
-            transition: color 0.4s;
+        /* [MODIFIED] Swapped color logic */
+        /* CHECKED (true) = Dynamic = Red */
+        input:checked + .slider {
+            background-color: #DC2626; /* Red for dynamic */
         }
-        /* When UNCHECKED (Dynamic active), make dynamicText bright white */
-        input:not(:checked) + .slider + .slider-text #dynamicText {
-            color: white;
+        /* UNCHECKED (false) = Static = Gray */
+        input:not(:checked) + .slider {
+            background-color: #4A5568; /* Gray for static */
         }
-        /* When CHECKED (Static active), make staticText bright white */
-        input:checked + .slider + .slider-text #staticText {
-            color: white;
+        input:checked + .slider:before {
+            transform: translateX(26px); /* Move slider to the right */
         }
-        /* --- [END NEW CSS FIX] --- */
+        /* [REMOVED] .slider-text styles are gone */
 
     </style>
 </head>
@@ -190,7 +164,7 @@
                 <input type="text" id="sessionName" required>
             </div>
             
-            <div class="flex flex-col sm:flex-row sm:justify-between gap-4 mb-4"> <!-- [MODIFIED] margin mb-4 -->
+            <div class="flex flex-col sm:flex-row sm:justify-between gap-4 mb-4">
                 <div class="w-full sm:w-1/2">
                     <label id="labelStartTime" for="startTime">Start Time</label>
                     <input type="datetime-local" id="startTime" class="text-gray-700" required>
@@ -204,14 +178,12 @@
             <!-- --- [MODIFIED] Passcode Type Toggle --- -->
             <div class="mb-6">
                 <div class="switch-container">
-                    <label id="labelPasscodeType" class="switch-label">Passcode Type</label>
+                    <!-- [MODIFIED] Label text changed -->
+                    <label id="labelDynamicPasscode" class="switch-label">Dynamic Passcode</label>
                     <label class="switch-toggle">
-                        <input type="checkbox" id="passcodeTypeToggle">
+                        <input type="checkbox" id="passcodeTypeToggle"> <!-- Default (unchecked) is Static -->
                         <span class="slider"></span>
-                        <div class="slider-text">
-                            <span id="dynamicText">Dynamic</span>
-                            <span id="staticText">Static</span>
-                        </div>
+                        <!-- [REMOVED] .slider-text div -->
                     </label>
                 </div>
             </div>
@@ -242,9 +214,8 @@
                 labelSessionName: "Session Name (for new sheet tab)",
                 labelStartTime: "Start Time",
                 labelEndTime: "End Time",
-                labelPasscodeType: "Passcode Type",
-                dynamic: "Dynamic", // [NEW]
-                static: "Static", // [NEW]
+                labelDynamicPasscode: "Dynamic Passcode", // [MODIFIED]
+                // [REMOVED] dynamic and static keys
                 setLocationBtn_set: "Set Location & Open Attendance",
                 setLocationBtn_getting: "Getting location...",
                 setLocationBtn_setting: "Setting location...",
@@ -268,9 +239,8 @@
                 labelSessionName: "اسم الجلسة (لصفحة جديدة)",
                 labelStartTime: "وقت البدء",
                 labelEndTime: "وقت الانتهاء",
-                labelPasscodeType: "نوع رمز المرور",
-                dynamic: "متغير", // [NEW]
-                static: "ثابت", // [NEW]
+                labelDynamicPasscode: "رمز مرور متغير", // [MODIFIED]
+                // [REMOVED] dynamic and static keys
                 setLocationBtn_set: "تحديد الموقع وفتح الحضور",
                 setLocationBtn_getting: "جاري تحديد الموقع...",
                 setLocationBtn_setting: "جاري إعداد الموقع...",
@@ -299,7 +269,7 @@
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwCjH23ufU7dh1F1HlgTk_UY8n0wcJxsMJ0TbihPk3zSiIFiX2UdPwmrANHmrjOtm9FKA/exec";
         let currentLang = localStorage.getItem('attendanceLang') || 'en';
 
-        // Function to update UI text
+        // [MODIFIED] Function to update UI text
         function updateUI(lang) {
             const t = translations[lang];
             document.documentElement.lang = lang;
@@ -312,9 +282,8 @@
             document.getElementById('labelSessionName').textContent = t.labelSessionName;
             document.getElementById('labelStartTime').textContent = t.labelStartTime;
             document.getElementById('labelEndTime').textContent = t.labelEndTime;
-            document.getElementById('labelPasscodeType').textContent = t.labelPasscodeType;
-            document.getElementById('dynamicText').textContent = t.dynamic; // [NEW]
-            document.getElementById('staticText').textContent = t.static; // [NEW]
+            document.getElementById('labelDynamicPasscode').textContent = t.labelDynamicPasscode; // [MODIFIED]
+            // [REMOVED] dynamicText and staticText lines
             document.getElementById('footerText').textContent = t.footerText;
             const verifyTextKey = verifyBtn.dataset.textKey || 'verifyBtn_verify';
             verifyBtn.textContent = t[verifyTextKey];
@@ -428,10 +397,11 @@
             const startTime = document.getElementById('startTime').value;
             const endTime = document.getElementById('endTime').value;
             const sessionName = sessionNameField.value;
-            // [NEW] Read the toggle state
-            // `isChecked` = true means "Static" (right side)
-            const isStatic = passcodeTypeToggle.checked;
-            const passcodeType = isStatic ? "static" : "dynamic";
+            
+            // [MODIFIED] Read the toggle state
+            // `isChecked` = true means "Dynamic" (red)
+            const isDynamic = passcodeTypeToggle.checked;
+            const passcodeType = isDynamic ? "dynamic" : "static";
 
             if (!password || !startTime || !endTime || !sessionName) {
                 showMessage('fillFields', 'error');
@@ -454,28 +424,23 @@
                     formData.append("startTime", startTime); 
                     formData.append("endTime", endTime);     
                     formData.append("sessionName", sessionName);
-                    formData.append("passcodeType", passcodeType); // [NEW] Send the type
+                    formData.append("passcodeType", passcodeType); // Send the correct type
 
                     fetch(SCRIPT_URL, { method: 'POST', body: formData })
                         .then(response => response.json())
                         .then(data => {
                             if (data.result === "success") {
-                                // --- [MODIFIED] ---
-                                // Server now returns different data based on type
                                 const params = { sessionName: data.data.sessionName };
                                 let messageKey = '';
 
                                 if (data.data.type === 'static') {
-                                    // If static, server returns the passcode
                                     params.passcode = data.data.passcode;
                                     messageKey = 'sessionCreatedStatic';
                                 } else {
-                                    // If dynamic, server returns nothing extra
                                     messageKey = 'sessionCreatedDynamic';
                                 }
                                 
                                 showMessage(messageKey, 'success', params);
-                                // --- [END MODIFIED] ---
                             } else {
                                 const key = findKeyByEnglishValue(data.data.message, translations.en) || 'sheetExists';
                                 throw new Error(key); 
@@ -521,9 +486,9 @@
                     messageText = messageText.replace(`{${pKey}}`, params[pKey]);
                 }
             }
-            messageDiv.innerHTML = messageText; // Use innerHTML for simple text
+            messageDiv.innerHTML = messageText;
             messageDiv.className = type;
-            messageDiv.dataset.messageKey = key; // Store the key for re-translation
+            messageDiv.dataset.messageKey = key;
             messageDiv.dataset.messageParams = params ? JSON.stringify(params) : "";
         }
     </script>
