@@ -140,7 +140,23 @@
             z-index: 1;
             pointer-events: none; /* Allow clicks to pass through to the input */
         }
-        /* --- [END NEW STYLES] --- */
+        
+        /* --- [NEW CSS FIX] --- */
+        /* Make inactive text slightly transparent */
+        .slider-text span {
+            color: rgba(255, 255, 255, 0.7);
+            transition: color 0.4s;
+        }
+        /* When UNCHECKED (Dynamic active), make dynamicText bright white */
+        input:not(:checked) + .slider + .slider-text #dynamicText {
+            color: white;
+        }
+        /* When CHECKED (Static active), make staticText bright white */
+        input:checked + .slider + .slider-text #staticText {
+            color: white;
+        }
+        /* --- [END NEW CSS FIX] --- */
+
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-100 via-indigo-200 to-blue-200 flex flex-col items-center justify-center min-h-screen p-0">
@@ -513,4 +529,5 @@
     </script>
 </body>
 </html>
+
 
