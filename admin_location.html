@@ -11,11 +11,9 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            position: relative; /* For lang button positioning */
+            position: relative;
             min-height: 100vh;
         }
-        
-        /* [NEW] Glassmorphism card effect */
         .glass-card {
             background: rgba(255, 255, 255, 0.6);
             border-radius: 16px;
@@ -24,99 +22,76 @@
             -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
-        /* Mobile-first: Full-screen card on mobile */
-        .glass-card {
-            width: 100%;
-            height: 100vh;
-            border-radius: 0;
-            border: none;
-            box-shadow: none;
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            background: rgba(255, 255, 255, 0.75);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        /* On screens 'sm' and larger, it becomes a card again */
         @media (min-width: 640px) {
             .glass-card {
-                width: auto;
-                height: auto;
-                border-radius: 16px;
+                width: auto; height: auto; border-radius: 16px;
                 border: 1px solid rgba(255, 255, 255, 0.3);
                 box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
                 background: rgba(255, 255, 255, 0.6);
             }
         }
-
+        .glass-card {
+            width: 100%; height: 100vh; border-radius: 0;
+            border: none; box-shadow: none;
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.75);
+            display: flex; flex-direction: column; justify-content: center;
+        }
         #message {
              font-weight: 600; margin-top: 1.5rem; padding: 0.75rem;
              border-radius: 5px; font-size: 0.9em;
-        }
+         }
         .success { color: #2b7d2b; background-color: #d4edda; border: 1px solid #c3e6cb; }
         .error { color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; }
         input {
              width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB;
              border-radius: 0.5rem; font-size: 0.875rem; box-sizing: border-box;
-             background-color: rgba(255, 255, 255, 0.5); /* Slightly transparent input */
-        }
+             background-color: rgba(255, 255, 255, 0.5);
+         }
         label {
              display: block; font-size: 0.875rem; font-weight: 500;
              color: #374151; margin-bottom: 0.25rem;
-        }
+         }
         .lang-switch-btn {
-            position: absolute; top: 1rem; right: 1rem;
-            background-color: rgba(107, 114, 128, 0.8);
-            color: white; padding: 0.5rem 0.75rem;
-            border-radius: 5px; font-weight: 600; font-size: 0.85em;
-            cursor: pointer; z-index: 10; border: none;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
+             position: absolute; top: 1rem; right: 1rem;
+             background-color: rgba(107, 114, 128, 0.8);
+             color: white; padding: 0.5rem 0.75rem;
+             border-radius: 5px; font-weight: 600; font-size: 0.85em;
+             cursor: pointer; z-index: 10; border: none;
+             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+         }
         .lang-switch-btn:hover { background-color: #4B5563; }
-        
-        /* --- [MODIFIED] Arabic Font Styling --- */
-        body[lang="ar"] { 
-            font-family: 'Tahoma', sans-serif; 
-            direction: rtl; /* Add Right-to-Left direction */
-        }
-        /* [FIXED] Only align labels to the right */
-        body[lang="ar"] label { 
-            text-align: right; 
-        }
-        /* Override Tailwind's text-left for forms */
-        body[lang="ar"] .text-left {
-            text-align: right;
-        }
-        /* Make sure input text is also right-aligned */
-        body[lang="ar"] input {
-            text-align: right;
-        }
-        /* --- End of modifications --- */
-
+        body[lang="ar"] { font-family: 'Tahoma', sans-serif; direction: rtl; }
+        body[lang="ar"] label { text-align: right; }
+        body[lang="ar"] .text-left { text-align: right; }
+        body[lang="ar"] input { text-align: right; }
         .hidden-details { display: none; }
+
+        /* [NEW] Style for the live passcode display */
+        #live-passcode {
+            font-size: 2rem; /* Make it large */
+            font-weight: 700;
+            color: #C53030; /* Red color */
+            display: block; /* On its own line */
+            margin-top: 0.5rem;
+            letter-spacing: 0.1em; /* Space out numbers */
+        }
     </style>
 </head>
-<!-- [MODIFIED] Using same body as index.html -->
 <body class="bg-gradient-to-br from-blue-100 via-indigo-200 to-blue-200 flex flex-col items-center justify-center min-h-screen p-0">
 
-    <!-- Language Switch Button -->
     <button id="langSwitchBtn" class="lang-switch-btn">En / ع</button>
 
-    <!-- [MODIFIED] Using glass-card div from index.html -->
     <div class="glass-card w-full max-w-lg p-8 md:p-12 text-center">
-        <!-- Logo -->
         <div class="mb-8">
             <a href="./index.html" class="inline-block">
                 <img src="https://admission.must.edu.eg/lovable-uploads/a51bf950-39e9-4502-bf1f-fcc9e958e555.png" alt="MUST Logo" class="h-28 w-28 mx-auto">
             </a>
         </div>
 
-        <!-- Title & Subtitle -->
         <h1 id="mainTitle" class="text-2xl font-bold text-gray-900 mb-2">Set Class Session</h1>
         <p id="subTitle" class="text-gray-700 mb-8">Misr University for Science & Technology</p>
 
-        <!-- Password Section (Always Visible) -->
         <form id="passwordForm" class="text-left px-4 sm:px-0">
             <div class="mb-4">
                 <label id="labelPassword" for="adminPassword">Admin Password</label>
@@ -127,15 +102,12 @@
             </button>
         </form>
         
-        <!-- Session Details Section (Initially Hidden) -->
         <form id="sessionForm" class="hidden-details text-left px-4 sm:px-0">
             <p id="verifiedText" style="margin-top: 1.5rem; font-weight: 600; color: #333; text-align: center; margin-bottom: 1.5rem;">Password Verified. Set session details:</p>
-            
             <div class="mb-4">
                 <label id="labelSessionName" for="sessionName">Session Name (for new sheet tab)</label>
                 <input type="text" id="sessionName" required>
             </div>
-            
             <div class="flex flex-col sm:flex-row sm:justify-between gap-4 mb-6">
                 <div class="w-full sm:w-1/2">
                     <label id="labelStartTime" for="startTime">Start Time</label>
@@ -146,7 +118,6 @@
                     <input type="datetime-local" id="endTime" class="text-gray-700" required>
                 </div>
             </div>
-            
             <button type="submit" id="setLocationBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-base disabled:bg-gray-400 shadow-md hover:shadow-lg">
                 Set Location & Open Attendance
             </button>
@@ -160,12 +131,16 @@
     </footer>
 
     <script>
-        // --- Translation Data for Admin Page ---
+        // --- [NEW] Global timer variable ---
+        let passcodeTimer = null; 
+        const TOTP_WINDOW = 30; // 30 seconds
+
+        // --- Translation Data ---
         const translations = {
             en: {
                 pageTitle: "Admin - Set Session",
                 mainTitle: "Set Class Session",
-                subTitle: "Misr University for Science & Technology",
+                // ... (all other translations remain the same) ...
                 labelPassword: "Admin Password",
                 verifyBtn_verify: "Verify Password",
                 verifyBtn_verifying: "Verifying...",
@@ -181,12 +156,15 @@
                 getLocError: "Error: Could not get location. Please allow access.",
                 invalidPassword: "Invalid password.",
                 sheetExists: "A sheet with the name '{sessionName}' already exists. Please use a unique name.",
-                sessionCreated: "Session '{sessionName}' created and is now active!",
-                unknownError: "An unknown error occurred."
+                unknownError: "An unknown error occurred.",
+                // [NEW] Success message text
+                sessionCreated_en: "Session '{sessionName}' created! Current Passcode:",
+                sessionCreated_ar: "تم إنشاء الجلسة '{sessionName}'! رمز المرور الحالي:"
             },
             ar: {
                 pageTitle: "المشرف - إعداد الجلسة",
                 mainTitle: "إعداد جلسة الحضور",
+                // ... (all other translations remain the same) ...
                 subTitle: "جامعة مصر للعلوم والتكنولوجيا",
                 labelPassword: "كلمة مرور المشرف",
                 verifyBtn_verify: "التحقق من كلمة المرور",
@@ -203,13 +181,13 @@
                 getLocError: "خطأ: تعذر الحصول على الموقع. يرجى السماح بالوصول.",
                 invalidPassword: "كلمة المرور غير صحيحة.",
                 sheetExists: "توجد صفحة بهذا الاسم '{sessionName}' بالفعل. الرجاء استخدام اسم فريد.",
-                sessionCreated: "تم إنشاء الجلسة '{sessionName}' وهي نشطة الآن!",
                 unknownError: "حدث خطأ غير معروف."
             }
         };
         // --- End Translation Data ---
 
         const passwordForm = document.getElementById('passwordForm');
+        // ... (all other const declarations are the same) ...
         const sessionForm = document.getElementById('sessionForm');
         const verifyBtn = document.getElementById('verifyBtn');
         const setLocationBtn = document.getElementById('setLocationBtn');
@@ -221,8 +199,49 @@
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwCjH23ufU7dh1F1HlgTk_UY8n0wcJxsMJ0TbihPk3zSiIFiX2UdPwmrANHmrjOtm9FKA/exec";
         let currentLang = localStorage.getItem('attendanceLang') || 'en';
 
-        // Function to update UI text
+        // --- [NEW] Passcode calculation function ---
+        // This MUST be identical to the one in code_location.gs
+        function calculatePasscode(secret, timeStep) {
+          var str = secret + timeStep.toString();
+          var hash = 0;
+          if (str.length === 0) return '0000';
+          for (var i = 0; i < str.length; i++) {
+            var char = str.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash = hash & hash; // Convert to 32bit integer
+          }
+          var code = Math.abs(hash) % 10000; // Get positive 4-digit
+          return code.toString().padStart(4, '0'); // Ensure it's 4 digits
+        }
+
+        // --- [NEW] Function to start the 30-second timer ---
+        function startPasscodeTimer(secret) {
+            // Clear any old timer just in case
+            if (passcodeTimer) clearInterval(passcodeTimer);
+
+            const passcodeEl = document.getElementById('live-passcode');
+            if (!passcodeEl) return;
+
+            // This function calculates and updates the display
+            function updateDisplay() {
+                // Get time step (number of 30-second intervals)
+                let timeStep = Math.floor(Date.now() / (TOTP_WINDOW * 1000));
+                let code = calculatePasscode(secret, timeStep);
+                passcodeEl.textContent = code;
+            }
+            
+            // Call it once immediately to show the first code
+            updateDisplay();
+            
+            // Set it to run every 1 second.
+            // It's cheap and ensures the code updates visually
+            // at the exact start of the 30-second window.
+            passcodeTimer = setInterval(updateDisplay, 1000);
+        }
+
+        // Function to update UI text (same as before)
         function updateUI(lang) {
+            // ... (this function is identical to the previous version) ...
             const t = translations[lang];
             document.documentElement.lang = lang;
             document.body.lang = lang;
@@ -247,12 +266,21 @@
             currentLang = currentLang === 'en' ? 'ar' : 'en';
             localStorage.setItem('attendanceLang', currentLang);
             updateUI(currentLang);
+            
             if (messageDiv.dataset.messageKey) {
+                 // Handle standard error/info messages
                  showMessage(messageDiv.dataset.messageKey, messageDiv.className, messageDiv.dataset.messageParams ? JSON.parse(messageDiv.dataset.messageParams) : null);
+            } 
+            // [MODIFIED] Handle live-updating success message translation
+            else if (messageDiv.dataset.manualSuccess === 'true') {
+                 const params = JSON.parse(messageDiv.dataset.messageParams);
+                 const key = currentLang === 'ar' ? 'sessionCreated_ar' : 'sessionCreated_en';
+                 let msg = translations[currentLang][key].replace('{sessionName}', params.sessionName);
+                 document.getElementById('live-passcode-title').textContent = msg;
             }
         });
-
         
+        // ... (getLocalDateTimeString and DOMContentLoaded are same as before) ...
         function getLocalDateTimeString(date) {
             const year = date.getFullYear();
             const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -261,20 +289,15 @@
             const minutes = date.getMinutes().toString().padStart(2, '0');
             return `${year}-${month}-${day}T${hours}:${minutes}`;
         }
-
-        // DOMContentLoaded
         document.addEventListener('DOMContentLoaded', () => {
-            updateUI(currentLang); // Set initial language
-
+            updateUI(currentLang);
             const now = new Date();
             const fifteenMinutesLater = new Date(now.getTime() + 15 * 60000);
             document.getElementById('startTime').value = getLocalDateTimeString(now);
             document.getElementById('endTime').value = getLocalDateTimeString(fifteenMinutesLater);
-
             verifyBtn.disabled = true; 
             verifyBtn.dataset.textKey = 'verifyBtn_verifying';
             updateUI(currentLang);
-
             fetch(SCRIPT_URL + "?action=getSheetNames") 
                 .then(response => response.json())
                 .then(data => {
@@ -304,6 +327,7 @@
                 });
         });
         
+        // ... (passwordForm listener is same as before) ...
         passwordForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const password = adminPasswordField.value;
@@ -338,6 +362,7 @@
                 });
         });
 
+        // --- [MODIFIED] sessionForm listener ---
         sessionForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const password = adminPasswordField.value; 
@@ -369,15 +394,35 @@
                         .then(response => response.json())
                         .then(data => {
                             if (data.result === "success") {
-                                const key = findKeyByEnglishValue(data.data.message, translations.en) || 'sessionCreated';
-                                showMessage(key, 'success', { sessionName: sessionName });
+                                // --- [MODIFIED] ---
+                                // Server now returns data.data.secret
+                                const params = {
+                                    sessionName: data.data.sessionName,
+                                    secret: data.data.secret // Store the secret
+                                };
+                                const key = currentLang === 'ar' ? 'sessionCreated_ar' : 'sessionCreated_en';
+                                
+                                // Build the success message with a placeholder for the live code
+                                let msgTitle = translations[currentLang][key].replace('{sessionName}', params.sessionName);
+                                let msgHtml = `<span id='live-passcode-title'>${msgTitle}</span><span id='live-passcode'>...</span>`;
+                                
+                                messageDiv.innerHTML = msgHtml;
+                                messageDiv.className = 'success';
+                                messageDiv.dataset.messageKey = ''; // Clear key
+                                messageDiv.dataset.manualSuccess = 'true'; // Set flag
+                                messageDiv.dataset.messageParams = JSON.stringify(params);
+
+                                // Start the live-updating timer
+                                startPasscodeTimer(params.secret);
+                                // --- [END MODIFIED] ---
+
                             } else {
                                 const key = findKeyByEnglishValue(data.data.message, translations.en) || 'sheetExists';
-                                throw new Error(key); // Throw key
+                                throw new Error(key); 
                             }
                         })
-                        .catch(errorKey => { // Catch key
-                            showMessage(errorKey, 'error', { sessionName: sessionName });
+                        .catch(errorKey => { 
+                            showMessage(errorKey.message || errorKey, 'error', { sessionName: sessionName });
                         })
                         .finally(() => {
                             setLocationBtn.disabled = false;
@@ -395,7 +440,7 @@
             );
         });
         
-        // Helper to find translation key from English server message
+        // ... (findKeyByEnglishValue and showMessage are same as before) ...
         function findKeyByEnglishValue(value, englishTranslations) {
             if (!value) return null;
             for (const key in englishTranslations) {
@@ -405,25 +450,24 @@
             }
             if (value.includes("Invalid password")) return 'invalidPassword';
             if (value.includes("already exists")) return 'sheetExists';
-            if (value.includes("created and is now active")) return 'sessionCreated';
-            
-            return 'unknownError'; // Fallback key
+            return 'unknownError'; 
         }
-        
-        // showMessage to use keys
         function showMessage(key, type, params = null) {
+            // [NEW] Clear any running timer when a new message (especially an error) is shown
+            if (passcodeTimer) clearInterval(passcodeTimer);
+
             let messageText = translations[currentLang][key] || translations['en'][key] || key;
             if (params) {
                 for (const pKey in params) {
                     messageText = messageText.replace(`{${pKey}}`, params[pKey]);
                 }
             }
-            messageDiv.textContent = messageText;
+            messageDiv.innerHTML = messageText; // Use innerHTML for simple text
             messageDiv.className = type;
             messageDiv.dataset.messageKey = key;
             messageDiv.dataset.messageParams = params ? JSON.stringify(params) : "";
+            messageDiv.dataset.manualSuccess = 'false'; 
         }
     </script>
 </body>
 </html>
-
