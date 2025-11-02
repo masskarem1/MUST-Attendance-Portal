@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="pageTitle">Course Attendance</title>
-    <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Load Inter font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -62,7 +60,7 @@
         #message {
              font-weight: 600; margin-top: 1.5rem; padding: 0.75rem;
              border-radius: 5px; font-size: 0.9em;
-        }
+         }
         .success { color: #2b7d2b; background-color: #d4edda; border: 1px solid #c3e6cb; }
         .error { color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; }
         
@@ -71,11 +69,11 @@
              width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB;
              border-radius: 0.5rem; font-size: 0.875rem; box-sizing: border-box;
              background-color: rgba(255, 255, 255, 0.5);
-        }
+         }
         label {
              display: block; font-size: 0.875rem; font-weight: 500;
              color: #374151; margin-bottom: 0.25rem;
-        }
+         }
         
         /* Newcomer Button Styles */
         .newcomer-actions {
@@ -137,18 +135,15 @@
 </head>
 <body class="bg-gradient-to-br from-blue-100 via-indigo-200 to-blue-200 flex flex-col items-center justify-center min-h-screen p-0">
 
-    <!-- Language Switch Button -->
     <button id="langSwitchBtn" class="lang-switch-btn">En / ع</button>
 
     <div class="glass-card w-full max-w-lg p-8 md:p-12 text-center">
-        <!-- Logo -->
         <div class="mb-8">
             <a href="./index.html" class="inline-block">
                 <img src="https://admission.must.edu.eg/lovable-uploads/a51bf950-39e9-4502-bf1f-fcc9e958e555.png" alt="MUST Logo" class="h-28 w-28 mx-auto">
             </a>
         </div>
 
-        <!-- Title & Subtitle -->
         <h1 id="mainTitle" class="text-2xl font-bold text-gray-900 mb-2">Course Attendance System</h1>
         <p id="subTitle" class="text-gray-700 mb-8">Misr University for Science & Technology</p>
 
@@ -160,13 +155,18 @@
                        required>
             </div>
 
-            <div class="mb-6">
-                 <label id="labelStudentName" for="studentName">Full Name (Text Only)</label>
+            <div class="mb-4"> <label id="labelStudentName" for="studentName">Full Name (Text Only)</label>
                 <input type="text" id="studentName" name="studentName"
                        pattern="[A-Za-z\s]+"
                        required>
             </div>
 
+            <div class="mb-6">
+                <label id="labelPasscode" for="passcode">Session Passcode (4-Digits)</label>
+                <input type="text" id="passcode" name="passcode"
+                       inputmode="numeric" pattern="[0-9]{4}"
+                       required>
+            </div>
             <button type="submit" id="submitButton" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-base disabled:bg-gray-400 shadow-md hover:shadow-lg">
                 Submit Attendance
             </button>
@@ -174,7 +174,6 @@
 
         <div id="message"></div>
 
-        <!-- Newcomer action buttons -->
         <div id="newcomerActions" class="newcomer-actions px-4 sm:px-0">
             <button id="newcomerYesBtn" class="newcomer-btn newcomer-yes">Yes, I'm New</button>
             <button id="newcomerNoBtn" class="newcomer-btn newcomer-no">No, Re-enter ID</button>
@@ -194,6 +193,7 @@
                 subTitle: "Misr University for Science & Technology",
                 labelStudentID: "Student ID (Numbers Only)",
                 labelStudentName: "Full Name (Text Only)",
+                labelPasscode: "Session Passcode (4-Digits)", // [NEW]
                 submitButton_submit: "Submit Attendance",
                 submitButton_checking: "Checking session...",
                 submitButton_gettingLocation: "Getting location...",
@@ -211,6 +211,7 @@
                 sessionCheckError: "There is no session available Now", // Changed from "Error: Could not check session status."
                 idNumbersOnly: "Error: Student ID must contain only numbers.",
                 nameLettersOnly: "Error: Name must contain only letters and spaces.",
+                passcodeInvalid: "Error: Passcode must be 4 numbers.", // [NEW]
                 geolocationNotSupported: "Error: Geolocation is not supported by your browser.",
                 permissionDenied: "Error: You must allow location access.",
                 positionUnavailable: "Error: Location information is unavailable.",
@@ -222,9 +223,10 @@
                     2. Go to "Permissions" or "Site settings".<br>
                     3. Set "Location" to "Allow" for this site.<br>
                     4. Tap the 'Submit' button again.`,
-                registerConfirm: "Please ensure ID (numbers only) and Name (text only) are entered correctly before registering.",
+                registerConfirm: "Please ensure ID, Name, and Passcode are entered correctly before registering.", // [MODIFIED]
                 registering: "Registering your details...",
                 // --- Server Messages (Keys derived from script output) ---
+                invalidPasscode: "Invalid Passcode.", // [NEW]
                 sessionNotActive: "Attendance is not currently active. Check the session times.",
                 invalidId_askNew: "Student ID not found in the list. Are you a new student?",
                 duplicateId_session: "This Student ID has already been recorded for this session.",
@@ -241,13 +243,14 @@
                 subTitle: "جامعة مصر للعلوم والتكنولوجيا",
                 labelStudentID: "رقم الطالب (أرقام فقط)",
                 labelStudentName: "الاسم بالكامل (حروف فقط)",
+                labelPasscode: "رمز الجلسة (٤ أرقام)", // [NEW]
                 submitButton_submit: "تسجيل الحضور",
                 submitButton_checking: "جاري فحص الجلسة...",
                 submitButton_gettingLocation: "جاري تحديد الموقع...",
                 submitButton_verifying: "جاري التحقق من الرقم والموقع...",
                 submitButton_submitted: "تم التسجيل",
                 submitButton_closed: "الحضور مغلق",
-                submitButton_error: "لا توجد جلسة", // Changed from "خطأ"
+                submitButton_error: "لا توجد جلسة", // Changed
                 newcomerYesBtn_yes: "نعم، أنا جديد",
                 newcomerYesBtn_gettingLocation: "جاري تحديد الموقع...", 
                 newcomerYesBtn_registering: "جاري التسجيل...",
@@ -258,6 +261,7 @@
                 sessionCheckError: "لا توجد جلسة متاحة حالياً", // Changed
                 idNumbersOnly: "خطأ: رقم الطالب يجب أن يحتوي على أرقام فقط.",
                 nameLettersOnly: "خطأ: الاسم يجب أن يحتوي على حروف ومسافات فقط.",
+                passcodeInvalid: "خطأ: رمز الجلسة يجب أن يكون ٤ أرقام.", // [NEW]
                 geolocationNotSupported: "خطأ: المتصفح لا يدعم تحديد الموقع.",
                 permissionDenied: "خطأ: يجب السماح بالوصول إلى الموقع.",
                 positionUnavailable: "خطأ: معلومات الموقع غير متاحة.",
@@ -269,9 +273,10 @@
                     ٢. اذهب إلى "الأذونات" أو "إعدادات الموقع".<br>
                     ٣. قم بتعيين "الموقع" إلى "سماح" لهذا الموقع.<br>
                     ٤. اضغط على زر 'Submit' مرة أخرى.`,
-                registerConfirm: "يرجى التأكد من إدخال الرقم (أرقام فقط) والاسم (حروف فقط) بشكل صحيح قبل التسجيل.",
+                registerConfirm: "يرجى التأكد من إدخال الرقم والاسم والرمز بشكل صحيح قبل التسجيل.", // [MODIFIED]
                 registering: "جاري تسجيل بياناتك...",
                  // --- Server Messages (Keys derived from script output) ---
+                invalidPasscode: "كود الجلسة غير صحيح", // [NEW]
                 sessionNotActive: "Attendance is not currently active. Check the session times.",
                 invalidId_askNew: "رقم الطالب غير موجود بالقائمة. هل أنت طالب جديد؟",
                 duplicateId_session: "تم تسجيل هذا الرقم الطلابي من قبل في هذه الجلسة.",
@@ -308,6 +313,7 @@
             document.getElementById('subTitle').textContent = t.subTitle;
             document.getElementById('labelStudentID').textContent = t.labelStudentID;
             document.getElementById('labelStudentName').textContent = t.labelStudentName;
+            document.getElementById('labelPasscode').textContent = t.labelPasscode; // [NEW]
             document.getElementById('newcomerYesBtn').textContent = t.newcomerYesBtn_yes;
             document.getElementById('newcomerNoBtn').textContent = t.newcomerNoBtn;
             document.getElementById('footerText').textContent = t.footerText;
@@ -369,6 +375,7 @@
 
             const studentID = document.getElementById('studentID').value;
             const studentName = document.getElementById('studentName').value;
+            const passcode = document.getElementById('passcode').value; // [NEW]
 
             if (!/^\d+$/.test(studentID)) {
                 showMessage('idNumbersOnly', 'error');
@@ -376,6 +383,11 @@
             }
             if (!/^[A-Za-z\s]+$/.test(studentName)) {
                 showMessage('nameLettersOnly', 'error');
+                return;
+            }
+            // [NEW] Passcode validation
+            if (!/^\d{4}$/.test(passcode)) {
+                showMessage('passcodeInvalid', 'error');
                 return;
             }
 
@@ -404,6 +416,7 @@
             const userLon = position.coords.longitude;
             const studentID = document.getElementById('studentID').value;
             const studentName = document.getElementById('studentName').value;
+            const passcode = document.getElementById('passcode').value; // [NEW]
 
             submitButton.dataset.textKey = 'submitButton_verifying';
             updateUI(currentLang);
@@ -414,6 +427,7 @@
             formData.append("studentName", studentName);
             formData.append("latitude", userLat);
             formData.append("longitude", userLon);
+            formData.append("passcode", passcode); // [NEW]
 
             fetch(SCRIPT_URL, {
                 method: 'POST',
@@ -455,16 +469,16 @@
         }
 
         function handleErrorFromServer(serverMessage) {
-             const key = findKeyByEnglishValue(serverMessage, translations.en);
-             let params = null;
-             if (key === 'locationDenied' || key === 'locationDenied_newcomer') { 
-                 const distanceMatch = serverMessage.match(/(\d+)\s+meters/);
-                 if (distanceMatch) { params = { distance: distanceMatch[1] }; }
-             }
-             showMessage(key || 'unknownServerError', 'error', params);
-             submitButton.disabled = false;
-             submitButton.dataset.textKey = 'submitButton_submit';
-             updateUI(currentLang);
+              const key = findKeyByEnglishValue(serverMessage, translations.en);
+              let params = null;
+              if (key === 'locationDenied' || key === 'locationDenied_newcomer') { 
+                   const distanceMatch = serverMessage.match(/(\d+)\s+meters/);
+                   if (distanceMatch) { params = { distance: distanceMatch[1] }; }
+              }
+              showMessage(key || 'unknownServerError', 'error', params);
+              submitButton.disabled = false;
+              submitButton.dataset.textKey = 'submitButton_submit';
+              updateUI(currentLang);
         }
         
         // Helper to find translation key from English server message
@@ -472,6 +486,10 @@
             if (!value) return null;
             if (value.includes("meters away")) {
                  return value.includes("Newcomer") ? 'locationDenied_newcomer' : 'locationDenied';
+            }
+            // [NEW] Check for new passcode error
+            if (value.includes("Invalid Passcode")) {
+                return 'invalidPasscode';
             }
             for (const key in englishTranslations) { if (englishTranslations[key] === value) { return key; } }
             if (value.includes("already been recorded for this session")) return 'duplicateId_session';
@@ -535,7 +553,6 @@
             submitButton.disabled = false;
             submitButton.dataset.textKey = 'submitButton_submit';
             updateUI(currentLang);
-Done
             showMessage('');
             document.getElementById('studentID').focus();
         });
@@ -544,8 +561,10 @@ Done
         newcomerYesBtn.addEventListener('click', () => {
             const studentID = document.getElementById('studentID').value;
             const studentName = document.getElementById('studentName').value;
+            const passcode = document.getElementById('passcode').value; // [NEW]
 
-            if (!/^\d+$/.test(studentID) || !/^[A-Za-z\s]+$/.test(studentName)) {
+            // [MODIFIED] Added passcode validation
+            if (!/^\d+$/.test(studentID) || !/^[A-Za-z\s]+$/.test(studentName) || !/^\d{4}$/.test(passcode)) {
                 showMessage('registerConfirm', 'error');
                 showNewcomerButtons();
                 return;
@@ -574,6 +593,7 @@ Done
                     formData.append("studentName", studentName);
                     formData.append("latitude", position.coords.latitude); // Send location
                     formData.append("longitude", position.coords.longitude);// Send location
+                    formData.append("passcode", passcode); // [NEW]
 
                     fetch(SCRIPT_URL, {
                         method: 'POST',
@@ -594,7 +614,7 @@ Done
                             submitButton.dataset.textKey = 'submitButton_submitted';
                             updateUI(currentLang);
                         } else {
-                            // Handle specific errors like location denied for newcomer
+                            // Handle specific errors like location denied or invalid passcode
                             handleErrorFromServer(data.data.message || 'unknownServerError');
                             // Re-enable Yes button on server error
                             newcomerYesBtn.disabled = false;
