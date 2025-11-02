@@ -82,6 +82,9 @@
             font-weight: 500;
             color: #374151;
         }
+        body[lang="ar"] .switch-label {
+            text-align: right; /* Ensure toggle label is right-aligned in AR */
+        }
         .switch-toggle {
             position: relative;
             display: inline-block;
@@ -182,7 +185,7 @@
                 </div>
             </div>
 
-            <!-- --- [NEW] Passcode Type Toggle --- -->
+            <!-- --- [MODIFIED] Passcode Type Toggle --- -->
             <div class="mb-6">
                 <div class="switch-container">
                     <label id="labelPasscodeType" class="switch-label">Passcode Type</label>
@@ -190,13 +193,13 @@
                         <input type="checkbox" id="passcodeTypeToggle">
                         <span class="slider"></span>
                         <div class="slider-text">
-                            <span>Dynamic</span>
-                            <span>Static</span>
+                            <span id="dynamicText">Dynamic</span>
+                            <span id="staticText">Static</span>
                         </div>
                     </label>
                 </div>
             </div>
-            <!-- --- [END NEW] --- -->
+            <!-- --- [END MODIFIED] --- -->
 
             <button type="submit" id="setLocationBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-base disabled:bg-gray-400 shadow-md hover:shadow-lg">
                 Set Location & Open Attendance
@@ -223,7 +226,9 @@
                 labelSessionName: "Session Name (for new sheet tab)",
                 labelStartTime: "Start Time",
                 labelEndTime: "End Time",
-                labelPasscodeType: "Passcode Type", // [NEW]
+                labelPasscodeType: "Passcode Type",
+                dynamic: "Dynamic", // [NEW]
+                static: "Static", // [NEW]
                 setLocationBtn_set: "Set Location & Open Attendance",
                 setLocationBtn_getting: "Getting location...",
                 setLocationBtn_setting: "Setting location...",
@@ -233,7 +238,6 @@
                 invalidPassword: "Invalid password.",
                 sheetExists: "A sheet with the name '{sessionName}' already exists. Please use a unique name.",
                 unknownError: "An unknown error occurred.",
-                // [NEW] Specific success messages
                 sessionCreatedDynamic: "Session '{sessionName}' created! View the DYNAMIC code on the Display page.",
                 sessionCreatedStatic: "Session '{sessionName}' created! The STATIC passcode is: {passcode}"
             },
@@ -248,7 +252,9 @@
                 labelSessionName: "اسم الجلسة (لصفحة جديدة)",
                 labelStartTime: "وقت البدء",
                 labelEndTime: "وقت الانتهاء",
-                labelPasscodeType: "نوع رمز المرور", // [NEW]
+                labelPasscodeType: "نوع رمز المرور",
+                dynamic: "متغير", // [NEW]
+                static: "ثابت", // [NEW]
                 setLocationBtn_set: "تحديد الموقع وفتح الحضور",
                 setLocationBtn_getting: "جاري تحديد الموقع...",
                 setLocationBtn_setting: "جاري إعداد الموقع...",
@@ -258,7 +264,6 @@
                 invalidPassword: "كلمة المرور غير صحيحة.",
                 sheetExists: "توجد صفحة بهذا الاسم '{sessionName}' بالفعل. الرجاء استخدام اسم فريد.",
                 unknownError: "حدث خطأ غير معروف.",
-                // [NEW] Specific success messages (Arabic)
                 sessionCreatedDynamic: "تم إنشاء الجلسة '{sessionName}'! اعرض الرمز المتغير من شاشة العرض.",
                 sessionCreatedStatic: "تم إنشاء الجلسة '{sessionName}'! الرمز الثابت هو: {passcode}"
             }
@@ -274,11 +279,9 @@
         const adminPasswordField = document.getElementById('adminPassword');
         const sessionNameField = document.getElementById('sessionName');
         const langSwitchBtn = document.getElementById('langSwitchBtn');
-        const passcodeTypeToggle = document.getElementById('passcodeTypeToggle'); // [NEW]
+        const passcodeTypeToggle = document.getElementById('passcodeTypeToggle');
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwCjH23ufU7dh1F1HlgTk_UY8n0wcJxsMJ0TbihPk3zSiIFiX2UdPwmrANHmrjOtm9FKA/exec";
         let currentLang = localStorage.getItem('attendanceLang') || 'en';
-
-        // [REMOVED] Passcode calculation and timer functions are no longer needed here
 
         // Function to update UI text
         function updateUI(lang) {
@@ -293,7 +296,9 @@
             document.getElementById('labelSessionName').textContent = t.labelSessionName;
             document.getElementById('labelStartTime').textContent = t.labelStartTime;
             document.getElementById('labelEndTime').textContent = t.labelEndTime;
-            document.getElementById('labelPasscodeType').textContent = t.labelPasscodeType; // [NEW]
+            document.getElementById('labelPasscodeType').textContent = t.labelPasscodeType;
+            document.getElementById('dynamicText').textContent = t.dynamic; // [NEW]
+            document.getElementById('staticText').textContent = t.static; // [NEW]
             document.getElementById('footerText').textContent = t.footerText;
             const verifyTextKey = verifyBtn.dataset.textKey || 'verifyBtn_verify';
             verifyBtn.textContent = t[verifyTextKey];
@@ -308,7 +313,6 @@
             localStorage.setItem('attendanceLang', currentLang);
             updateUI(currentLang);
             
-            // [MODIFIED] Re-translate success message if it exists
             if (messageDiv.dataset.messageKey) {
                  showMessage(messageDiv.dataset.messageKey, messageDiv.className, messageDiv.dataset.messageParams ? JSON.parse(messageDiv.dataset.messageParams) : null);
             }
