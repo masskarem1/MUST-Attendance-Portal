@@ -36,16 +36,12 @@
              background-color: rgba(255, 255, 255, 0.5);
          }
         label { display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem; }
-        #timer-svg { transform: rotate(-90deg); }
-        .timer-track, .timer-progress { fill: none; stroke-width: 8; } /* Thicker line */
-        .timer-track { stroke: #e6e6e6; }
-        .timer-progress { stroke: #C53030; stroke-linecap: round; transition: stroke-dashoffset 0.3s linear; }
+        
+        /* [MODIFIED] Passcode font */
         #live-passcode {
             font-size: 6rem; /* Much larger for display */
             font-weight: 700;
             color: #C53030;
-            display: block;
-            letter-spacing: 0.1em;
         }
         .passcode-text-content { text-align: center; }
         #passcodeDisplay { display: none; } /* Hidden by default */
@@ -63,13 +59,52 @@
             border-radius: 8px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
+
+        /* --- [NEW] Logo Timer Styles --- */
+        .logo-timer-container {
+            display: grid;
+            place-items: center; /* Center both items */
+            margin-top: 1rem;
+            margin-bottom: 0.5rem; /* Less space between logo and code */
+        }
+        .logo-timer-container img,
+        .logo-timer-container svg {
+            /* Both items in the same grid cell */
+            grid-column: 1;
+            grid-row: 1;
+        }
+        .logo-timer-container img {
+            border: 6px solid white; /* Nice white border */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        #timer-svg {
+            transform: rotate(-90deg);
+            z-index: 10; /* Ensure timer is on top */
+            /* 192px (w-48) + 12px border + 12px padding = 216px */
+            width: 216px; 
+            height: 216px;
+        }
+        .timer-track, .timer-progress {
+            fill: none;
+            stroke-width: 8; /* Thicker line */
+        }
+        .timer-track { 
+            stroke: rgba(255, 255, 255, 0.4); /* Semi-transparent track */
+        }
+        .timer-progress { 
+            stroke: #C53030; 
+            stroke-linecap: round; 
+            transition: stroke-dashoffset 0.3s linear; 
+        }
+        /* --- [END NEW STYLES] --- */
+
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-100 via-indigo-200 to-blue-200 flex flex-col items-center justify-center min-h-screen p-0">
 
     <div class="glass-card w-full max-w-lg p-8 md:p-12 text-center">
-        <!-- Logo -->
-        <div class="mb-8">
+        <!-- Logo (will be hidden on login) -->
+        <div id="topLogo" class="mb-8">
             <a href="./index.html" class="inline-block">
                 <img src="https://admission.must.edu.eg/lovable-uploads/a51bf950-39e9-4502-bf1f-fcc9e958e555.png" alt="MUST Logo" class="h-28 w-28 mx-auto">
             </a>
@@ -93,15 +128,22 @@
         <div id="passcodeDisplay">
             <div id="live-passcode-title" class="text-2xl font-semibold text-gray-800"></div>
             
-            <div style="display: flex; align-items: center; justify-content: center; gap: 2rem; margin-top: 2rem;">
-              <svg id="timer-svg" width="100" height="100" viewBox="0 0 100 100">
-                <circle class="timer-track" r="45" cx="50" cy="50"></circle>
-                <circle class="timer-progress" r="45" cx="50" cy="50"></circle>
-              </svg>
-              <div class="passcode-text-content">
-                <span id='live-passcode'>....</span>
-              </div>
+            <!-- [MODIFIED] New Logo/Timer Container -->
+            <div class="logo-timer-container">
+                <svg id="timer-svg" viewBox="0 0 220 220"> <!-- Centered viewbox -->
+                    <circle class="timer-track" r="104" cx="110" cy="110"></circle>
+                    <circle class="timer-progress" r="104" cx="110" cy="110"></circle>
+                </svg>
+                <!-- Larger, rounded logo -->
+                <img src="https://admission.must.edu.eg/lovable-uploads/a51bf950-39e9-4502-bf1f-fcc9e958e555.png" alt="MUST Logo" class="h-48 w-48 rounded-full">
             </div>
+
+            <!-- Passcode (now below logo) -->
+            <div class="passcode-text-content">
+                <span id='live-passcode'>....</span>
+            </div>
+            
+            <!-- [REMOVED] Old flex container -->
 
             <div id="qr-code-container">
                 <div id="qr-code"></div>
@@ -109,7 +151,7 @@
             </div>
         </div>
 
-        <!-- [NEW] 3. Session Ended Display (starts hidden) -->
+        <!-- 3. Session Ended Display (starts hidden) -->
         <div id="sessionEndedDisplay" class="text-center" style="display: none;">
             <h2 class="text-5xl font-bold text-gray-800">Session Ended</h2>
             <p class="text-xl text-gray-600 mt-4">You can now close this window.</p>
@@ -120,7 +162,6 @@
 
     <script>
         let passcodeTimer = null; 
-        // [NEW] Timer for checking if session is still active
         let sessionActivePoller = null; 
         const TOTP_WINDOW = 30; // 30 seconds
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwCjH23ufU7dh1F1HlgTk_UY8n0wcJxsMJ0TbihPk3zSiIFiX2UdPwmrANHmrjOtm9FKA/exec";
@@ -132,8 +173,11 @@
         const verifyBtn = document.getElementById('verifyBtn');
         const timerSVG = document.getElementById('timer-svg');
         const qrCodeContainer = document.getElementById('qr-code-container');
-        // [NEW] Get session ended display
         const sessionEndedDisplay = document.getElementById('sessionEndedDisplay');
+        // [NEW] Get top logo and title
+        const topLogo = document.getElementById('topLogo');
+        const mainTitle = document.getElementById('mainTitle');
+
 
         // --- Passcode calculation function ---
         function calculatePasscode(secret, timeStep) {
@@ -189,43 +233,35 @@
             });
         }
 
-        // --- [NEW] Function to show the "Session Ended" screen ---
+        // --- Function to show the "Session Ended" screen ---
         function showSessionEnded() {
-            // Stop all running timers
             if (passcodeTimer) clearInterval(passcodeTimer);
             if (sessionActivePoller) clearInterval(sessionActivePoller);
-
-            // Hide the passcode and QR code
             passcodeDisplay.style.display = 'none';
-            
-            // Show the "Session Ended" message
             sessionEndedDisplay.style.display = 'block';
+            
+            // [NEW] Also hide the main title and show the logo again
+            mainTitle.style.display = 'block';
+            topLogo.style.display = 'block';
         }
 
-        // --- [NEW] Function to poll the server to check if the session is still active ---
+        // --- Function to poll the server to check if the session is still active ---
         function startSessionActivePoller() {
             if (sessionActivePoller) clearInterval(sessionActivePoller);
 
             const poll = () => {
-                // This is the same simple GET request the student page uses
                 fetch(SCRIPT_URL) 
                     .then(response => response.json())
                     .then(data => {
-                        // The student endpoint returns "error" if no session is active
                         if (data.result === "error") {
-                            // The session has ended!
                             showSessionEnded();
                         }
-                        // If result is "success", do nothing and let the poller run again
                     })
                     .catch(err => {
-                        // Handle potential network errors
                         console.error("Polling error:", err);
                         showMessage("Connection lost. Re-checking...", "error");
                     });
             };
-
-            // Poll every 30 seconds
             sessionActivePoller = setInterval(poll, 30000);
         }
 
@@ -244,7 +280,7 @@
             showMessage('');
 
             const formData = new FormData();
-            formData.append("action", "getAdminSessionData"); // New Action
+            formData.append("action", "getAdminSessionData"); 
             formData.append("password", password);
             
             fetch(SCRIPT_URL, { method: 'POST', body: formData })
@@ -256,7 +292,11 @@
                         // SUCCESS!
                         passwordForm.style.display = 'none'; 
                         messageDiv.style.display = 'none'; 
-                        passcodeDisplay.style.display = 'block'; 
+                        passcodeDisplay.style.display = 'block';
+                        
+                        // [NEW] Hide top logo and title
+                        topLogo.style.display = 'none';
+                        mainTitle.style.display = 'none'; 
                         
                         document.getElementById('live-passcode-title').textContent = `Live code for: ${data.data.sessionName}`;
                         
@@ -269,7 +309,6 @@
                             startPasscodeTimer(data.data.secret); 
                         }
 
-                        // [NEW] Start the poller to check for session end
                         startSessionActivePoller();
 
                     } else {
