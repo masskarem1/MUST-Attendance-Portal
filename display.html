@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="pageTitle">Passcode Display</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- [NEW] QR Code Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.1/qrcode.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -45,6 +47,24 @@
         }
         .passcode-text-content { text-align: center; }
         #passcodeDisplay { display: none; } /* Hidden by default */
+
+        /* [NEW] QR Code Styling */
+        #qrcode-container {
+            display: none; /* Hide until populated */
+            margin-top: 2rem;
+        }
+        #qrcode {
+            display: flex;
+            justify-content: center;
+            padding: 1rem; /* White padding around QR */
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            width: 192px; /* 160px + 32px padding */
+            height: 192px; /* 160px + 32px padding */
+            margin-left: auto;
+            margin-right: auto;
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-100 via-indigo-200 to-blue-200 flex flex-col items-center justify-center min-h-screen p-0">
@@ -86,10 +106,21 @@
                 <span id='live-passcode'>....</span>
               </div>
             </div>
+
+            <!-- [NEW] QR Code Holder -->
+            <div id="qrcode-container">
+                <p class="text-sm font-medium text-gray-700 mb-2">Students: Scan to open attendance page</p>
+                <div id="qrcode"></div>
+            </div>
         </div>
 
         <div id="message"></div>
     </div>
+
+    <!-- [NEW] Footer -->
+    <footer class="mt-8 text-gray-700 text-xs md:text-sm absolute bottom-4">
+        <p>&copy; Misr University for Science and Technology</p>
+    </footer>
 
     <script>
         let passcodeTimer = null; 
@@ -100,6 +131,8 @@
         const passcodeDisplay = document.getElementById('passcodeDisplay');
         const messageDiv = document.getElementById('message');
         const verifyBtn = document.getElementById('verifyBtn');
+        const timerSvg = document.getElementById('timer-svg');
+        const qrCodeContainer = document.getElementById('qrcode-container'); // [NEW]
 
         // --- Passcode calculation function ---
         function calculatePasscode(secret, timeStep) {
@@ -142,7 +175,26 @@
             passcodeTimer = setInterval(updateDisplay, 1000);
         }
 
-        // --- Password Form Submission ---
+        // --- [NEW] QR Code Generation Function ---
+        function generateQRCode() {
+            const url = "https://masskarem1.github.io/MUST-Attendance-Portal/geo_attendance.html";
+            const qrCodeEl = document.getElementById('qrcode');
+            
+            qrCodeEl.innerHTML = ''; // Clear previous
+            
+            new QRCode(qrCodeEl, {
+                text: url,
+                width: 160,
+                height: 160,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+            
+            qrCodeContainer.style.display = 'block'; // Show it
+        }
+
+        // --- [MODIFIED] Password Form Submission ---
         passwordForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const password = document.getElementById('adminPassword').value;
@@ -168,10 +220,19 @@
                         messageDiv.style.display = 'none'; // Hide messages
                         passcodeDisplay.style.display = 'block'; // Show display
                         
-                        document.getElementById('live-passcode-title').textContent = `Live code for: ${data.data.sessionName}`;
+                        // [NEW] Generate the QR Code
+                        generateQRCode();
                         
-                        // Start the timer with the secret
-                        startPasscodeTimer(data.data.secret);
+                        if (data.data.type === 'dynamic') {
+                            // Dynamic: Show timer, start timer
+                            document.getElementById('live-passcode-title').textContent = `Live code for: ${data.data.sessionName}`;
+                            startPasscodeTimer(data.data.key); // key is the secret
+                        } else {
+                            // Static: Hide timer, show code
+                            document.getElementById('live-passcode-title').textContent = `Static code for: ${data.data.sessionName}`;
+                            timerSvg.style.display = 'none'; // Hide timer
+                            document.getElementById('live-passcode').textContent = data.data.key; // key is the static code
+                        }
 
                     } else {
                         // Handle errors (Invalid password, no active session)
@@ -193,3 +254,4 @@
     </script>
 </body>
 </html>
+
