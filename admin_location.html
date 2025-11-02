@@ -67,15 +67,37 @@
         body[lang="ar"] input { text-align: right; }
         .hidden-details { display: none; }
 
-        /* [NEW] Style for the live passcode display */
-        #live-passcode {
-            font-size: 2rem; /* Make it large */
-            font-weight: 700;
-            color: #C53030; /* Red color */
-            display: block; /* On its own line */
-            margin-top: 0.5rem;
-            letter-spacing: 0.1em; /* Space out numbers */
+        /* --- [NEW] Styles for the 30-second timer --- */
+        #timer-svg {
+            transform: rotate(-90deg); /* Start the circle at the top */
         }
+        .timer-track, .timer-progress {
+            fill: none;
+            stroke-width: 4; /* Stroke thickness */
+        }
+        .timer-track {
+            stroke: #e6e6e6; /* Light gray background track */
+        }
+        .timer-progress {
+            stroke: #C53030; /* Red progress, matches the code color */
+            stroke-linecap: round; /* Rounded end for the progress bar */
+            transition: stroke-dashoffset 0.3s linear; /* Smooths the tick animation */
+        }
+        /* Style for the live passcode display */
+        #live-passcode {
+            font-size: 2rem; 
+            font-weight: 700;
+            color: #C53030;
+            display: block; 
+            margin-top: 0.5rem;
+            letter-spacing: 0.1em;
+        }
+        /* [NEW] Align the text content (title + code) to the left */
+        .passcode-text-content {
+            text-align: left;
+        }
+        /* --- [END NEW STYLES] --- */
+
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-100 via-indigo-200 to-blue-200 flex flex-col items-center justify-center min-h-screen p-0">
@@ -131,7 +153,7 @@
     </footer>
 
     <script>
-        // --- [NEW] Global timer variable ---
+        // --- Global timer variables ---
         let passcodeTimer = null; 
         const TOTP_WINDOW = 30; // 30 seconds
 
@@ -140,7 +162,6 @@
             en: {
                 pageTitle: "Admin - Set Session",
                 mainTitle: "Set Class Session",
-                // ... (all other translations remain the same) ...
                 labelPassword: "Admin Password",
                 verifyBtn_verify: "Verify Password",
                 verifyBtn_verifying: "Verifying...",
@@ -157,14 +178,13 @@
                 invalidPassword: "Invalid password.",
                 sheetExists: "A sheet with the name '{sessionName}' already exists. Please use a unique name.",
                 unknownError: "An unknown error occurred.",
-                // [NEW] Success message text
+                // [MODIFIED] Success message text
                 sessionCreated_en: "Session '{sessionName}' created! Current Passcode:",
                 sessionCreated_ar: "تم إنشاء الجلسة '{sessionName}'! رمز المرور الحالي:"
             },
             ar: {
                 pageTitle: "المشرف - إعداد الجلسة",
                 mainTitle: "إعداد جلسة الحضور",
-                // ... (all other translations remain the same) ...
                 subTitle: "جامعة مصر للعلوم والتكنولوجيا",
                 labelPassword: "كلمة مرور المشرف",
                 verifyBtn_verify: "التحقق من كلمة المرور",
@@ -186,8 +206,8 @@
         };
         // --- End Translation Data ---
 
+        // --- Const declarations ---
         const passwordForm = document.getElementById('passwordForm');
-        // ... (all other const declarations are the same) ...
         const sessionForm = document.getElementById('sessionForm');
         const verifyBtn = document.getElementById('verifyBtn');
         const setLocationBtn = document.getElementById('setLocationBtn');
@@ -195,12 +215,10 @@
         const adminPasswordField = document.getElementById('adminPassword');
         const sessionNameField = document.getElementById('sessionName');
         const langSwitchBtn = document.getElementById('langSwitchBtn');
-        
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwCjH23ufU7dh1F1HlgTk_UY8n0wcJxsMJ0TbihPk3zSiIFiX2UdPwmrANHmrjOtm9FKA/exec";
         let currentLang = localStorage.getItem('attendanceLang') || 'en';
 
-        // --- [NEW] Passcode calculation function ---
-        // This MUST be identical to the one in code_location.gs
+        // --- Passcode calculation function ---
         function calculatePasscode(secret, timeStep) {
           var str = secret + timeStep.toString();
           var hash = 0;
@@ -210,38 +228,53 @@
             hash = ((hash << 5) - hash) + char;
             hash = hash & hash; // Convert to 32bit integer
           }
-          var code = Math.abs(hash) % 10000; // Get positive 4-digit
-          return code.toString().padStart(4, '0'); // Ensure it's 4 digits
+          var code = Math.abs(hash) % 10000;
+          return code.toString().padStart(4, '0');
         }
 
-        // --- [NEW] Function to start the 30-second timer ---
+        // --- [MODIFIED] Function to start the 30-second timer and animation ---
         function startPasscodeTimer(secret) {
-            // Clear any old timer just in case
             if (passcodeTimer) clearInterval(passcodeTimer);
 
             const passcodeEl = document.getElementById('live-passcode');
-            if (!passcodeEl) return;
+            // [NEW] Get timer elements
+            const progressCircle = document.querySelector('.timer-progress');
+            if (!passcodeEl || !progressCircle) return;
 
-            // This function calculates and updates the display
+            // [NEW] Set up circle math
+            const radius = progressCircle.r.baseVal.value;
+            const circumference = 2 * Math.PI * radius;
+            // Set the dash array to the circumference. This "draws" the circle.
+            progressCircle.style.strokeDasharray = `${circumference} ${circumference}`;
+
             function updateDisplay() {
-                // Get time step (number of 30-second intervals)
+                // --- Passcode Logic (same as before) ---
                 let timeStep = Math.floor(Date.now() / (TOTP_WINDOW * 1000));
                 let code = calculatePasscode(secret, timeStep);
                 passcodeEl.textContent = code;
+
+                // --- [NEW] Timer Animation Logic ---
+                // 1. Get seconds remaining (from 30 down to 1)
+                const secondsSinceEpoch = Math.floor(Date.now() / 1000);
+                const secondsRemaining = TOTP_WINDOW - (secondsSinceEpoch % TOTP_WINDOW);
+
+                // 2. Calculate percentage elapsed (from 0.0 to 1.0)
+                // We want the bar to be FULL (offset 0) at 30s
+                // and EMPTY (offset 'circumference') at 0s.
+                const percentageElapsed = (TOTP_WINDOW - secondsRemaining) / TOTP_WINDOW;
+                
+                // 3. Calculate the new dash offset
+                const offset = circumference * percentageElapsed;
+                progressCircle.style.strokeDashoffset = offset;
+                // --- [END NEW TIMER LOGIC] ---
             }
             
-            // Call it once immediately to show the first code
-            updateDisplay();
-            
-            // Set it to run every 1 second.
-            // It's cheap and ensures the code updates visually
-            // at the exact start of the 30-second window.
-            passcodeTimer = setInterval(updateDisplay, 1000);
+            updateDisplay(); // Call immediately
+            passcodeTimer = setInterval(updateDisplay, 1000); // Update every second
         }
 
         // Function to update UI text (same as before)
         function updateUI(lang) {
-            // ... (this function is identical to the previous version) ...
             const t = translations[lang];
             document.documentElement.lang = lang;
             document.body.lang = lang;
@@ -268,206 +301,9 @@
             updateUI(currentLang);
             
             if (messageDiv.dataset.messageKey) {
-                 // Handle standard error/info messages
                  showMessage(messageDiv.dataset.messageKey, messageDiv.className, messageDiv.dataset.messageParams ? JSON.parse(messageDiv.dataset.messageParams) : null);
             } 
-            // [MODIFIED] Handle live-updating success message translation
             else if (messageDiv.dataset.manualSuccess === 'true') {
+                 // [MODIFIED] Retranslate the title span
                  const params = JSON.parse(messageDiv.dataset.messageParams);
-                 const key = currentLang === 'ar' ? 'sessionCreated_ar' : 'sessionCreated_en';
-                 let msg = translations[currentLang][key].replace('{sessionName}', params.sessionName);
-                 document.getElementById('live-passcode-title').textContent = msg;
-            }
-        });
-        
-        // ... (getLocalDateTimeString and DOMContentLoaded are same as before) ...
-        function getLocalDateTimeString(date) {
-            const year = date.getFullYear();
-            const month = (date.getMonth() + 1).toString().padStart(2, '0');
-            const day = date.getDate().toString().padStart(2, '0');
-            const hours = date.getHours().toString().padStart(2, '0');
-            const minutes = date.getMinutes().toString().padStart(2, '0');
-            return `${year}-${month}-${day}T${hours}:${minutes}`;
-        }
-        document.addEventListener('DOMContentLoaded', () => {
-            updateUI(currentLang);
-            const now = new Date();
-            const fifteenMinutesLater = new Date(now.getTime() + 15 * 60000);
-            document.getElementById('startTime').value = getLocalDateTimeString(now);
-            document.getElementById('endTime').value = getLocalDateTimeString(fifteenMinutesLater);
-            verifyBtn.disabled = true; 
-            verifyBtn.dataset.textKey = 'verifyBtn_verifying';
-            updateUI(currentLang);
-            fetch(SCRIPT_URL + "?action=getSheetNames") 
-                .then(response => response.json())
-                .then(data => {
-                    if (data.result === "success" && data.data.sheetNames) {
-                        const existingNames = data.data.sheetNames;
-                        const dateStr = now.toISOString().split('T')[0];
-                        const baseName = `${dateStr} Lecture`;
-                        let uniqueName = baseName;
-                        let counter = 2;
-                        while (existingNames.includes(uniqueName)) {
-                            uniqueName = `${baseName}_${counter}`;
-                            counter++;
-                        }
-                        sessionNameField.value = uniqueName; 
-                    } else {
-                        throw new Error(data.data.message || "Failed to fetch sheet names");
-                    }
-                })
-                .catch(error => {
-                    console.error("Error fetching sheet names:", error);
-                    showMessage('unknownError', 'error'); 
-                })
-                .finally(() => {
-                    verifyBtn.disabled = false; 
-                    verifyBtn.dataset.textKey = 'verifyBtn_verify';
-                    updateUI(currentLang);
-                });
-        });
-        
-        // ... (passwordForm listener is same as before) ...
-        passwordForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const password = adminPasswordField.value;
-            if (!password) {
-                showMessage('fillFields', 'error');
-                return;
-            }
-            verifyBtn.disabled = true;
-            verifyBtn.dataset.textKey = 'verifyBtn_verifying';
-            updateUI(currentLang);
-            showMessage('');
-            const formData = new FormData();
-            formData.append("action", "verifyPassword"); 
-            formData.append("password", password);
-            fetch(SCRIPT_URL, { method: 'POST', body: formData })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.result === "success") {
-                        passwordForm.style.display = 'none';
-                        sessionForm.classList.remove('hidden-details');
-                        showMessage(''); 
-                    } else {
-                        throw new Error(data.data.message || "Verification failed");
-                    }
-                })
-                .catch(error => {
-                    const key = findKeyByEnglishValue(error.message, translations.en) || 'invalidPassword';
-                    showMessage(key, 'error');
-                    verifyBtn.disabled = false; 
-                    verifyBtn.dataset.textKey = 'verifyBtn_verify';
-                    updateUI(currentLang);
-                });
-        });
-
-        // --- [MODIFIED] sessionForm listener ---
-        sessionForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const password = adminPasswordField.value; 
-            const startTime = document.getElementById('startTime').value;
-            const endTime = document.getElementById('endTime').value;
-            const sessionName = sessionNameField.value; 
-            if (!password || !startTime || !endTime || !sessionName) {
-                showMessage('fillFields', 'error');
-                return;
-            }
-            setLocationBtn.disabled = true;
-            setLocationBtn.dataset.textKey = 'setLocationBtn_getting';
-            updateUI(currentLang);
-            showMessage('');
-            navigator.geolocation.getCurrentPosition(
-                function(position) {
-                    setLocationBtn.dataset.textKey = 'setLocationBtn_setting';
-                    updateUI(currentLang);
-                    
-                    const formData = new FormData();
-                    formData.append("action", "setLocation");
-                    formData.append("password", password); 
-                    formData.append("latitude", position.coords.latitude);
-                    formData.append("longitude", position.coords.longitude);
-                    formData.append("startTime", startTime); 
-                    formData.append("endTime", endTime);     
-                    formData.append("sessionName", sessionName); 
-                    fetch(SCRIPT_URL, { method: 'POST', body: formData })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.result === "success") {
-                                // --- [MODIFIED] ---
-                                // Server now returns data.data.secret
-                                const params = {
-                                    sessionName: data.data.sessionName,
-                                    secret: data.data.secret // Store the secret
-                                };
-                                const key = currentLang === 'ar' ? 'sessionCreated_ar' : 'sessionCreated_en';
-                                
-                                // Build the success message with a placeholder for the live code
-                                let msgTitle = translations[currentLang][key].replace('{sessionName}', params.sessionName);
-                                let msgHtml = `<span id='live-passcode-title'>${msgTitle}</span><span id='live-passcode'>...</span>`;
-                                
-                                messageDiv.innerHTML = msgHtml;
-                                messageDiv.className = 'success';
-                                messageDiv.dataset.messageKey = ''; // Clear key
-                                messageDiv.dataset.manualSuccess = 'true'; // Set flag
-                                messageDiv.dataset.messageParams = JSON.stringify(params);
-
-                                // Start the live-updating timer
-                                startPasscodeTimer(params.secret);
-                                // --- [END MODIFIED] ---
-
-                            } else {
-                                const key = findKeyByEnglishValue(data.data.message, translations.en) || 'sheetExists';
-                                throw new Error(key); 
-                            }
-                        })
-                        .catch(errorKey => { 
-                            showMessage(errorKey.message || errorKey, 'error', { sessionName: sessionName });
-                        })
-                        .finally(() => {
-                            setLocationBtn.disabled = false;
-                            setLocationBtn.dataset.textKey = 'setLocationBtn_set';
-                            updateUI(currentLang);
-                        });
-                },
-                function(error) {
-                    showMessage('getLocError', 'error');
-                    setLocationBtn.disabled = false;
-                    setLocationBtn.dataset.textKey = 'setLocationBtn_set';
-                    updateUI(currentLang);
-                },
-                { enableHighAccuracy: true }
-            );
-        });
-        
-        // ... (findKeyByEnglishValue and showMessage are same as before) ...
-        function findKeyByEnglishValue(value, englishTranslations) {
-            if (!value) return null;
-            for (const key in englishTranslations) {
-                if (value.includes(englishTranslations[key])) { 
-                    return key;
-                }
-            }
-            if (value.includes("Invalid password")) return 'invalidPassword';
-            if (value.includes("already exists")) return 'sheetExists';
-            return 'unknownError'; 
-        }
-        function showMessage(key, type, params = null) {
-            // [NEW] Clear any running timer when a new message (especially an error) is shown
-            if (passcodeTimer) clearInterval(passcodeTimer);
-
-            let messageText = translations[currentLang][key] || translations['en'][key] || key;
-            if (params) {
-                for (const pKey in params) {
-                    messageText = messageText.replace(`{${pKey}}`, params[pKey]);
-                }
-            }
-            messageDiv.innerHTML = messageText; // Use innerHTML for simple text
-            messageDiv.className = type;
-            messageDiv.dataset.messageKey = key;
-            messageDiv.dataset.messageParams = params ? JSON.stringify(params) : "";
-            messageDiv.dataset.manualSuccess = 'false'; 
-        }
-    </script>
-</body>
-</html>
+                 const
