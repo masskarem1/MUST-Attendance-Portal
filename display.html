@@ -50,6 +50,7 @@
 <body class="bg-gradient-to-br from-blue-100 via-indigo-200 to-blue-200 flex flex-col items-center justify-center min-h-screen p-0">
 
     <div class="glass-card w-full max-w-lg p-8 md:p-12 text-center">
+        <!-- Logo -->
         <div class="mb-8">
             <a href="./index.html" class="inline-block">
                 <img src="https://admission.must.edu.eg/lovable-uploads/a51bf950-39e9-4502-bf1f-fcc9e958e555.png" alt="MUST Logo" class="h-28 w-28 mx-auto">
@@ -58,6 +59,7 @@
 
         <h1 id="mainTitle" class="text-2xl font-bold text-gray-900 mb-2">Passcode Display Screen</h1>
 
+        <!-- 1. Password Form -->
         <form id="passwordForm" class="text-left px-4 sm:px-0">
             <p id="subTitle" class="text-gray-700 mb-8 text-center">Enter admin password to show the live code.</p>
             <div class="mb-4">
@@ -69,14 +71,17 @@
             </button>
         </form>
         
+        <!-- 2. Passcode Display (starts hidden) -->
         <div id="passcodeDisplay">
             <div id="live-passcode-title" class="text-2xl font-semibold text-gray-800"></div>
             
             <div style="display: flex; align-items: center; justify-content: center; gap: 2rem; margin-top: 2rem;">
+              <!-- Timer SVG (larger) -->
               <svg id="timer-svg" width="100" height="100" viewBox="0 0 100 100">
                 <circle class="timer-track" r="45" cx="50" cy="50"></circle>
                 <circle class="timer-progress" r="45" cx="50" cy="50"></circle>
               </svg>
+              <!-- Text Content -->
               <div class="passcode-text-content">
                 <span id='live-passcode'>....</span>
               </div>
