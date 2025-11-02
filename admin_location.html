@@ -67,34 +67,75 @@
         body[lang="ar"] input { text-align: right; }
         .hidden-details { display: none; }
 
-        /* --- [NEW] Styles for the 30-second timer --- */
-        #timer-svg {
-            transform: rotate(-90deg); /* Start the circle at the top */
+        /* --- [NEW] Styles for the toggle switch --- */
+        .switch-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 0.5rem;
+            background-color: rgba(255, 255, 255, 0.4);
+            border-radius: 0.5rem;
         }
-        .timer-track, .timer-progress {
-            fill: none;
-            stroke-width: 4; /* Stroke thickness */
+        .switch-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
         }
-        .timer-track {
-            stroke: #e6e6e6; /* Light gray background track */
+        .switch-toggle {
+            position: relative;
+            display: inline-block;
+            width: 100px; /* Width for two labels */
+            height: 34px;
         }
-        .timer-progress {
-            stroke: #C53030; /* Red progress, matches the code color */
-            stroke-linecap: round; /* Rounded end for the progress bar */
-            transition: stroke-dashoffset 0.3s linear; /* Smooths the tick animation */
+        .switch-toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
         }
-        /* Style for the live passcode display */
-        #live-passcode {
-            font-size: 2rem; 
-            font-weight: 700;
-            color: #C53030;
-            display: block; 
-            margin-top: 0.5rem;
-            letter-spacing: 0.1em;
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
         }
-        /* [NEW] Align the text content (title + code) to the left */
-        .passcode-text-content {
-            text-align: left;
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 46px; /* Half width minus margin */
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        input:checked + .slider {
+            background-color: #4A5568; /* Gray for static */
+        }
+        input:not(:checked) + .slider {
+            background-color: #DC2626; /* Red for dynamic */
+        }
+        input:checked + .slider:before {
+            transform: translateX(46px); /* Move slider to the right */
+        }
+        .slider-text {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+            z-index: 1;
+            pointer-events: none; /* Allow clicks to pass through to the input */
         }
         /* --- [END NEW STYLES] --- */
     </style>
@@ -129,7 +170,8 @@
                 <label id="labelSessionName" for="sessionName">Session Name (for new sheet tab)</label>
                 <input type="text" id="sessionName" required>
             </div>
-            <div class="flex flex-col sm:flex-row sm:justify-between gap-4 mb-6">
+            
+            <div class="flex flex-col sm:flex-row sm:justify-between gap-4 mb-4"> <!-- [MODIFIED] margin mb-4 -->
                 <div class="w-full sm:w-1/2">
                     <label id="labelStartTime" for="startTime">Start Time</label>
                     <input type="datetime-local" id="startTime" class="text-gray-700" required>
@@ -139,6 +181,23 @@
                     <input type="datetime-local" id="endTime" class="text-gray-700" required>
                 </div>
             </div>
+
+            <!-- --- [NEW] Passcode Type Toggle --- -->
+            <div class="mb-6">
+                <div class="switch-container">
+                    <label id="labelPasscodeType" class="switch-label">Passcode Type</label>
+                    <label class="switch-toggle">
+                        <input type="checkbox" id="passcodeTypeToggle">
+                        <span class="slider"></span>
+                        <div class="slider-text">
+                            <span>Dynamic</span>
+                            <span>Static</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+            <!-- --- [END NEW] --- -->
+
             <button type="submit" id="setLocationBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-base disabled:bg-gray-400 shadow-md hover:shadow-lg">
                 Set Location & Open Attendance
             </button>
@@ -152,10 +211,6 @@
     </footer>
 
     <script>
-        // --- Global timer variables ---
-        let passcodeTimer = null; 
-        const TOTP_WINDOW = 30; // 30 seconds
-
         // --- Translation Data ---
         const translations = {
             en: {
@@ -168,6 +223,7 @@
                 labelSessionName: "Session Name (for new sheet tab)",
                 labelStartTime: "Start Time",
                 labelEndTime: "End Time",
+                labelPasscodeType: "Passcode Type", // [NEW]
                 setLocationBtn_set: "Set Location & Open Attendance",
                 setLocationBtn_getting: "Getting location...",
                 setLocationBtn_setting: "Setting location...",
@@ -177,9 +233,9 @@
                 invalidPassword: "Invalid password.",
                 sheetExists: "A sheet with the name '{sessionName}' already exists. Please use a unique name.",
                 unknownError: "An unknown error occurred.",
-                // [MODIFIED] Success message text
-                sessionCreated_en: "Session '{sessionName}' created! Current Passcode:",
-                sessionCreated_ar: "تم إنشاء الجلسة '{sessionName}'! رمز المرور الحالي:"
+                // [NEW] Specific success messages
+                sessionCreatedDynamic: "Session '{sessionName}' created! View the DYNAMIC code on the Display page.",
+                sessionCreatedStatic: "Session '{sessionName}' created! The STATIC passcode is: {passcode}"
             },
             ar: {
                 pageTitle: "المشرف - إعداد الجلسة",
@@ -192,6 +248,7 @@
                 labelSessionName: "اسم الجلسة (لصفحة جديدة)",
                 labelStartTime: "وقت البدء",
                 labelEndTime: "وقت الانتهاء",
+                labelPasscodeType: "نوع رمز المرور", // [NEW]
                 setLocationBtn_set: "تحديد الموقع وفتح الحضور",
                 setLocationBtn_getting: "جاري تحديد الموقع...",
                 setLocationBtn_setting: "جاري إعداد الموقع...",
@@ -200,7 +257,10 @@
                 getLocError: "خطأ: تعذر الحصول على الموقع. يرجى السماح بالوصول.",
                 invalidPassword: "كلمة المرور غير صحيحة.",
                 sheetExists: "توجد صفحة بهذا الاسم '{sessionName}' بالفعل. الرجاء استخدام اسم فريد.",
-                unknownError: "حدث خطأ غير معروف."
+                unknownError: "حدث خطأ غير معروف.",
+                // [NEW] Specific success messages (Arabic)
+                sessionCreatedDynamic: "تم إنشاء الجلسة '{sessionName}'! اعرض الرمز المتغير من شاشة العرض.",
+                sessionCreatedStatic: "تم إنشاء الجلسة '{sessionName}'! الرمز الثابت هو: {passcode}"
             }
         };
         // --- End Translation Data ---
@@ -214,63 +274,11 @@
         const adminPasswordField = document.getElementById('adminPassword');
         const sessionNameField = document.getElementById('sessionName');
         const langSwitchBtn = document.getElementById('langSwitchBtn');
+        const passcodeTypeToggle = document.getElementById('passcodeTypeToggle'); // [NEW]
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwCjH23ufU7dh1F1HlgTk_UY8n0wcJxsMJ0TbihPk3zSiIFiX2UdPwmrANHmrjOtm9FKA/exec";
         let currentLang = localStorage.getItem('attendanceLang') || 'en';
 
-        // --- Passcode calculation function ---
-        function calculatePasscode(secret, timeStep) {
-          var str = secret + timeStep.toString();
-          var hash = 0;
-          if (str.length === 0) return '0000';
-          for (var i = 0; i < str.length; i++) {
-            var char = str.charCodeAt(i);
-            hash = ((hash << 5) - hash) + char;
-            hash = hash & hash; // Convert to 32bit integer
-          }
-          var code = Math.abs(hash) % 10000;
-          return code.toString().padStart(4, '0');
-        }
-
-        // --- [MODIFIED] Function to start the 30-second timer and animation ---
-        function startPasscodeTimer(secret) {
-            if (passcodeTimer) clearInterval(passcodeTimer);
-
-            const passcodeEl = document.getElementById('live-passcode');
-            // [NEW] Get timer elements
-            const progressCircle = document.querySelector('.timer-progress');
-            if (!passcodeEl || !progressCircle) return;
-
-            // [NEW] Set up circle math
-            const radius = progressCircle.r.baseVal.value;
-            const circumference = 2 * Math.PI * radius;
-            // Set the dash array to the circumference. This "draws" the circle.
-            progressCircle.style.strokeDasharray = `${circumference} ${circumference}`;
-
-            function updateDisplay() {
-                // --- Passcode Logic (same as before) ---
-                let timeStep = Math.floor(Date.now() / (TOTP_WINDOW * 1000));
-                let code = calculatePasscode(secret, timeStep);
-                passcodeEl.textContent = code;
-
-                // --- [NEW] Timer Animation Logic ---
-                // 1. Get seconds remaining (from 30 down to 1)
-                const secondsSinceEpoch = Math.floor(Date.now() / 1000);
-                const secondsRemaining = TOTP_WINDOW - (secondsSinceEpoch % TOTP_WINDOW);
-
-                // 2. Calculate percentage elapsed (from 0.0 to 1.0)
-                // We want the bar to be FULL (offset 0) at 30s
-                // and EMPTY (offset 'circumference') at 0s.
-                const percentageElapsed = (TOTP_WINDOW - secondsRemaining) / TOTP_WINDOW;
-                
-                // 3. Calculate the new dash offset
-                const offset = circumference * percentageElapsed;
-                progressCircle.style.strokeDashoffset = offset;
-                // --- [END NEW TIMER LOGIC] ---
-            }
-            
-            updateDisplay(); // Call immediately
-            passcodeTimer = setInterval(updateDisplay, 1000); // Update every second
-        }
+        // [REMOVED] Passcode calculation and timer functions are no longer needed here
 
         // Function to update UI text
         function updateUI(lang) {
@@ -285,6 +293,7 @@
             document.getElementById('labelSessionName').textContent = t.labelSessionName;
             document.getElementById('labelStartTime').textContent = t.labelStartTime;
             document.getElementById('labelEndTime').textContent = t.labelEndTime;
+            document.getElementById('labelPasscodeType').textContent = t.labelPasscodeType; // [NEW]
             document.getElementById('footerText').textContent = t.footerText;
             const verifyTextKey = verifyBtn.dataset.textKey || 'verifyBtn_verify';
             verifyBtn.textContent = t[verifyTextKey];
@@ -299,15 +308,9 @@
             localStorage.setItem('attendanceLang', currentLang);
             updateUI(currentLang);
             
+            // [MODIFIED] Re-translate success message if it exists
             if (messageDiv.dataset.messageKey) {
                  showMessage(messageDiv.dataset.messageKey, messageDiv.className, messageDiv.dataset.messageParams ? JSON.parse(messageDiv.dataset.messageParams) : null);
-            } 
-            else if (messageDiv.dataset.manualSuccess === 'true') {
-                 // [MODIFIED] Retranslate the title span
-                 const params = JSON.parse(messageDiv.dataset.messageParams);
-                 const key = currentLang === 'ar' ? 'sessionCreated_ar' : 'sessionCreated_en';
-                 let msg = translations[currentLang][key].replace('{sessionName}', params.sessionName);
-                 document.getElementById('live-passcode-title').textContent = msg;
             }
         });
         
@@ -324,8 +327,7 @@
         // DOMContentLoaded
         document.addEventListener('DOMContentLoaded', () => {
             updateUI(currentLang);
-            // Use user's current date, but set time based on 12:01 AM EET
-            const now = new Date(); // This is Nov 3, 2025, 00:01 EET
+            const now = new Date();
             const fifteenMinutesLater = new Date(now.getTime() + 15 * 60000);
             
             document.getElementById('startTime').value = getLocalDateTimeString(now);
@@ -340,8 +342,7 @@
                 .then(data => {
                     if (data.result === "success" && data.data.sheetNames) {
                         const existingNames = data.data.sheetNames;
-                        // Use 2025-11-03 as the date string
-                        const dateStr = "2025-11-03";
+                        const dateStr = now.toISOString().split('T')[0];
                         const baseName = `${dateStr} Lecture`;
                         let uniqueName = baseName;
                         let counter = 2;
@@ -403,13 +404,15 @@
         // [MODIFIED] sessionForm listener
         sessionForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            // Clear any old timer if admin submits a new form
-            if (passcodeTimer) clearInterval(passcodeTimer);
-
             const password = adminPasswordField.value; 
             const startTime = document.getElementById('startTime').value;
             const endTime = document.getElementById('endTime').value;
-            const sessionName = sessionNameField.value; 
+            const sessionName = sessionNameField.value;
+            // [NEW] Read the toggle state
+            // `isChecked` = true means "Static" (right side)
+            const isStatic = passcodeTypeToggle.checked;
+            const passcodeType = isStatic ? "static" : "dynamic";
+
             if (!password || !startTime || !endTime || !sessionName) {
                 showMessage('fillFields', 'error');
                 return;
@@ -430,46 +433,29 @@
                     formData.append("longitude", position.coords.longitude);
                     formData.append("startTime", startTime); 
                     formData.append("endTime", endTime);     
-                    formData.append("sessionName", sessionName); 
+                    formData.append("sessionName", sessionName);
+                    formData.append("passcodeType", passcodeType); // [NEW] Send the type
+
                     fetch(SCRIPT_URL, { method: 'POST', body: formData })
                         .then(response => response.json())
                         .then(data => {
                             if (data.result === "success") {
                                 // --- [MODIFIED] ---
-                                // Server returns data.data.secret
-                                const params = {
-                                    sessionName: data.data.sessionName,
-                                    secret: data.data.secret
-                                };
-                                const key = currentLang === 'ar' ? 'sessionCreated_ar' : 'sessionCreated_en';
-                                let msgTitle = translations[currentLang][key].replace('{sessionName}', params.sessionName);
-                                
-                                // [NEW] This is the full HTML structure for the timer and code
-                                let msgHtml = `
-                                    <div style="display: flex; align-items: center; justify-content: center; gap: 1rem;">
-                                      <!-- Timer SVG -->
-                                      <svg id="timer-svg" width="40" height="40" viewBox="0 0 40 40">
-                                        <circle class="timer-track" r="16" cx="20" cy="20"></circle>
-                                        <circle class="timer-progress" r="16" cx="20" cy="20"></circle>
-                                      </svg>
-                                      <!-- Text Content -->
-                                      <div class="passcode-text-content">
-                                        <span id='live-passcode-title'>${msgTitle}</span>
-                                        <span id='live-passcode'>...</span>
-                                      </div>
-                                    </div>
-                                `;
-                                
-                                messageDiv.innerHTML = msgHtml;
-                                messageDiv.className = 'success';
-                                messageDiv.dataset.messageKey = '';
-                                messageDiv.dataset.manualSuccess = 'true';
-                                messageDiv.dataset.messageParams = JSON.stringify(params);
+                                // Server now returns different data based on type
+                                const params = { sessionName: data.data.sessionName };
+                                let messageKey = '';
 
-                                // Start the live-updating timer
-                                startPasscodeTimer(params.secret);
+                                if (data.data.type === 'static') {
+                                    // If static, server returns the passcode
+                                    params.passcode = data.data.passcode;
+                                    messageKey = 'sessionCreatedStatic';
+                                } else {
+                                    // If dynamic, server returns nothing extra
+                                    messageKey = 'sessionCreatedDynamic';
+                                }
+                                
+                                showMessage(messageKey, 'success', params);
                                 // --- [END MODIFIED] ---
-
                             } else {
                                 const key = findKeyByEnglishValue(data.data.message, translations.en) || 'sheetExists';
                                 throw new Error(key); 
@@ -507,11 +493,8 @@
             return 'unknownError'; 
         }
 
-        // showMessage (modified)
+        // showMessage
         function showMessage(key, type, params = null) {
-            // [NEW] Clear any running timer when a new message (especially an error) is shown
-            if (passcodeTimer) clearInterval(passcodeTimer);
-
             let messageText = translations[currentLang][key] || translations['en'][key] || key;
             if (params) {
                 for (const pKey in params) {
@@ -520,10 +503,10 @@
             }
             messageDiv.innerHTML = messageText; // Use innerHTML for simple text
             messageDiv.className = type;
-            messageDiv.dataset.messageKey = key;
+            messageDiv.dataset.messageKey = key; // Store the key for re-translation
             messageDiv.dataset.messageParams = params ? JSON.stringify(params) : "";
-            messageDiv.dataset.manualSuccess = 'false'; 
         }
     </script>
 </body>
 </html>
+
