@@ -89,19 +89,20 @@
         }
         
         /* --- [MODIFIED] Passcode Toggle Switch Styles --- */
-        .toggle-label {
+        /* [NEW] Flex container to align text and switch */
+        .toggle-container {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            cursor: pointer;
             width: 100%;
-            /* [REMOVED] background-color: white; */
-            padding: 0; /* [REMOVED] padding: 0.5rem 0.75rem; */
-            border-radius: 0.5rem;
-            /* [REMOVED] border: 1px solid #D1D5DB; */
+        }
+
+        .toggle-label-text {
+            font-size: 0.875rem;
             font-weight: 500;
             color: #374151;
         }
+
         .toggle-switch {
             position: relative;
             display: inline-block;
@@ -261,13 +262,14 @@
 
             <!-- [MODIFIED] Passcode Toggle -->
             <div class="mb-6">
-                <label id="labelPasscodeType" for="passcodeType" class="toggle-label">
-                    <span>Dynamic Passcode</span>
+                <!-- [NEW] Flex container -->
+                <div class="toggle-container">
+                    <span id="labelPasscodeType" class="toggle-label-text">Dynamic Passcode</span>
                     <label class="toggle-switch">
                         <input type="checkbox" id="passcodeType" checked>
                         <span class="slider"></span>
                     </label>
-                </label>
+                </div>
             </div>
             
             <button type="submit" id="setLocationBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-base disabled:bg-gray-400 shadow-md hover:shadow-lg">
@@ -301,9 +303,7 @@
                 labelSessionName: "Session Name (for new sheet tab)",
                 labelStartTime: "Start Time",
                 labelEndTime: "End Time",
-                labelPasscodeType: "Dynamic Passcode", // [MODIFIED]
-                dynamic: "Dynamic", // [REMOVED]
-                static: "Static",   // [REMOVED]
+                labelPasscodeType: "Dynamic Passcode",
                 setLocationBtn_set: "Set Location & Open Attendance",
                 setLocationBtn_getting: "Getting location...",
                 setLocationBtn_setting: "Setting location...",
@@ -327,9 +327,7 @@
                 labelSessionName: "اسم الجلسة (لصفحة جديدة)",
                 labelStartTime: "وقت البدء",
                 labelEndTime: "وقت الانتهاء",
-                labelPasscodeType: "رمز مرور متغير", // [MODIFIED]
-                dynamic: "متغير", // [REMOVED]
-                static: "ثابت",   // [REMOVED]
+                labelPasscodeType: "رمز مرور متغير",
                 setLocationBtn_set: "تحديد الموقع وفتح الحضور",
                 setLocationBtn_getting: "جاري تحديد الموقع...",
                 setLocationBtn_setting: "جاري إعداد الموقع...",
@@ -454,6 +452,7 @@
             document.getElementById('labelSessionName').textContent = t.labelSessionName;
             document.getElementById('labelStartTime').textContent = t.labelStartTime;
             document.getElementById('labelEndTime').textContent = t.labelEndTime;
+            // [MODIFIED] Find the label by its ID
             document.getElementById('labelPasscodeType').textContent = t.labelPasscodeType;
             document.getElementById('footerText').textContent = t.footerText;
             
