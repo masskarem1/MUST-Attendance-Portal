@@ -87,7 +87,7 @@
                 <input type="password" id="adminPassword" required>
             </div>
             <button type="submit" id="verifyBtn" class="w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-base disabled:bg-gray-400 shadow-md hover:shadow-lg">
-                Show Passcode
+                Display Passcode
             </button>
         </form>
         
@@ -242,7 +242,7 @@
                 .catch(error => {
                     showMessage(error.message, 'error');
                     verifyBtn.disabled = false; 
-                    verifyBtn.textContent = "Show Passcode";
+                    verifyBtn.textContent = "Display Passcode";
                 });
         });
 
@@ -254,4 +254,3 @@
     </script>
 </body>
 </html>
-
