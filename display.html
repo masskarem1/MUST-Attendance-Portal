@@ -50,7 +50,6 @@
         .passcode-text-content { text-align: center; }
         #passcodeDisplay { display: none; } /* Hidden by default */
         
-        /* [NEW] QR Code Styles */
         #qr-code-container {
             margin-top: 2rem;
             display: flex;
@@ -85,7 +84,6 @@
                 <label id="labelPassword" for="adminPassword">Admin Password</label>
                 <input type="password" id="adminPassword" required>
             </div>
-            <!-- [MODIFIED] Button text changed -->
             <button type="submit" id="verifyBtn" class="w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-base disabled:bg-gray-400 shadow-md hover:shadow-lg">
                 Display Passcode
             </button>
@@ -96,22 +94,25 @@
             <div id="live-passcode-title" class="text-2xl font-semibold text-gray-800"></div>
             
             <div style="display: flex; align-items: center; justify-content: center; gap: 2rem; margin-top: 2rem;">
-              <!-- Timer SVG (larger) -->
               <svg id="timer-svg" width="100" height="100" viewBox="0 0 100 100">
                 <circle class="timer-track" r="45" cx="50" cy="50"></circle>
                 <circle class="timer-progress" r="45" cx="50" cy="50"></circle>
               </svg>
-              <!-- Text Content -->
               <div class="passcode-text-content">
                 <span id='live-passcode'>....</span>
               </div>
             </div>
 
-            <!-- [NEW] QR Code Container -->
             <div id="qr-code-container">
                 <div id="qr-code"></div>
                 <p class="text-sm text-gray-700 font-medium">Scan for Attendance Link</p>
             </div>
+        </div>
+
+        <!-- [NEW] 3. Session Ended Display (starts hidden) -->
+        <div id="sessionEndedDisplay" class="text-center" style="display: none;">
+            <h2 class="text-5xl font-bold text-gray-800">Session Ended</h2>
+            <p class="text-xl text-gray-600 mt-4">You can now close this window.</p>
         </div>
 
         <div id="message"></div>
@@ -119,6 +120,8 @@
 
     <script>
         let passcodeTimer = null; 
+        // [NEW] Timer for checking if session is still active
+        let sessionActivePoller = null; 
         const TOTP_WINDOW = 30; // 30 seconds
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwCjH23ufU7dh1F1HlgTk_UY8n0wcJxsMJ0TbihPk3zSiIFiX2UdPwmrANHmrjOtm9FKA/exec";
         const ATTENDANCE_URL = "https://masskarem1.github.io/MUST-Attendance-Portal/geo_attendance.html"; // Your link
@@ -129,6 +132,8 @@
         const verifyBtn = document.getElementById('verifyBtn');
         const timerSVG = document.getElementById('timer-svg');
         const qrCodeContainer = document.getElementById('qr-code-container');
+        // [NEW] Get session ended display
+        const sessionEndedDisplay = document.getElementById('sessionEndedDisplay');
 
         // --- Passcode calculation function ---
         function calculatePasscode(secret, timeStep) {
@@ -171,7 +176,7 @@
             passcodeTimer = setInterval(updateDisplay, 1000);
         }
 
-        // --- [NEW] Function to generate QR Code ---
+        // --- Function to generate QR Code ---
         function generateQRCode(url) {
             document.getElementById("qr-code").innerHTML = ""; // Clear old QR code
             new QRCode(document.getElementById("qr-code"), {
@@ -184,7 +189,48 @@
             });
         }
 
-        // --- Password Form Submission ---
+        // --- [NEW] Function to show the "Session Ended" screen ---
+        function showSessionEnded() {
+            // Stop all running timers
+            if (passcodeTimer) clearInterval(passcodeTimer);
+            if (sessionActivePoller) clearInterval(sessionActivePoller);
+
+            // Hide the passcode and QR code
+            passcodeDisplay.style.display = 'none';
+            
+            // Show the "Session Ended" message
+            sessionEndedDisplay.style.display = 'block';
+        }
+
+        // --- [NEW] Function to poll the server to check if the session is still active ---
+        function startSessionActivePoller() {
+            if (sessionActivePoller) clearInterval(sessionActivePoller);
+
+            const poll = () => {
+                // This is the same simple GET request the student page uses
+                fetch(SCRIPT_URL) 
+                    .then(response => response.json())
+                    .then(data => {
+                        // The student endpoint returns "error" if no session is active
+                        if (data.result === "error") {
+                            // The session has ended!
+                            showSessionEnded();
+                        }
+                        // If result is "success", do nothing and let the poller run again
+                    })
+                    .catch(err => {
+                        // Handle potential network errors
+                        console.error("Polling error:", err);
+                        showMessage("Connection lost. Re-checking...", "error");
+                    });
+            };
+
+            // Poll every 30 seconds
+            sessionActivePoller = setInterval(poll, 30000);
+        }
+
+
+        // --- Password Form Submission (Modified) ---
         passwordForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const password = document.getElementById('adminPassword').value;
@@ -204,32 +250,29 @@
             fetch(SCRIPT_URL, { method: 'POST', body: formData })
                 .then(response => response.json())
                 .then(data => {
-                    // [DEBUGGING] Log the raw server response
-                    console.log("Server response:", data);
+                    console.log("Server response:", data); // Debugging
 
                     if (data.result === "success") {
                         // SUCCESS!
-                        passwordForm.style.display = 'none'; // Hide form
-                        messageDiv.style.display = 'none'; // Hide messages
-                        passcodeDisplay.style.display = 'block'; // Show display
+                        passwordForm.style.display = 'none'; 
+                        messageDiv.style.display = 'none'; 
+                        passcodeDisplay.style.display = 'block'; 
                         
                         document.getElementById('live-passcode-title').textContent = `Live code for: ${data.data.sessionName}`;
                         
-                        // [NEW] Generate the QR code
                         generateQRCode(ATTENDANCE_URL);
 
-                        // Check if session is static or dynamic
                         if (data.data.passcodeType === 'static') {
-                            // STATIC: Show code, hide timer
-                            document.getElementById('live-passcode').textContent = data.data.secret.padStart(4, '0'); // 'secret' is the static code
+                            document.getElementById('live-passcode').textContent = data.data.secret.padStart(4, '0');
                             timerSVG.style.display = 'none';
                         } else {
-                            // DYNAMIC: Start the live timer
-                            startPasscodeTimer(data.data.secret); // 'secret' is the dynamic key
+                            startPasscodeTimer(data.data.secret); 
                         }
 
+                        // [NEW] Start the poller to check for session end
+                        startSessionActivePoller();
+
                     } else {
-                        // Handle errors (Invalid password, no active session)
                         throw new Error(data.data.message || "An unknown error occurred.");
                     }
                 })
