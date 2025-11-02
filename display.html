@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">Passcode Display</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; min-height: 100vh; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.6); border-radius: 16px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        @media (min-width: 640px) {
+            .glass-card { width: auto; height: auto; border-radius: 16px; }
+        }
+        .glass-card {
+            width: 100%; height: 100vh; border-radius: 0; border: none; box-shadow: none;
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.75); display: flex; flex-direction: column; justify-content: center;
+        }
+        #message { font-weight: 600; margin-top: 1.5rem; padding: 0.75rem; border-radius: 5px; font-size: 0.9em; }
+        .success { color: #2b7d2b; background-color: #d4edda; border: 1px solid #c3e6cb; }
+        .error { color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; }
+        input {
+             width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB;
+             border-radius: 0.5rem; font-size: 0.875rem; box-sizing: border-box;
+             background-color: rgba(255, 255, 255, 0.5);
+         }
+        label { display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem; }
+        #timer-svg { transform: rotate(-90deg); }
+        .timer-track, .timer-progress { fill: none; stroke-width: 8; } /* Thicker line */
+        .timer-track { stroke: #e6e6e6; }
+        .timer-progress { stroke: #C53030; stroke-linecap: round; transition: stroke-dashoffset 0.3s linear; }
+        #live-passcode {
+            font-size: 6rem; /* Much larger for display */
+            font-weight: 700;
+            color: #C53030;
+            display: block;
+            letter-spacing: 0.1em;
+        }
+        .passcode-text-content { text-align: center; }
+        #passcodeDisplay { display: none; } /* Hidden by default */
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-100 via-indigo-200 to-blue-200 flex flex-col items-center justify-center min-h-screen p-0">
+
+    <div class="glass-card w-full max-w-lg p-8 md:p-12 text-center">
+        <div class="mb-8">
+            <a href="./index.html" class="inline-block">
+                <img src="https://admission.must.edu.eg/lovable-uploads/a51bf950-39e9-4502-bf1f-fcc9e958e555.png" alt="MUST Logo" class="h-28 w-28 mx-auto">
+            </a>
+        </div>
+
+        <h1 id="mainTitle" class="text-2xl font-bold text-gray-900 mb-2">Passcode Display Screen</h1>
+
+        <form id="passwordForm" class="text-left px-4 sm:px-0">
+            <p id="subTitle" class="text-gray-700 mb-8 text-center">Enter admin password to show the live code.</p>
+            <div class="mb-4">
+                <label id="labelPassword" for="adminPassword">Admin Password</label>
+                <input type="password" id="adminPassword" required>
+            </div>
+            <button type="submit" id="verifyBtn" class="w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-base disabled:bg-gray-400 shadow-md hover:shadow-lg">
+                Show Passcode
+            </button>
+        </form>
+        
+        <div id="passcodeDisplay">
+            <div id="live-passcode-title" class="text-2xl font-semibold text-gray-800"></div>
+            
+            <div style="display: flex; align-items: center; justify-content: center; gap: 2rem; margin-top: 2rem;">
+              <svg id="timer-svg" width="100" height="100" viewBox="0 0 100 100">
+                <circle class="timer-track" r="45" cx="50" cy="50"></circle>
+                <circle class="timer-progress" r="45" cx="50" cy="50"></circle>
+              </svg>
+              <div class="passcode-text-content">
+                <span id='live-passcode'>....</span>
+              </div>
+            </div>
+        </div>
+
+        <div id="message"></div>
+    </div>
+
+    <script>
+        let passcodeTimer = null; 
+        const TOTP_WINDOW = 30; // 30 seconds
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwCjH23ufU7dh1F1HlgTk_UY8n0wcJxsMJ0TbihPk3zSiIFiX2UdPwmrANHmrjOtm9FKA/exec";
+
+        const passwordForm = document.getElementById('passwordForm');
+        const passcodeDisplay = document.getElementById('passcodeDisplay');
+        const messageDiv = document.getElementById('message');
+        const verifyBtn = document.getElementById('verifyBtn');
+
+        // --- Passcode calculation function ---
+        function calculatePasscode(secret, timeStep) {
+          var str = secret + timeStep.toString();
+          var hash = 0;
+          if (str.length === 0) return '0000';
+          for (var i = 0; i < str.length; i++) {
+            var char = str.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash = hash & hash;
+          }
+          var code = Math.abs(hash) % 10000;
+          return code.toString().padStart(4, '0');
+        }
+
+        // --- Timer and animation function ---
+        function startPasscodeTimer(secret) {
+            if (passcodeTimer) clearInterval(passcodeTimer);
+
+            const passcodeEl = document.getElementById('live-passcode');
+            const progressCircle = document.querySelector('.timer-progress');
+            if (!passcodeEl || !progressCircle) return;
+
+            const radius = progressCircle.r.baseVal.value;
+            const circumference = 2 * Math.PI * radius;
+            progressCircle.style.strokeDasharray = `${circumference} ${circumference}`;
+
+            function updateDisplay() {
+                let timeStep = Math.floor(Date.now() / (TOTP_WINDOW * 1000));
+                let code = calculatePasscode(secret, timeStep);
+                passcodeEl.textContent = code;
+                const secondsSinceEpoch = Math.floor(Date.now() / 1000);
+                const secondsRemaining = TOTP_WINDOW - (secondsSinceEpoch % TOTP_WINDOW);
+                const percentageElapsed = (TOTP_WINDOW - secondsRemaining) / TOTP_WINDOW;
+                const offset = circumference * percentageElapsed;
+                progressCircle.style.strokeDashoffset = offset;
+            }
+            
+            updateDisplay();
+            passcodeTimer = setInterval(updateDisplay, 1000);
+        }
+
+        // --- Password Form Submission ---
+        passwordForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const password = document.getElementById('adminPassword').value;
+            if (!password) {
+                showMessage('Please enter the password.', 'error');
+                return;
+            }
+            
+            verifyBtn.disabled = true;
+            verifyBtn.textContent = "Verifying...";
+            showMessage('');
+
+            const formData = new FormData();
+            formData.append("action", "getAdminSessionData"); // New Action
+            formData.append("password", password);
+            
+            fetch(SCRIPT_URL, { method: 'POST', body: formData })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.result === "success") {
+                        // SUCCESS!
+                        passwordForm.style.display = 'none'; // Hide form
+                        messageDiv.style.display = 'none'; // Hide messages
+                        passcodeDisplay.style.display = 'block'; // Show display
+                        
+                        document.getElementById('live-passcode-title').textContent = `Live code for: ${data.data.sessionName}`;
+                        
+                        // Start the timer with the secret
+                        startPasscodeTimer(data.data.secret);
+
+                    } else {
+                        // Handle errors (Invalid password, no active session)
+                        throw new Error(data.data.message || "An unknown error occurred.");
+                    }
+                })
+                .catch(error => {
+                    showMessage(error.message, 'error');
+                    verifyBtn.disabled = false; 
+                    verifyBtn.textContent = "Show Passcode";
+                });
+        });
+
+        // --- Simple showMessage helper ---
+        function showMessage(text, type) {
+            messageDiv.textContent = text;
+            messageDiv.className = type;
+        }
+    </script>
+</body>
+</html>
