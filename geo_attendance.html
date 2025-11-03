@@ -140,62 +140,67 @@
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-blue-100 via-indigo-200 to-blue-200 flex flex-col items-center justify-center min-h-screen p-0">
+<!-- [MODIFIED] Removed flex classes */ -->
+<body class="bg-gradient-to-br from-blue-100 via-indigo-200 to-blue-200">
 
     <!-- Language Switch Button -->
     <button id="langSwitchBtn" class="lang-switch-btn">En / ع</button>
 
-    <div class="glass-card w-full max-w-lg p-8 md:p-12 text-center">
-        <!-- Logo -->
-        <div class="mb-8">
-            <a href="./index.html" class="inline-block">
-                <img src="https://admission.must.edu.eg/lovable-uploads/a51bf950-39e9-4502-bf1f-fcc9e958e555.png" alt="MUST Logo" class="h-28 w-28 mx-auto">
-            </a>
+    <!-- [NEW] Main content wrapper -->
+    <main class="flex flex-col items-center justify-center min-h-screen p-0 pb-16 sm:pb-0">
+        <div class="glass-card w-full max-w-lg p-8 md:p-12 text-center">
+            <!-- Logo -->
+            <div class="mb-8">
+                <a href="./index.html" class="inline-block">
+                    <img src="https://admission.must.edu.eg/lovable-uploads/a51bf950-39e9-4502-bf1f-fcc9e958e555.png" alt="MUST Logo" class="h-28 w-28 mx-auto">
+                </a>
+            </div>
+
+            <!-- Title & Subtitle -->
+            <h1 id="mainTitle" class="text-2xl font-bold text-gray-900 mb-2">Course Attendance System</h1>
+            <p id="subTitle" class="text-gray-700 mb-8">Misr University for Science & Technology</p>
+
+            <form id="attendanceForm" class="text-left px-4 sm:px-0">
+                <div class="mb-4">
+                    <label id="labelStudentID" for="studentID">Student ID (Numbers Only)</label>
+                    <input type="text" id="studentID" name="studentID"
+                           inputmode="numeric" pattern="[0-9]*"
+                           required>
+                </div>
+
+                <div class="mb-4">
+                     <label id="labelStudentName" for="studentName">Full Name (Text Only)</label>
+                    <input type="text" id="studentName" name="studentName"
+                           pattern="[A-Za-z\s]+"
+                           required>
+                </div>
+
+                <!-- --- [MODIFIED] Passcode field (now hidden by default) --- -->
+                <div id="passcodeContainer" class="mb-6 passcode-hidden">
+                    <label id="labelPasscode" for="passcode">Session Passcode (4-Digits)</label>
+                    <input type="text" id="passcode" name="passcode"
+                           inputmode="numeric" pattern="[0-9]{4}">
+                </div>
+                <!-- --- [END MODIFIED FIELD] --- -->
+
+
+                <button type="submit" id="submitButton" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-base disabled:bg-gray-400 shadow-md hover:shadow-lg">
+                    Submit Attendance
+                </button>
+            </form>
+
+            <div id="message"></div>
+
+            <!-- Newcomer action buttons -->
+            <div id="newcomerActions" class="newcomer-actions px-4 sm:px-0">
+                <button id="newcomerYesBtn" class="newcomer-btn newcomer-yes">Yes, I'm New</button>
+                <button id="newcomerNoBtn" class="newcomer-btn newcomer-no">No, Re-enter ID</button>
+            </div>
         </div>
+    </main>
 
-        <!-- Title & Subtitle -->
-        <h1 id="mainTitle" class="text-2xl font-bold text-gray-900 mb-2">Course Attendance System</h1>
-        <p id="subTitle" class="text-gray-700 mb-8">Misr University for Science & Technology</p>
-
-        <form id="attendanceForm" class="text-left px-4 sm:px-0">
-            <div class="mb-4">
-                <label id="labelStudentID" for="studentID">Student ID (Numbers Only)</label>
-                <input type="text" id="studentID" name="studentID"
-                       inputmode="numeric" pattern="[0-9]*"
-                       required>
-            </div>
-
-            <div class="mb-4">
-                 <label id="labelStudentName" for="studentName">Full Name (Text Only)</label>
-                <input type="text" id="studentName" name="studentName"
-                       pattern="[A-Za-z\s]+"
-                       required>
-            </div>
-
-            <!-- --- [MODIFIED] Passcode field (now hidden by default) --- -->
-            <div id="passcodeContainer" class="mb-6 passcode-hidden">
-                <label id="labelPasscode" for="passcode">Session Passcode (4-Digits)</label>
-                <input type="text" id="passcode" name="passcode"
-                       inputmode="numeric" pattern="[0-9]{4}">
-            </div>
-            <!-- --- [END MODIFIED FIELD] --- -->
-
-
-            <button type="submit" id="submitButton" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-base disabled:bg-gray-400 shadow-md hover:shadow-lg">
-                Submit Attendance
-            </button>
-        </form>
-
-        <div id="message"></div>
-
-        <!-- Newcomer action buttons -->
-        <div id="newcomerActions" class="newcomer-actions px-4 sm:px-0">
-            <button id="newcomerYesBtn" class="newcomer-btn newcomer-yes">Yes, I'm New</button>
-            <button id="newcomerNoBtn" class="newcomer-btn newcomer-no">No, Re-enter ID</button>
-        </div>
-    </div>
-
-    <footer class="mt-8 text-gray-700 text-xs md:text-sm absolute bottom-4">
+    <!-- [MODIFIED] Footer is now outside main, at the bottom of the body -->
+    <footer class="w-full text-center text-gray-700 text-xs md:text-sm absolute bottom-4">
         <p id="footerText">&copy; Misr University for Science and Technology</p>
     </footer>
 
