@@ -99,15 +99,17 @@
         
         /* --- [NEW] Logo Timer Styles --- */
         .logo-timer-container {
-            display: grid; /* Use grid for easy centering */
-            place-items: center; /* Center both items */
-            position: relative; /* For stacking */
+            /* [MODIFIED] Use grid for robust centering */
+            display: grid;
+            place-items: center;
+            position: relative; 
             width: 112px; /* 7rem */
             height: 112px; /* 7rem */
             margin: 0 auto; /* Center the container */
         }
         .logo-timer-container > * {
-            grid-column: 1 / -1; /* Place all children in the same cell */
+            /* This makes all children stack in the same grid cell */
+            grid-column: 1 / -1;
             grid-row: 1 / -1;
         }
         .timer-logo {
@@ -144,7 +146,7 @@
         /* --- [END] Logo Timer Styles --- */
         
         
-        /* --- [NEW] Toggle Switch Styles --- */
+        /* --- [MODIFIED] Toggle Switch Styles --- */
         .toggle-label {
             display: flex;
             align-items: center;
@@ -152,6 +154,7 @@
             cursor: pointer;
             width: 100%;
             margin-bottom: 0.5rem;
+            padding: 0.25rem 0; /* Add a little vertical padding */
         }
         .toggle-label span {
             font-size: 0.875rem;
@@ -163,6 +166,7 @@
             display: inline-block;
             width: 50px; /* Width of the switch */
             height: 28px; /* Height of the switch */
+            flex-shrink: 0; /* Prevent switch from shrinking */
         }
         .toggle-switch input {
             opacity: 0;
@@ -212,6 +216,7 @@
         <div id="passwordScreen">
             <!-- Logo -->
             <div class="mb-8">
+                <!-- [MODIFIED] Added link to home page -->
                 <a href="./index.html" class="inline-block">
                     <img src="https://admission.must.edu.eg/lovable-uploads/a51bf950-39e9-4502-bf1f-fcc9e958e555.png" alt="MUST Logo" class="h-28 w-28 mx-auto">
                 </a>
@@ -286,6 +291,7 @@
         <div id="liveDisplay" class="hidden-details">
             <!-- [NEW] Logo Timer Container -->
             <div class="logo-timer-container mb-4">
+                <!-- [MODIFIED] Added link to home page -->
                 <a href="./index.html" class="inline-block z-10">
                     <img src="https://admission.must.edu.eg/lovable-uploads/a51bf950-39e9-4502-bf1f-fcc9e958e555.png" alt="MUST Logo" class="timer-logo">
                 </a>
@@ -302,6 +308,7 @@
         <!-- Screen 4: Session Ended Display (Initially Hidden) -->
         <div id="sessionEndedDisplay" class="hidden-details">
             <div class="mb-8">
+                <!-- [MODIFIED] Added link to home page -->
                 <a href="./index.html" class="inline-block">
                     <img src="https://admission.must.edu.eg/lovable-uploads/a51bf950-39e9-4502-bf1f-fcc9e958e555.png" alt="MUST Logo" class="h-28 w-28 mx-auto">
                 </a>
