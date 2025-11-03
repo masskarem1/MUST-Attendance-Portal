@@ -11,9 +11,11 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            position: relative;
+            position: relative; /* For lang button positioning */
             min-height: 100vh;
         }
+        
+        /* Glassmorphism card effect */
         .glass-card {
             background: rgba(255, 255, 255, 0.6);
             border-radius: 16px;
@@ -22,31 +24,44 @@
             -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
+        /* Mobile-first: Full-screen card on mobile */
+        .glass-card {
+            width: 100%;
+            height: 100vh;
+            border-radius: 0;
+            border: none;
+            box-shadow: none;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.75);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow-y: auto; /* Allow scrolling on small screens */
+        }
+        /* On screens 'sm' and larger, it becomes a card again */
         @media (min-width: 640px) {
             .glass-card {
-                width: auto; height: auto; border-radius: 16px;
+                width: auto;
+                height: auto;
+                border-radius: 16px;
                 border: 1px solid rgba(255, 255, 255, 0.3);
                 box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
                 background: rgba(255, 255, 255, 0.6);
+                overflow-y: visible; /* Reset scrolling */
             }
         }
-        .glass-card {
-            width: 100%; height: 100vh; border-radius: 0;
-            border: none; box-shadow: none;
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            background: rgba(255, 255, 255, 0.75);
-            display: flex; flex-direction: column; justify-content: center;
-        }
-        #message, #live-message {
+
+        #message {
              font-weight: 600; margin-top: 1.5rem; padding: 0.75rem;
              border-radius: 5px; font-size: 0.9em;
          }
         .success { color: #2b7d2b; background-color: #d4edda; border: 1px solid #c3e6cb; }
         .error { color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; }
-        input[type="text"], input[type="password"], input[type="datetime-local"] {
+        input {
              width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB;
              border-radius: 0.5rem; font-size: 0.875rem; box-sizing: border-box;
-             background-color: rgba(255, 255, 255, 0.5);
+             background-color: rgba(255, 255, 255, 0.5); /* Slightly transparent input */
          }
         label {
              display: block; font-size: 0.875rem; font-weight: 500;
@@ -61,33 +76,93 @@
              box-shadow: 0 2px 4px rgba(0,0,0,0.1);
          }
         .lang-switch-btn:hover { background-color: #4B5563; }
-        body[lang="ar"] { font-family: 'Tahoma', sans-serif; direction: rtl; }
-        body[lang="ar"] label { text-align: right; }
-        body[lang="ar"] .text-left { text-align: right; }
-        body[lang="ar"] input { text-align: right; }
-        .hidden { display: none; }
+        
+        body[lang="ar"] { 
+            font-family: 'Tahoma', sans-serif; 
+            direction: rtl; /* Add Right-to-Left direction */
+        }
+        body[lang="ar"] label { 
+            text-align: right; 
+        }
+        body[lang="ar"] .text-left {
+            text-align: right;
+        }
+        body[lang="ar"] input {
+            text-align: right;
+        }
+        /* Align toggle labels in RTL */
+        body[lang="ar"] .toggle-label {
+            flex-direction: row-reverse;
+        }
 
-        /* --- Toggle Switch Styles --- */
-        .toggle-label-container {
+        .hidden-details { display: none; }
+        
+        /* --- [NEW] Logo Timer Styles --- */
+        .logo-timer-container {
+            display: grid; /* Use grid for easy centering */
+            place-items: center; /* Center both items */
+            position: relative; /* For stacking */
+            width: 112px; /* 7rem */
+            height: 112px; /* 7rem */
+            margin: 0 auto; /* Center the container */
+        }
+        .logo-timer-container > * {
+            grid-column: 1 / -1; /* Place all children in the same cell */
+            grid-row: 1 / -1;
+        }
+        .timer-logo {
+            width: 112px; /* 7rem */
+            height: 112px; /* 7rem */
+            z-index: 10; /* Logo on top */
+        }
+        #timer-svg {
+            width: 132px; /* Make SVG slightly larger than logo for padding */
+            height: 132px;
+            transform: rotate(-90deg); /* Start the circle at the top */
+            z-index: 20; /* Timer progress on top of logo */
+        }
+        .timer-track, .timer-progress {
+            fill: none;
+            stroke-width: 6; /* Thicker stroke */
+        }
+        .timer-track {
+            stroke: rgba(255, 255, 255, 0.3); /* Semi-transparent white track */
+        }
+        .timer-progress {
+            stroke: #C53030; /* Red progress */
+            stroke-linecap: round; /* Rounded end for the progress bar */
+            transition: stroke-dashoffset 0.3s linear;
+        }
+        #live-passcode {
+            font-size: 2.5rem; /* Large code */
+            font-weight: 700;
+            color: #C53030;
+            display: block;
+            margin-top: 1rem;
+            letter-spacing: 0.1em;
+        }
+        /* --- [END] Logo Timer Styles --- */
+        
+        
+        /* --- [NEW] Toggle Switch Styles --- */
+        .toggle-label {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1rem;
+            justify-content: space-between; /* Puts label on left, switch on right */
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 0.5rem;
         }
-        .toggle-label {
+        .toggle-label span {
             font-size: 0.875rem;
             font-weight: 500;
             color: #374151;
         }
-        body[lang="ar"] .toggle-label {
-            text-align: right;
-        }
         .toggle-switch {
             position: relative;
             display: inline-block;
-            width: 50px; /* 50px */
-            height: 28px; /* 28px */
-            margin: 0 0.5rem;
+            width: 50px; /* Width of the switch */
+            height: 28px; /* Height of the switch */
         }
         .toggle-switch input {
             opacity: 0;
@@ -101,15 +176,15 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: #ccc;
+            background-color: #ccc; /* Gray (inactive) */
             transition: .4s;
-            border-radius: 28px;
+            border-radius: 28px; /* Rounded switch */
         }
         .slider:before {
             position: absolute;
             content: "";
-            height: 20px; /* 20px */
-            width: 20px; /* 20px */
+            height: 20px; /* Size of the circle */
+            width: 20px;
             left: 4px;
             bottom: 4px;
             background-color: white;
@@ -117,145 +192,126 @@
             border-radius: 50%;
         }
         input:checked + .slider {
-            background-color: #C53030; /* Red */
+            background-color: #EF4444; /* Red (active) */
         }
         input:checked + .slider:before {
-            transform: translateX(22px); /* 22px */
+            transform: translateX(22px); /* Move circle to the right */
         }
-
-        /* --- Logo Timer Styles --- */
-        .logo-timer-container {
-            display: grid;
-            place-items: center; /* Center both logo and timer */
-            width: 112px; /* h-28 */
-            height: 112px; /* w-28 */
-            margin: 0 auto 2rem auto; /* Replaces mb-8 and mx-auto */
-            position: relative; /* Needed for grid layout */
-        }
-        #logo-timer-svg {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            transform: rotate(-90deg); /* Start the circle at the top */
-        }
-        .timer-track, .timer-progress {
-            fill: none;
-            stroke-width: 6; /* Thicker line */
-        }
-        .timer-track {
-            stroke: #e6e6e6; /* Light gray background track */
-        }
-        .timer-progress {
-            stroke: #C53030; /* Red progress, matches the code color */
-            stroke-linecap: round; /* Rounded end for the progress bar */
-            transition: stroke-dashoffset 0.3s linear; /* Smooths the tick animation */
-        }
-        #live-logo {
-            /* Logo is a grid item, centered by place-items */
-            width: 100%;
-            height: 100%;
-            z-index: 10;
-        }
-        #live-passcode {
-            font-size: 2rem; 
-            font-weight: 700;
-            color: #C53030;
-            display: block; 
-            letter-spacing: 0.1em;
-        }
+        /* --- [END] Toggle Switch Styles --- */
+        
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-100 via-indigo-200 to-blue-200 flex flex-col items-center justify-center min-h-screen p-0">
 
+    <!-- Language Switch Button -->
     <button id="langSwitchBtn" class="lang-switch-btn">En / ع</button>
 
     <div class="glass-card w-full max-w-lg p-8 md:p-12 text-center">
-        <!-- Logo (Original, for password screen) -->
-        <div id="originalLogo" class="mb-8">
-            <a href="./index.html" class="inline-block">
-                <img src="https://admission.must.edu.eg/lovable-uploads/a51bf950-39e9-4502-bf1f-fcc9e958e555.png" alt="MUST Logo" class="h-28 w-28 mx-auto">
-            </a>
-        </div>
-
-        <!-- Title & Subtitle -->
-        <h1 id="mainTitle" class="text-2xl font-bold text-gray-900 mb-2">Set Class Session</h1>
-        <p id="subTitle" class="text-gray-700 mb-8">Misr University for Science & Technology</p>
-
-        <!-- Password Section (Always Visible) -->
-        <form id="passwordForm" class="text-left px-4 sm:px-0">
-            <div class="mb-4">
-                <label id="labelPassword" for="adminPassword">Admin Password</label>
-                <input type="password" id="adminPassword" required>
-            </div>
-            <button type="submit" id="verifyBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-base disabled:bg-gray-400 shadow-md hover:shadow-lg">
-                Verify Password
-            </button>
-        </form>
         
-        <!-- Session Details Section (Initially Hidden) -->
-        <form id="sessionForm" class="hidden text-left px-4 sm:px-0">
-            <p id="verifiedText" style="margin-top: 1.5rem; font-weight: 600; color: #333; text-align: center; margin-bottom: 1.5rem;">Password Verified. Set session details:</p>
-            <div class="mb-4">
-                <label id="labelSessionName" for="sessionName">Session Name (for new sheet tab)</label>
-                <input type="text" id="sessionName" required>
-            </div>
-            <div class="flex flex-col sm:flex-row sm:justify-between gap-4 mb-4">
-                <div class="w-full sm:w-1/2">
-                    <label id="labelStartTime" for="startTime">Start Time</label>
-                    <input type="datetime-local" id="startTime" class="text-gray-700" required>
-                </div>
-                <div class="w-full sm:w-1/2">
-                    <label id="labelEndTime" for="endTime">End Time</label>
-                    <input type="datetime-local" id="endTime" class="text-gray-700" required>
-                </div>
+        <!-- Screen 1: Password Form -->
+        <div id="passwordScreen">
+            <!-- Logo -->
+            <div class="mb-8">
+                <a href="./index.html" class="inline-block">
+                    <img src="https://admission.must.edu.eg/lovable-uploads/a51bf950-39e9-4502-bf1f-fcc9e958e555.png" alt="MUST Logo" class="h-28 w-28 mx-auto">
+                </a>
             </div>
 
-            <!-- Enable Passcode Toggle -->
-            <div class="toggle-label-container">
-                <span id="labelEnablePasscode" class="toggle-label">Enable Passcode</span>
-                <label class="toggle-switch">
-                    <input type="checkbox" id="enablePasscodeToggle" checked>
-                    <span class="slider"></span>
-                </label>
-            </div>
+            <!-- Title & Subtitle -->
+            <h1 id="mainTitle" class="text-2xl font-bold text-gray-900 mb-2">Set Class Session</h1>
+            <p id="subTitle" class="text-gray-700 mb-8">Misr University for Science & Technology</p>
 
-            <!-- Dynamic Passcode Toggle (Hidden by default) -->
-            <div id="dynamicPasscodeContainer" class="toggle-label-container">
-                <span id="labelDynamicPasscode" class="toggle-label">Dynamic Passcode</span>
-                <label class="toggle-switch">
-                    <input type="checkbox" id="dynamicPasscodeToggle" checked>
-                    <span class="slider"></span>
-                </label>
+            <!-- Password Form -->
+            <form id="passwordForm" class="text-left px-4 sm:px-0">
+                <div class="mb-4">
+                    <label id="labelPassword" for="adminPassword">Admin Password</label>
+                    <input type="password" id="adminPassword" required>
+                </div>
+                <button type="submit" id="verifyBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-base disabled:bg-gray-400 shadow-md hover:shadow-lg">
+                    Verify Password
+                </button>
+            </form>
+        </div>
+        
+        <!-- Screen 2: Session Form (Initially Hidden) -->
+        <div id="sessionScreen" class="hidden-details">
+            <p id="verifiedText" style="font-weight: 600; color: #333; text-align: center; margin-bottom: 1.5rem;">Password Verified. Set session details:</p>
+            
+            <form id="sessionForm" class="text-left px-4 sm:px-0">
+                <div class="mb-4">
+                    <label id="labelSessionName" for="sessionName">Session Name (for new sheet tab)</label>
+                    <input type="text" id="sessionName" required>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row sm:justify-between gap-4 mb-4">
+                    <div class="w-full sm:w-1/2">
+                        <label id="labelStartTime" for="startTime">Start Time</label>
+                        <input type="datetime-local" id="startTime" class="text-gray-700" required>
+                    </div>
+                    <div class="w-full sm:w-1/2">
+                        <label id="labelEndTime" for="endTime">End Time</label>
+                        <input type="datetime-local" id="endTime" class="text-gray-700" required>
+                    </div>
+                </div>
+
+                <!-- [NEW] Enable Passcode Toggle -->
+                <div class="mb-4 pt-2">
+                    <label class="toggle-label">
+                        <span id="labelEnablePasscode">Enable Passcode</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="enablePasscode" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </label>
+                </div>
+                
+                <!-- [MODIFIED] Dynamic Passcode Toggle (now inside a container) -->
+                <div id="dynamicToggleContainer" class="mb-6">
+                    <label class="toggle-label">
+                        <span id="labelDynamicPasscode">Dynamic Passcode</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="passcodeType" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </label>
+                </div>
+
+                <button type="submit" id="setLocationBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-base disabled:bg-gray-400 shadow-md hover:shadow-lg">
+                    Set Location & Open Attendance
+                </button>
+            </form>
+        </div>
+        
+        <!-- Screen 3: Live Passcode Display (Initially Hidden) -->
+        <div id="liveDisplay" class="hidden-details">
+            <!-- [NEW] Logo Timer Container -->
+            <div class="logo-timer-container mb-4">
+                <a href="./index.html" class="inline-block z-10">
+                    <img src="https://admission.must.edu.eg/lovable-uploads/a51bf950-39e9-4502-bf1f-fcc9e958e555.png" alt="MUST Logo" class="timer-logo">
+                </a>
+                <svg id="timer-svg" viewBox="0 0 100 100">
+                    <circle class="timer-track" r="45" cx="50" cy="50"></circle>
+                    <circle class="timer-progress" r="45" cx="50" cy="50"></circle>
+                </svg>
             </div>
             
-            <button type="submit" id="setLocationBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-base disabled:bg-gray-400 shadow-md hover:shadow-lg mt-6">
-                Set Location & Open Attendance
-            </button>
-        </form>
-        
-        <!-- Live Display (After Session Set) -->
-        <div id="liveDisplay" class="hidden">
-            <!-- Logo with Timer -->
-            <div class="logo-timer-container">
-                <svg id="logo-timer-svg" viewBox="0 0 44 44">
-                    <circle class="timer-track" r="20" cx="22" cy="22"></circle>
-                    <circle class="timer-progress" r="20" cx="22" cy="22"></circle>
-                </svg>
-                <img id="live-logo" src="https://admission.must.edu.eg/lovable-uploads/a51bf950-39e9-4502-bf1f-fcc9e958e555.png" alt="MUST Logo">
+            <div id="live-passcode-title" class="text-xl font-semibold text-gray-800"></div>
+            <span id='live-passcode'>....</span>
+        </div>
+
+        <!-- Screen 4: Session Ended Display (Initially Hidden) -->
+        <div id="sessionEndedDisplay" class="hidden-details">
+            <div class="mb-8">
+                <a href="./index.html" class="inline-block">
+                    <img src="https://admission.must.edu.eg/lovable-uploads/a51bf950-39e9-4502-bf1f-fcc9e958e555.png" alt="MUST Logo" class="h-28 w-28 mx-auto">
+                </a>
             </div>
-
-            <h2 id="live-session-name" class="text-2xl font-bold text-gray-900"></h2>
-            <p id="live-passcode-title" class="text-lg text-gray-700"></p>
-            <span id="live-passcode" class="mt-2">....</span>
-            <div id="live-message" class="mt-4"></div>
+            <h1 id="sessionEndedTitle" class="text-2xl font-bold text-gray-900 mb-2">Session Ended</h1>
+            <p id="sessionEndedSub" class="text-gray-700 mb-8">The attendance period is over.</p>
         </div>
 
-        <!-- Session Ended Display -->
-        <div id="sessionEndedDisplay" class="hidden">
-            <h2 id="sessionEndedTitle" class="text-2xl font-bold text-gray-900">Session Ended</h2>
-            <p id="sessionEndedSub" class="text-lg text-gray-700 mt-2">Attendance is now closed.</p>
-        </div>
 
+        <!-- Universal Message Div -->
         <div id="message"></div>
     </div>
 
@@ -264,10 +320,9 @@
     </footer>
 
     <script>
-        // --- Global timer variables ---
+        // --- [NEW] Global timer variables ---
         let passcodeTimer = null; 
         let sessionPoller = null;
-        let activeSessionData = null; // Store session data
         const TOTP_WINDOW = 30; // 30 seconds
 
         // --- Translation Data ---
@@ -283,8 +338,8 @@
                 labelSessionName: "Session Name (for new sheet tab)",
                 labelStartTime: "Start Time",
                 labelEndTime: "End Time",
-                labelEnablePasscode: "Enable Passcode",
-                labelDynamicPasscode: "Dynamic Passcode",
+                labelEnablePasscode: "Enable Passcode", // [NEW]
+                labelDynamicPasscode: "Dynamic Passcode", // [MODIFIED]
                 setLocationBtn_set: "Set Location & Open Attendance",
                 setLocationBtn_getting: "Getting location...",
                 setLocationBtn_setting: "Setting location...",
@@ -294,14 +349,11 @@
                 invalidPassword: "Invalid password.",
                 sheetExists: "A sheet with the name '{sessionName}' already exists. Please use a unique name.",
                 unknownError: "An unknown error occurred.",
-                // Live Display
-                passcodeTitleDynamic: "Current Passcode:",
-                passcodeTitleStatic: "Session Passcode:",
-                passcodeTitleNone: "Passcode is OFF",
-                passcodeSubNone: "Attendance is by Location Only",
-                sessionCreated: "Session created successfully!",
+                sessionCreated_dynamic: "Session '{sessionName}' is active! Current Passcode:",
+                sessionCreated_static: "Session '{sessionName}' is active! Static Passcode:",
+                sessionCreated_none: "Session '{sessionName}' is active! (Location Only)",
                 sessionEndedTitle: "Session Ended",
-                sessionEndedSub: "Attendance is now closed."
+                sessionEndedSub: "The attendance period is over."
             },
             ar: {
                 pageTitle: "المشرف - إعداد الجلسة",
@@ -314,8 +366,8 @@
                 labelSessionName: "اسم الجلسة (لصفحة جديدة)",
                 labelStartTime: "وقت البدء",
                 labelEndTime: "وقت الانتهاء",
-                labelEnablePasscode: "تفعيل رمز المرور",
-                labelDynamicPasscode: "رمز مرور متغير",
+                labelEnablePasscode: "تفعيل رمز المرور", // [NEW]
+                labelDynamicPasscode: "رمز مرور متغير", // [MODIFIED]
                 setLocationBtn_set: "تحديد الموقع وفتح الحضور",
                 setLocationBtn_getting: "جاري تحديد الموقع...",
                 setLocationBtn_setting: "جاري إعداد الموقع...",
@@ -325,19 +377,16 @@
                 invalidPassword: "كلمة المرور غير صحيحة.",
                 sheetExists: "توجد صفحة بهذا الاسم '{sessionName}' بالفعل. الرجاء استخدام اسم فريد.",
                 unknownError: "حدث خطأ غير معروف.",
-                // Live Display
-                passcodeTitleDynamic: "رمز المرور الحالي:",
-                passcodeTitleStatic: "رمز مرور الجلسة:",
-                passcodeTitleNone: "رمز المرور معطل",
-                passcodeSubNone: "الحضور بالموقع الجغرافي فقط",
-                sessionCreated: "تم إنشاء الجلسة بنجاح!",
+                sessionCreated_dynamic: "الجلسة '{sessionName}' نشطة! رمز المرور الحالي:",
+                sessionCreated_static: "الجلسة '{sessionName}' نشطة! رمز المرور الثابت:",
+                sessionCreated_none: "الجلسة '{sessionName}' نشطة! (الحضور بالموقع فقط)",
                 sessionEndedTitle: "انتهت الجلسة",
-                sessionEndedSub: "تم إغلاق الحضور."
+                sessionEndedSub: "انتهى وقت الحضور."
             }
         };
         // --- End Translation Data ---
 
-        // --- Const declarations ---
+        // --- Element Selectors ---
         const passwordForm = document.getElementById('passwordForm');
         const sessionForm = document.getElementById('sessionForm');
         const verifyBtn = document.getElementById('verifyBtn');
@@ -347,20 +396,19 @@
         const sessionNameField = document.getElementById('sessionName');
         const langSwitchBtn = document.getElementById('langSwitchBtn');
         
-        const enablePasscodeToggle = document.getElementById('enablePasscodeToggle');
-        const dynamicPasscodeContainer = document.getElementById('dynamicPasscodeContainer');
-        const dynamicPasscodeToggle = document.getElementById('dynamicPasscodeToggle');
-
-        const originalLogo = document.getElementById('originalLogo');
-        const mainTitle = document.getElementById('mainTitle');
-        const subTitle = document.getElementById('subTitle');
+        const passwordScreen = document.getElementById('passwordScreen');
+        const sessionScreen = document.getElementById('sessionScreen');
         const liveDisplay = document.getElementById('liveDisplay');
         const sessionEndedDisplay = document.getElementById('sessionEndedDisplay');
 
+        const enablePasscodeToggle = document.getElementById('enablePasscode');
+        const dynamicToggleContainer = document.getElementById('dynamicToggleContainer');
+        const dynamicPasscodeToggle = document.getElementById('passcodeType');
+        
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwCjH23ufU7dh1F1HlgTk_UY8n0wcJxsMJ0TbihPk3zSiIFiX2UdPwmrANHmrjOtm9FKA/exec";
         let currentLang = localStorage.getItem('attendanceLang') || 'en';
 
-        // --- Passcode calculation function ---
+        // --- [NEW] Passcode calculation function ---
         function calculatePasscode(secret, timeStep) {
           var str = secret + timeStep.toString();
           var hash = 0;
@@ -374,13 +422,16 @@
           return code.toString().padStart(4, '0');
         }
 
-        // --- Timer and animation function ---
+        // --- [NEW] Function to start the 30-second timer ---
         function startPasscodeTimer(secret) {
             if (passcodeTimer) clearInterval(passcodeTimer);
 
             const passcodeEl = document.getElementById('live-passcode');
             const progressCircle = document.querySelector('.timer-progress');
             if (!passcodeEl || !progressCircle) return;
+            
+            // Show the timer
+            document.getElementById('timer-svg').style.display = 'block';
 
             const radius = progressCircle.r.baseVal.value;
             const circumference = 2 * Math.PI * radius;
@@ -390,6 +441,7 @@
                 let timeStep = Math.floor(Date.now() / (TOTP_WINDOW * 1000));
                 let code = calculatePasscode(secret, timeStep);
                 passcodeEl.textContent = code;
+
                 const secondsSinceEpoch = Math.floor(Date.now() / 1000);
                 const secondsRemaining = TOTP_WINDOW - (secondsSinceEpoch % TOTP_WINDOW);
                 const percentageElapsed = (TOTP_WINDOW - secondsRemaining) / TOTP_WINDOW;
@@ -400,81 +452,83 @@
             updateDisplay();
             passcodeTimer = setInterval(updateDisplay, 1000);
         }
-
-        // --- Session Polling ---
+        
+        // --- [NEW] Function to poll for active session ---
         function startSessionActivePoller() {
             if (sessionPoller) clearInterval(sessionPoller);
-
+            
             sessionPoller = setInterval(() => {
-                // Check if the end time (stored in activeSessionData) has passed
-                if (activeSessionData && activeSessionData.endTime) {
-                    if (new Date() > new Date(activeSessionData.endTime)) {
-                        showSessionEnded();
-                    }
-                }
-            }, 5000); // Check every 5 seconds
+                fetch(SCRIPT_URL) // This (GET request) checks for an active session
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.result !== 'success') {
+                            // Session has ended
+                            if (passcodeTimer) clearInterval(passcodeTimer);
+                            if (sessionPoller) clearInterval(sessionPoller);
+                            liveDisplay.style.display = 'none';
+                            sessionEndedDisplay.style.display = 'block';
+                            updateUI(currentLang); // Update session ended text
+                        }
+                    })
+                    .catch(err => {
+                        console.error("Error polling session status:", err);
+                        // Don't stop the timer on a network error, just try again
+                    });
+            }, 30 * 1000); // Check every 30 seconds
         }
 
-        function showSessionEnded() {
-            if (passcodeTimer) clearInterval(passcodeTimer);
-            if (sessionPoller) clearInterval(sessionPoller);
 
-            liveDisplay.classList.add('hidden');
-            mainTitle.classList.add('hidden');
-            subTitle.classList.add('hidden');
-            originalLogo.classList.remove('hidden'); // Show original logo again
-
-            sessionEndedDisplay.classList.remove('hidden');
-            updateUI(currentLang); // To translate the "Session Ended" text
-        }
-
-        // Function to update UI text
+        // --- [MODIFIED] updateUI function ---
         function updateUI(lang) {
             const t = translations[lang];
             document.documentElement.lang = lang;
             document.body.lang = lang;
+            
+            // Screen 1
             document.getElementById('pageTitle').textContent = t.pageTitle;
             document.getElementById('mainTitle').textContent = t.mainTitle;
             document.getElementById('subTitle').textContent = t.subTitle;
             document.getElementById('labelPassword').textContent = t.labelPassword;
+            const verifyTextKey = verifyBtn.dataset.textKey || 'verifyBtn_verify';
+            verifyBtn.textContent = t[verifyTextKey];
+
+            // Screen 2
             document.getElementById('verifiedText').textContent = t.verifiedText;
             document.getElementById('labelSessionName').textContent = t.labelSessionName;
             document.getElementById('labelStartTime').textContent = t.labelStartTime;
             document.getElementById('labelEndTime').textContent = t.labelEndTime;
             document.getElementById('labelEnablePasscode').textContent = t.labelEnablePasscode;
             document.getElementById('labelDynamicPasscode').textContent = t.labelDynamicPasscode;
-            document.getElementById('footerText').textContent = t.footerText;
             
+            // [FIXED] Use dataset.textKey for the setLocationBtn
+            const setTextKey = setLocationBtn.dataset.textKey || 'setLocationBtn_set';
+            setLocationBtn.textContent = t[setTextKey];
+
+
+            // Screen 4
             document.getElementById('sessionEndedTitle').textContent = t.sessionEndedTitle;
             document.getElementById('sessionEndedSub').textContent = t.sessionEndedSub;
             
-            const verifyTextKey = verifyBtn.dataset.textKey || 'verifyBtn_verify';
-            verifyBtn.textContent = t[verifyTextKey];
-            
-            // [FIXED] This was the line causing the error
-            const setTextKey = setLocationBtn.dataset.textKey || 'setLocationBtn_set';
-            setLocationBtn.textContent = t[setTextKey]; // Was t[setLocationBtn_set]
-
+            // Footer
+            document.getElementById('footerText').textContent = t.footerText;
             langSwitchBtn.textContent = lang === 'en' ? 'ع' : 'En';
         }
 
-        // Event listener for language switch
+        // --- Event Listeners ---
         langSwitchBtn.addEventListener('click', () => {
             currentLang = currentLang === 'en' ? 'ar' : 'en';
             localStorage.setItem('attendanceLang', currentLang);
             updateUI(currentLang);
             
-            if (messageDiv.dataset.messageKey) {
-                 showMessage(messageDiv.dataset.messageKey, messageDiv.className, messageDiv.dataset.messageParams ? JSON.parse(messageDiv.dataset.messageParams) : null);
-            }
-            
-            // Re-translate live display if it's active
-            if (activeSessionData) {
-                updateLiveDisplayUI();
+            // [NEW] Retranslate live display title if it's active
+            const liveTitle = document.getElementById('live-passcode-title');
+            if (liveTitle && liveTitle.dataset.key) {
+                const key = liveTitle.dataset.key;
+                const sessionName = liveTitle.dataset.sessionName;
+                liveTitle.textContent = translations[currentLang][key].replace('{sessionName}', sessionName);
             }
         });
         
-        // getLocalDateTimeString
         function getLocalDateTimeString(date) {
             const year = date.getFullYear();
             const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -484,17 +538,20 @@
             return `${year}-${month}-${day}T${hours}:${minutes}`;
         }
 
-        // DOMContentLoaded
         document.addEventListener('DOMContentLoaded', () => {
-            updateUI(currentLang);
+            updateUI(currentLang); // Set initial language
+
+            // Auto-fill times
             const now = new Date();
             const fifteenMinutesLater = new Date(now.getTime() + 15 * 60000);
             document.getElementById('startTime').value = getLocalDateTimeString(now);
             document.getElementById('endTime').value = getLocalDateTimeString(fifteenMinutesLater);
+
+            // Fetch sheet names to suggest a unique name
             verifyBtn.disabled = true; 
             verifyBtn.dataset.textKey = 'verifyBtn_verifying';
             updateUI(currentLang);
-            
+
             fetch(SCRIPT_URL + "?action=getSheetNames") 
                 .then(response => response.json())
                 .then(data => {
@@ -522,18 +579,9 @@
                     verifyBtn.dataset.textKey = 'verifyBtn_verify';
                     updateUI(currentLang);
                 });
-
-            // Toggle logic
-            enablePasscodeToggle.addEventListener('change', () => {
-                if (enablePasscodeToggle.checked) {
-                    dynamicPasscodeContainer.classList.remove('hidden');
-                } else {
-                    dynamicPasscodeContainer.classList.add('hidden');
-                }
-            });
         });
         
-        // passwordForm listener
+        // --- Password Form Submission ---
         passwordForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const password = adminPasswordField.value;
@@ -552,8 +600,9 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.result === "success") {
-                        passwordForm.style.display = 'none';
-                        sessionForm.classList.remove('hidden');
+                        // Show Screen 2
+                        passwordScreen.style.display = 'none';
+                        sessionScreen.style.display = 'block';
                         showMessage(''); 
                     } else {
                         throw new Error(data.data.message || "Verification failed");
@@ -567,10 +616,21 @@
                     updateUI(currentLang);
                 });
         });
+        
+        // --- [NEW] Toggle listener ---
+        enablePasscodeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                dynamicToggleContainer.style.display = 'block'; // Show
+            } else {
+                dynamicToggleContainer.style.display = 'none'; // Hide
+            }
+        });
 
-        // sessionForm listener
+
+        // --- [MODIFIED] Session Form Submission ---
         sessionForm.addEventListener('submit', function(e) {
             e.preventDefault();
+            // Clear any old timers
             if (passcodeTimer) clearInterval(passcodeTimer);
             if (sessionPoller) clearInterval(sessionPoller);
 
@@ -579,14 +639,9 @@
             const endTime = document.getElementById('endTime').value;
             const sessionName = sessionNameField.value; 
             
-            let passcodeType;
-            if (!enablePasscodeToggle.checked) {
-                passcodeType = 'none';
-            } else if (dynamicPasscodeToggle.checked) {
-                passcodeType = 'dynamic';
-            } else {
-                passcodeType = 'static';
-            }
+            // [NEW] Get toggle values
+            const enablePasscode = enablePasscodeToggle.checked;
+            const isDynamic = dynamicPasscodeToggle.checked;
 
             if (!password || !startTime || !endTime || !sessionName) {
                 showMessage('fillFields', 'error');
@@ -596,6 +651,7 @@
             setLocationBtn.dataset.textKey = 'setLocationBtn_getting';
             updateUI(currentLang);
             showMessage('');
+            
             navigator.geolocation.getCurrentPosition(
                 function(position) {
                     setLocationBtn.dataset.textKey = 'setLocationBtn_setting';
@@ -609,34 +665,46 @@
                     formData.append("startTime", startTime); 
                     formData.append("endTime", endTime);     
                     formData.append("sessionName", sessionName); 
-                    formData.append("passcodeType", passcodeType); // 'dynamic', 'static', or 'none'
+                    formData.append("enablePasscode", enablePasscode); // [NEW]
+                    formData.append("isDynamic", isDynamic); // [NEW]
 
                     fetch(SCRIPT_URL, { method: 'POST', body: formData })
                         .then(response => response.json())
                         .then(data => {
                             if (data.result === "success") {
-                                // Store session data globally
-                                activeSessionData = {
-                                    sessionName: data.data.sessionName,
-                                    secret: data.data.secret, // This is the secret OR static code OR "NONE"
-                                    type: passcodeType,
-                                    endTime: endTime
-                                };
-
-                                // Hide forms and main titles
-                                sessionForm.classList.add('hidden');
-                                originalLogo.classList.add('hidden');
-                                mainTitle.classList.add('hidden');
-                                subTitle.classList.add('hidden');
-                                messageDiv.innerHTML = ''; // Clear setup messages
+                                // --- [MODIFIED] Show Screen 3 ---
+                                sessionScreen.style.display = 'none';
+                                liveDisplay.style.display = 'block';
                                 
-                                // Show the live display
-                                liveDisplay.classList.remove('hidden');
-                                
-                                // Update and show the live display content
-                                updateLiveDisplayUI();
+                                const sessionName = data.data.sessionName;
+                                const secret = data.data.secret;
+                                const passcodeType = data.data.passcodeType;
 
-                                // Start polling to check for session end
+                                const titleEl = document.getElementById('live-passcode-title');
+                                const passcodeEl = document.getElementById('live-passcode');
+                                const timerEl = document.getElementById('timer-svg');
+
+                                let titleKey = 'sessionCreated_none';
+                                
+                                if (passcodeType === 'dynamic') {
+                                    titleKey = 'sessionCreated_dynamic';
+                                    startPasscodeTimer(secret);
+                                } else if (passcodeType === 'static') {
+                                    titleKey = 'sessionCreated_static';
+                                    passcodeEl.textContent = secret; // Show the static code
+                                    timerEl.style.display = 'none'; // Hide timer
+                                } else {
+                                    // 'none'
+                                    titleKey = 'sessionCreated_none';
+                                    passcodeEl.style.display = 'none'; // Hide code
+                                    timerEl.style.display = 'none'; // Hide timer
+                                }
+
+                                titleEl.textContent = translations[currentLang][titleKey].replace('{sessionName}', sessionName);
+                                titleEl.dataset.key = titleKey; // For re-translation
+                                titleEl.dataset.sessionName = sessionName;
+                                
+                                // Start polling to check when session ends
                                 startSessionActivePoller();
 
                             } else {
@@ -646,8 +714,6 @@
                         })
                         .catch(errorKey => { 
                             showMessage(errorKey.message || errorKey, 'error', { sessionName: sessionName });
-                        })
-                        .finally(() => {
                             setLocationBtn.disabled = false;
                             setLocationBtn.dataset.textKey = 'setLocationBtn_set';
                             updateUI(currentLang);
@@ -662,52 +728,17 @@
                 { enableHighAccuracy: true }
             );
         });
-
-        // Helper to update the live display based on session data and language
-        function updateLiveDisplayUI() {
-            if (!activeSessionData) return;
-
-            const t = translations[currentLang];
-            const passcodeEl = document.getElementById('live-passcode');
-            const passcodeTitleEl = document.getElementById('live-passcode-title');
-            const timerSVG = document.getElementById('logo-timer-svg');
-            const liveMessage = document.getElementById('live-message');
-
-            document.getElementById('live-session-name').textContent = activeSessionData.sessionName;
-            liveMessage.textContent = t.sessionCreated;
-            liveMessage.className = 'success';
-
-            // Reset styles
-            passcodeEl.style.fontSize = "";
-            passcodeEl.style.color = "";
-
-            if (activeSessionData.type === 'dynamic') {
-                passcodeTitleEl.textContent = t.passcodeTitleDynamic;
-                timerSVG.classList.remove('hidden');
-                startPasscodeTimer(activeSessionData.secret);
-            } else if (activeSessionData.type === 'static') {
-                passcodeTitleEl.textContent = t.passcodeTitleStatic;
-                passcodeEl.textContent = activeSessionData.secret;
-                timerSVG.classList.add('hidden');
-                if (passcodeTimer) clearInterval(passcodeTimer);
-            } else { // 'none'
-                passcodeTitleEl.textContent = t.passcodeTitleNone;
-                passcodeEl.textContent = t.passcodeSubNone;
-                passcodeEl.style.fontSize = "1.25rem"; // Smaller font for subtitle
-                passcodeEl.style.color = "#374151"; // Gray text
-                timerSVG.classList.add('hidden');
-                if (passcodeTimer) clearInterval(passcodeTimer);
-            }
-        }
         
         // findKeyByEnglishValue
         function findKeyByEnglishValue(value, englishTranslations) {
             if (!value) return null;
+            // Exact matches first
             for (const key in englishTranslations) {
-                if (value.includes(englishTranslations[key])) { 
+                if (englishTranslations[key] === value) { 
                     return key;
                 }
             }
+            // Partial matches
             if (value.includes("Invalid password")) return 'invalidPassword';
             if (value.includes("already exists")) return 'sheetExists';
             return 'unknownError'; 
@@ -715,8 +746,11 @@
 
         // showMessage
         function showMessage(key, type, params = null) {
-            if (passcodeTimer) clearInterval(passcodeTimer);
-            if (sessionPoller) clearInterval(sessionPoller);
+            // Clear any running timers if an error is shown
+            if (type === 'error') {
+                if (passcodeTimer) clearInterval(passcodeTimer);
+                if (sessionPoller) clearInterval(sessionPoller);
+            }
 
             let messageText = translations[currentLang][key] || translations['en'][key] || key;
             if (params) {
@@ -724,7 +758,7 @@
                     messageText = messageText.replace(`{${pKey}}`, params[pKey]);
                 }
             }
-            messageDiv.innerHTML = messageText;
+            messageDiv.innerHTML = messageText; 
             messageDiv.className = type;
             messageDiv.dataset.messageKey = key;
             messageDiv.dataset.messageParams = params ? JSON.stringify(params) : "";
