@@ -11,10 +11,9 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            position: relative; 
+            position: relative;
             min-height: 100vh;
         }
-        
         .glass-card {
             background: rgba(255, 255, 255, 0.6);
             border-radius: 16px;
@@ -23,42 +22,31 @@
             -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
-        /* Mobile-first: Full-screen card on mobile */
-        .glass-card {
-            width: 100%;
-            height: 100vh;
-            border-radius: 0;
-            border: none;
-            box-shadow: none;
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            background: rgba(255, 255, 255, 0.75);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        /* On screens 'sm' and larger, it becomes a card again */
         @media (min-width: 640px) {
             .glass-card {
-                width: auto;
-                height: auto;
-                border-radius: 16px;
+                width: auto; height: auto; border-radius: 16px;
                 border: 1px solid rgba(255, 255, 255, 0.3);
                 box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
                 background: rgba(255, 255, 255, 0.6);
             }
         }
-
-        #message {
+        .glass-card {
+            width: 100%; height: 100vh; border-radius: 0;
+            border: none; box-shadow: none;
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.75);
+            display: flex; flex-direction: column; justify-content: center;
+        }
+        #message, #live-message {
              font-weight: 600; margin-top: 1.5rem; padding: 0.75rem;
              border-radius: 5px; font-size: 0.9em;
          }
         .success { color: #2b7d2b; background-color: #d4edda; border: 1px solid #c3e6cb; }
         .error { color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; }
-        input {
+        input[type="text"], input[type="password"], input[type="datetime-local"] {
              width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB;
              border-radius: 0.5rem; font-size: 0.875rem; box-sizing: border-box;
-             background-color: rgba(255, 255, 255, 0.5); 
+             background-color: rgba(255, 255, 255, 0.5);
          }
         label {
              display: block; font-size: 0.875rem; font-weight: 500;
@@ -73,41 +61,33 @@
              box-shadow: 0 2px 4px rgba(0,0,0,0.1);
          }
         .lang-switch-btn:hover { background-color: #4B5563; }
-        
-        body[lang="ar"] { 
-            font-family: 'Tahoma', sans-serif; 
-            direction: rtl; 
-        }
-        body[lang="ar"] label { 
-            text-align: right; 
-        }
-        body[lang="ar"] .text-left {
-            text-align: right;
-        }
-        body[lang="ar"] input {
-            text-align: right;
-        }
-        
-        /* --- [MODIFIED] Passcode Toggle Switch Styles --- */
-        /* [NEW] Flex container to align text and switch */
-        .toggle-container {
+        body[lang="ar"] { font-family: 'Tahoma', sans-serif; direction: rtl; }
+        body[lang="ar"] label { text-align: right; }
+        body[lang="ar"] .text-left { text-align: right; }
+        body[lang="ar"] input { text-align: right; }
+        .hidden { display: none; }
+
+        /* --- Toggle Switch Styles --- */
+        .toggle-label-container {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            width: 100%;
+            margin-bottom: 1rem;
         }
-
-        .toggle-label-text {
+        .toggle-label {
             font-size: 0.875rem;
             font-weight: 500;
             color: #374151;
         }
-
+        body[lang="ar"] .toggle-label {
+            text-align: right;
+        }
         .toggle-switch {
             position: relative;
             display: inline-block;
-            width: 60px;
-            height: 34px;
+            width: 50px; /* 50px */
+            height: 28px; /* 28px */
+            margin: 0 0.5rem;
         }
         .toggle-switch input {
             opacity: 0;
@@ -121,15 +101,15 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: #ccc; /* Off color */
+            background-color: #ccc;
             transition: .4s;
-            border-radius: 34px;
+            border-radius: 28px;
         }
         .slider:before {
             position: absolute;
             content: "";
-            height: 26px;
-            width: 26px;
+            height: 20px; /* 20px */
+            width: 20px; /* 20px */
             left: 4px;
             bottom: 4px;
             background-color: white;
@@ -137,93 +117,65 @@
             border-radius: 50%;
         }
         input:checked + .slider {
-            background-color: #DC2626; /* Red (Dynamic) */
+            background-color: #C53030; /* Red */
         }
         input:checked + .slider:before {
-            transform: translateX(26px);
+            transform: translateX(22px); /* 22px */
         }
-        /* --- [END] Toggle Switch Styles --- */
 
-        /* --- [NEW] Logo Timer Styles --- */
+        /* --- Logo Timer Styles --- */
         .logo-timer-container {
-            display: grid; /* Use Grid */
-            place-items: center; /* Center items horizontally and vertically */
-            position: relative; /* For stacking */
-            width: 112px; /* w-28 */
-            height: 112px; /* h-28 */
-            margin: 0 auto 2rem auto; /* Center the block */
+            display: grid;
+            place-items: center; /* Center both logo and timer */
+            width: 112px; /* h-28 */
+            height: 112px; /* w-28 */
+            margin: 0 auto 2rem auto; /* Replaces mb-8 and mx-auto */
+            position: relative; /* Needed for grid layout */
         }
-        /* Both img and svg go into the same grid cell */
-        .logo-timer-container img,
-        .logo-timer-container svg {
-            grid-column: 1;
-            grid-row: 1;
-        }
-        #timer-svg {
-            width: 128px; /* Slightly larger than logo */
-            height: 128px;
-            transform: rotate(-90deg);
-            z-index: 10; /* Timer on top */
+        #logo-timer-svg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg); /* Start the circle at the top */
         }
         .timer-track, .timer-progress {
             fill: none;
-            stroke-width: 6; /* Line thickness */
+            stroke-width: 6; /* Thicker line */
         }
-        .timer-track { 
-            stroke: rgba(255, 255, 255, 0.4); /* Semi-transparent track */
+        .timer-track {
+            stroke: #e6e6e6; /* Light gray background track */
         }
-        .timer-progress { 
-            stroke: #DC2626; /* Red progress */
-            stroke-linecap: round; 
-            transition: stroke-dashoffset 0.3s linear; 
+        .timer-progress {
+            stroke: #C53030; /* Red progress, matches the code color */
+            stroke-linecap: round; /* Rounded end for the progress bar */
+            transition: stroke-dashoffset 0.3s linear; /* Smooths the tick animation */
+        }
+        #live-logo {
+            /* Logo is a grid item, centered by place-items */
+            width: 100%;
+            height: 100%;
+            z-index: 10;
         }
         #live-passcode {
-            font-size: 2.5rem; /* 4xl */
+            font-size: 2rem; 
             font-weight: 700;
-            color: #DC2626;
+            color: #C53030;
+            display: block; 
             letter-spacing: 0.1em;
         }
-        /* --- [END] Logo Timer Styles --- */
-
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-100 via-indigo-200 to-blue-200 flex flex-col items-center justify-center min-h-screen p-0">
 
-    <!-- Language Switch Button -->
     <button id="langSwitchBtn" class="lang-switch-btn">En / ع</button>
 
     <div class="glass-card w-full max-w-lg p-8 md:p-12 text-center">
-        <!-- Logo (original) -->
+        <!-- Logo (Original, for password screen) -->
         <div id="originalLogo" class="mb-8">
             <a href="./index.html" class="inline-block">
                 <img src="https://admission.must.edu.eg/lovable-uploads/a51bf950-39e9-4502-bf1f-fcc9e958e555.png" alt="MUST Logo" class="h-28 w-28 mx-auto">
             </a>
         </div>
-
-        <!-- [NEW] Live Passcode Display (starts hidden) -->
-        <div id="liveDisplay" style="display: none;">
-            <!-- [NEW] Timer/Logo Container -->
-            <div class="logo-timer-container">
-                <svg id="timer-svg" viewBox="0 0 128 128">
-                    <circle class="timer-track" r="60" cx="64" cy="64"></circle>
-                    <circle class="timer-progress" r="60" cx="64" cy="64"></circle>
-                </svg>
-                <img src="https://admission.must.edu.eg/lovable-uploads/a51bf950-39e9-4502-bf1f-fcc9e958e555.png" alt="MUST Logo" class="h-28 w-28">
-            </div>
-            
-            <h2 id="live-passcode-title" class="text-xl font-semibold text-gray-800"></h2>
-            <span id="live-passcode" class="block">....</span>
-        </div>
-
-        <!-- [NEW] Session Ended Display (starts hidden) -->
-        <div id="sessionEndedDisplay" class="text-center" style="display: none;">
-            <div class="mb-8"> <!-- Show logo here too -->
-                <img src="https://admission.must.edu.eg/lovable-uploads/a51bf950-39e9-4502-bf1f-fcc9e958e555.png" alt="MUST Logo" class="h-28 w-28 mx-auto">
-            </div>
-            <h2 class="text-3xl font-bold text-gray-800">Session Ended</h2>
-            <p class="text-lg text-gray-600 mt-2">You can now close this window.</p>
-        </div>
-
 
         <!-- Title & Subtitle -->
         <h1 id="mainTitle" class="text-2xl font-bold text-gray-900 mb-2">Set Class Session</h1>
@@ -241,14 +193,12 @@
         </form>
         
         <!-- Session Details Section (Initially Hidden) -->
-        <form id="sessionForm" class="text-left px-4 sm:px-0" style="display: none;">
+        <form id="sessionForm" class="hidden text-left px-4 sm:px-0">
             <p id="verifiedText" style="margin-top: 1.5rem; font-weight: 600; color: #333; text-align: center; margin-bottom: 1.5rem;">Password Verified. Set session details:</p>
-            
             <div class="mb-4">
                 <label id="labelSessionName" for="sessionName">Session Name (for new sheet tab)</label>
                 <input type="text" id="sessionName" required>
             </div>
-            
             <div class="flex flex-col sm:flex-row sm:justify-between gap-4 mb-4">
                 <div class="w-full sm:w-1/2">
                     <label id="labelStartTime" for="startTime">Start Time</label>
@@ -260,23 +210,52 @@
                 </div>
             </div>
 
-            <!-- [MODIFIED] Passcode Toggle -->
-            <div class="mb-6">
-                <!-- [NEW] Flex container -->
-                <div class="toggle-container">
-                    <span id="labelPasscodeType" class="toggle-label-text">Dynamic Passcode</span>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="passcodeType" checked>
-                        <span class="slider"></span>
-                    </label>
-                </div>
+            <!-- Enable Passcode Toggle -->
+            <div class="toggle-label-container">
+                <span id="labelEnablePasscode" class="toggle-label">Enable Passcode</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="enablePasscodeToggle" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Dynamic Passcode Toggle (Hidden by default) -->
+            <div id="dynamicPasscodeContainer" class="toggle-label-container">
+                <span id="labelDynamicPasscode" class="toggle-label">Dynamic Passcode</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="dynamicPasscodeToggle" checked>
+                    <span class="slider"></span>
+                </label>
             </div>
             
-            <button type="submit" id="setLocationBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-base disabled:bg-gray-400 shadow-md hover:shadow-lg">
+            <button type="submit" id="setLocationBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-base disabled:bg-gray-400 shadow-md hover:shadow-lg mt-6">
                 Set Location & Open Attendance
             </button>
         </form>
         
+        <!-- Live Display (After Session Set) -->
+        <div id="liveDisplay" class="hidden">
+            <!-- Logo with Timer -->
+            <div class="logo-timer-container">
+                <svg id="logo-timer-svg" viewBox="0 0 44 44">
+                    <circle class="timer-track" r="20" cx="22" cy="22"></circle>
+                    <circle class="timer-progress" r="20" cx="22" cy="22"></circle>
+                </svg>
+                <img id="live-logo" src="https://admission.must.edu.eg/lovable-uploads/a51bf950-39e9-4502-bf1f-fcc9e958e555.png" alt="MUST Logo">
+            </div>
+
+            <h2 id="live-session-name" class="text-2xl font-bold text-gray-900"></h2>
+            <p id="live-passcode-title" class="text-lg text-gray-700"></p>
+            <span id="live-passcode" class="mt-2">....</span>
+            <div id="live-message" class="mt-4"></div>
+        </div>
+
+        <!-- Session Ended Display -->
+        <div id="sessionEndedDisplay" class="hidden">
+            <h2 id="sessionEndedTitle" class="text-2xl font-bold text-gray-900">Session Ended</h2>
+            <p id="sessionEndedSub" class="text-lg text-gray-700 mt-2">Attendance is now closed.</p>
+        </div>
+
         <div id="message"></div>
     </div>
 
@@ -287,7 +266,8 @@
     <script>
         // --- Global timer variables ---
         let passcodeTimer = null; 
-        let sessionActivePoller = null;
+        let sessionPoller = null;
+        let activeSessionData = null; // Store session data
         const TOTP_WINDOW = 30; // 30 seconds
 
         // --- Translation Data ---
@@ -295,7 +275,7 @@
             en: {
                 pageTitle: "Admin - Set Session",
                 mainTitle: "Set Class Session",
-                subTitle: "Misr University for Science &Technology",
+                subTitle: "Misr University for Science & Technology",
                 labelPassword: "Admin Password",
                 verifyBtn_verify: "Verify Password",
                 verifyBtn_verifying: "Verifying...",
@@ -303,7 +283,8 @@
                 labelSessionName: "Session Name (for new sheet tab)",
                 labelStartTime: "Start Time",
                 labelEndTime: "End Time",
-                labelPasscodeType: "Dynamic Passcode",
+                labelEnablePasscode: "Enable Passcode",
+                labelDynamicPasscode: "Dynamic Passcode",
                 setLocationBtn_set: "Set Location & Open Attendance",
                 setLocationBtn_getting: "Getting location...",
                 setLocationBtn_setting: "Setting location...",
@@ -313,8 +294,14 @@
                 invalidPassword: "Invalid password.",
                 sheetExists: "A sheet with the name '{sessionName}' already exists. Please use a unique name.",
                 unknownError: "An unknown error occurred.",
-                sessionCreated: "Session '{sessionName}' created!",
-                passcodeTitle: "Current Passcode:"
+                // Live Display
+                passcodeTitleDynamic: "Current Passcode:",
+                passcodeTitleStatic: "Session Passcode:",
+                passcodeTitleNone: "Passcode is OFF",
+                passcodeSubNone: "Attendance is by Location Only",
+                sessionCreated: "Session created successfully!",
+                sessionEndedTitle: "Session Ended",
+                sessionEndedSub: "Attendance is now closed."
             },
             ar: {
                 pageTitle: "المشرف - إعداد الجلسة",
@@ -327,7 +314,8 @@
                 labelSessionName: "اسم الجلسة (لصفحة جديدة)",
                 labelStartTime: "وقت البدء",
                 labelEndTime: "وقت الانتهاء",
-                labelPasscodeType: "رمز مرور متغير",
+                labelEnablePasscode: "تفعيل رمز المرور",
+                labelDynamicPasscode: "رمز مرور متغير",
                 setLocationBtn_set: "تحديد الموقع وفتح الحضور",
                 setLocationBtn_getting: "جاري تحديد الموقع...",
                 setLocationBtn_setting: "جاري إعداد الموقع...",
@@ -337,12 +325,19 @@
                 invalidPassword: "كلمة المرور غير صحيحة.",
                 sheetExists: "توجد صفحة بهذا الاسم '{sessionName}' بالفعل. الرجاء استخدام اسم فريد.",
                 unknownError: "حدث خطأ غير معروف.",
-                sessionCreated: "تم إنشاء الجلسة '{sessionName}'!",
-                passcodeTitle: "رمز المرور الحالي:"
+                // Live Display
+                passcodeTitleDynamic: "رمز المرور الحالي:",
+                passcodeTitleStatic: "رمز مرور الجلسة:",
+                passcodeTitleNone: "رمز المرور معطل",
+                passcodeSubNone: "الحضور بالموقع الجغرافي فقط",
+                sessionCreated: "تم إنشاء الجلسة بنجاح!",
+                sessionEndedTitle: "انتهت الجلسة",
+                sessionEndedSub: "تم إغلاق الحضور."
             }
         };
         // --- End Translation Data ---
 
+        // --- Const declarations ---
         const passwordForm = document.getElementById('passwordForm');
         const sessionForm = document.getElementById('sessionForm');
         const verifyBtn = document.getElementById('verifyBtn');
@@ -352,13 +347,15 @@
         const sessionNameField = document.getElementById('sessionName');
         const langSwitchBtn = document.getElementById('langSwitchBtn');
         
-        // [NEW] Get new display elements
+        const enablePasscodeToggle = document.getElementById('enablePasscodeToggle');
+        const dynamicPasscodeContainer = document.getElementById('dynamicPasscodeContainer');
+        const dynamicPasscodeToggle = document.getElementById('dynamicPasscodeToggle');
+
         const originalLogo = document.getElementById('originalLogo');
         const mainTitle = document.getElementById('mainTitle');
         const subTitle = document.getElementById('subTitle');
         const liveDisplay = document.getElementById('liveDisplay');
         const sessionEndedDisplay = document.getElementById('sessionEndedDisplay');
-        const timerSVG = document.getElementById('timer-svg');
 
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwCjH23ufU7dh1F1HlgTk_UY8n0wcJxsMJ0TbihPk3zSiIFiX2UdPwmrANHmrjOtm9FKA/exec";
         let currentLang = localStorage.getItem('attendanceLang') || 'en';
@@ -404,40 +401,32 @@
             passcodeTimer = setInterval(updateDisplay, 1000);
         }
 
-        // --- Function to show the "Session Ended" screen ---
+        // --- Session Polling ---
+        function startSessionActivePoller() {
+            if (sessionPoller) clearInterval(sessionPoller);
+
+            sessionPoller = setInterval(() => {
+                // Check if the end time (stored in activeSessionData) has passed
+                if (activeSessionData && activeSessionData.endTime) {
+                    if (new Date() > new Date(activeSessionData.endTime)) {
+                        showSessionEnded();
+                    }
+                }
+            }, 5000); // Check every 5 seconds
+        }
+
         function showSessionEnded() {
             if (passcodeTimer) clearInterval(passcodeTimer);
-            if (sessionActivePoller) clearInterval(sessionActivePoller);
-            
-            liveDisplay.style.display = 'none';
-            sessionEndedDisplay.style.display = 'block';
-            mainTitle.style.display = 'block'; // Show title again
-            subTitle.style.display = 'block';
+            if (sessionPoller) clearInterval(sessionPoller);
+
+            liveDisplay.classList.add('hidden');
+            mainTitle.classList.add('hidden');
+            subTitle.classList.add('hidden');
+            originalLogo.classList.remove('hidden'); // Show original logo again
+
+            sessionEndedDisplay.classList.remove('hidden');
+            updateUI(currentLang); // To translate the "Session Ended" text
         }
-
-        // --- Function to poll the server to check if the session is still active ---
-        function startSessionActivePoller() {
-            if (sessionActivePoller) clearInterval(sessionActivePoller);
-
-            const poll = () => {
-                // Use the basic GET request to check for ANY active session
-                fetch(SCRIPT_URL) 
-                    .then(response => response.json())
-                    .then(data => {
-                        // If the server returns an error (like "no active session"), end it.
-                        if (data.result === "error") {
-                            showSessionEnded();
-                        }
-                    })
-                    .catch(err => {
-                        console.error("Polling error:", err);
-                        showMessage("Connection lost. Re-checking...", "error");
-                    });
-            };
-            // Check every 30 seconds
-            sessionActivePoller = setInterval(poll, 30000);
-        }
-
 
         // Function to update UI text
         function updateUI(lang) {
@@ -452,15 +441,20 @@
             document.getElementById('labelSessionName').textContent = t.labelSessionName;
             document.getElementById('labelStartTime').textContent = t.labelStartTime;
             document.getElementById('labelEndTime').textContent = t.labelEndTime;
-            // [MODIFIED] Find the label by its ID
-            document.getElementById('labelPasscodeType').textContent = t.labelPasscodeType;
+            document.getElementById('labelEnablePasscode').textContent = t.labelEnablePasscode;
+            document.getElementById('labelDynamicPasscode').textContent = t.labelDynamicPasscode;
             document.getElementById('footerText').textContent = t.footerText;
+            
+            document.getElementById('sessionEndedTitle').textContent = t.sessionEndedTitle;
+            document.getElementById('sessionEndedSub').textContent = t.sessionEndedSub;
             
             const verifyTextKey = verifyBtn.dataset.textKey || 'verifyBtn_verify';
             verifyBtn.textContent = t[verifyTextKey];
-            const setTextKey = setLocationBtn.dataset.textKey || 'setLocationBtn_set';
-            setLocationBtn.textContent = t[setTextKey];
             
+            // [FIXED] This was the line causing the error
+            const setTextKey = setLocationBtn.dataset.textKey || 'setLocationBtn_set';
+            setLocationBtn.textContent = t[setTextKey]; // Was t[setLocationBtn_set]
+
             langSwitchBtn.textContent = lang === 'en' ? 'ع' : 'En';
         }
 
@@ -472,15 +466,11 @@
             
             if (messageDiv.dataset.messageKey) {
                  showMessage(messageDiv.dataset.messageKey, messageDiv.className, messageDiv.dataset.messageParams ? JSON.parse(messageDiv.dataset.messageParams) : null);
-            } 
-            // [NEW] Translate live display if it's visible
-            else if (liveDisplay.style.display !== 'none') {
-                const params = JSON.parse(liveDisplay.dataset.params || '{}');
-                const titleKey = 'passcodeTitle';
-                const createdKey = 'sessionCreated';
-                let title = translations[currentLang][titleKey] || translations['en'][titleKey];
-                let created = (translations[currentLang][createdKey] || translations['en'][createdKey]).replace('{sessionName}', params.sessionName);
-                document.getElementById('live-passcode-title').textContent = `${created} ${title}`;
+            }
+            
+            // Re-translate live display if it's active
+            if (activeSessionData) {
+                updateLiveDisplayUI();
             }
         });
         
@@ -496,17 +486,15 @@
 
         // DOMContentLoaded
         document.addEventListener('DOMContentLoaded', () => {
-            updateUI(currentLang); 
-
+            updateUI(currentLang);
             const now = new Date();
             const fifteenMinutesLater = new Date(now.getTime() + 15 * 60000);
             document.getElementById('startTime').value = getLocalDateTimeString(now);
             document.getElementById('endTime').value = getLocalDateTimeString(fifteenMinutesLater);
-
             verifyBtn.disabled = true; 
             verifyBtn.dataset.textKey = 'verifyBtn_verifying';
             updateUI(currentLang);
-
+            
             fetch(SCRIPT_URL + "?action=getSheetNames") 
                 .then(response => response.json())
                 .then(data => {
@@ -534,6 +522,15 @@
                     verifyBtn.dataset.textKey = 'verifyBtn_verify';
                     updateUI(currentLang);
                 });
+
+            // Toggle logic
+            enablePasscodeToggle.addEventListener('change', () => {
+                if (enablePasscodeToggle.checked) {
+                    dynamicPasscodeContainer.classList.remove('hidden');
+                } else {
+                    dynamicPasscodeContainer.classList.add('hidden');
+                }
+            });
         });
         
         // passwordForm listener
@@ -556,7 +553,7 @@
                 .then(data => {
                     if (data.result === "success") {
                         passwordForm.style.display = 'none';
-                        sessionForm.style.display = 'block'; // [MODIFIED] Use display: block
+                        sessionForm.classList.remove('hidden');
                         showMessage(''); 
                     } else {
                         throw new Error(data.data.message || "Verification failed");
@@ -571,18 +568,26 @@
                 });
         });
 
-        // [MODIFIED] sessionForm listener
+        // sessionForm listener
         sessionForm.addEventListener('submit', function(e) {
             e.preventDefault();
             if (passcodeTimer) clearInterval(passcodeTimer);
-            if (sessionActivePoller) clearInterval(sessionActivePoller);
+            if (sessionPoller) clearInterval(sessionPoller);
 
             const password = adminPasswordField.value; 
             const startTime = document.getElementById('startTime').value;
             const endTime = document.getElementById('endTime').value;
             const sessionName = sessionNameField.value; 
-            const isDynamic = document.getElementById('passcodeType').checked;
             
+            let passcodeType;
+            if (!enablePasscodeToggle.checked) {
+                passcodeType = 'none';
+            } else if (dynamicPasscodeToggle.checked) {
+                passcodeType = 'dynamic';
+            } else {
+                passcodeType = 'static';
+            }
+
             if (!password || !startTime || !endTime || !sessionName) {
                 showMessage('fillFields', 'error');
                 return;
@@ -604,47 +609,35 @@
                     formData.append("startTime", startTime); 
                     formData.append("endTime", endTime);     
                     formData.append("sessionName", sessionName); 
-                    formData.append("passcodeType", isDynamic ? 'dynamic' : 'static'); // Send type
+                    formData.append("passcodeType", passcodeType); // 'dynamic', 'static', or 'none'
 
                     fetch(SCRIPT_URL, { method: 'POST', body: formData })
                         .then(response => response.json())
                         .then(data => {
                             if (data.result === "success") {
-                                // --- [NEW] Show Live Display ---
-                                const params = {
+                                // Store session data globally
+                                activeSessionData = {
                                     sessionName: data.data.sessionName,
-                                    secret: data.data.secret
+                                    secret: data.data.secret, // This is the secret OR static code OR "NONE"
+                                    type: passcodeType,
+                                    endTime: endTime
                                 };
-                                
-                                // Hide form and titles
-                                sessionForm.style.display = 'none';
-                                originalLogo.style.display = 'none';
-                                mainTitle.style.display = 'none';
-                                subTitle.style.display = 'none';
+
+                                // Hide forms and main titles
+                                sessionForm.classList.add('hidden');
+                                originalLogo.classList.add('hidden');
+                                mainTitle.classList.add('hidden');
+                                subTitle.classList.add('hidden');
+                                messageDiv.innerHTML = ''; // Clear setup messages
                                 
                                 // Show the live display
-                                liveDisplay.style.display = 'block';
-                                liveDisplay.dataset.params = JSON.stringify(params);
+                                liveDisplay.classList.remove('hidden');
+                                
+                                // Update and show the live display content
+                                updateLiveDisplayUI();
 
-                                // Set title text
-                                const titleKey = 'passcodeTitle';
-                                const createdKey = 'sessionCreated';
-                                let title = translations[currentLang][titleKey] || translations['en'][titleKey];
-                                let created = (translations[currentLang][createdKey] || translations['en'][createdKey]).replace('{sessionName}', params.sessionName);
-                                document.getElementById('live-passcode-title').textContent = `${created} ${title}`;
-                                
-                                // Start timer OR show static code
-                                if (isDynamic) {
-                                    timerSVG.style.display = 'block';
-                                    startPasscodeTimer(params.secret);
-                                } else {
-                                    timerSVG.style.display = 'none';
-                                    document.getElementById('live-passcode').textContent = params.secret.padStart(4, '0');
-                                }
-                                
                                 // Start polling to check for session end
                                 startSessionActivePoller();
-                                // --- [END NEW DISPLAY LOGIC] ---
 
                             } else {
                                 const key = findKeyByEnglishValue(data.data.message, translations.en) || 'sheetExists';
@@ -669,6 +662,43 @@
                 { enableHighAccuracy: true }
             );
         });
+
+        // Helper to update the live display based on session data and language
+        function updateLiveDisplayUI() {
+            if (!activeSessionData) return;
+
+            const t = translations[currentLang];
+            const passcodeEl = document.getElementById('live-passcode');
+            const passcodeTitleEl = document.getElementById('live-passcode-title');
+            const timerSVG = document.getElementById('logo-timer-svg');
+            const liveMessage = document.getElementById('live-message');
+
+            document.getElementById('live-session-name').textContent = activeSessionData.sessionName;
+            liveMessage.textContent = t.sessionCreated;
+            liveMessage.className = 'success';
+
+            // Reset styles
+            passcodeEl.style.fontSize = "";
+            passcodeEl.style.color = "";
+
+            if (activeSessionData.type === 'dynamic') {
+                passcodeTitleEl.textContent = t.passcodeTitleDynamic;
+                timerSVG.classList.remove('hidden');
+                startPasscodeTimer(activeSessionData.secret);
+            } else if (activeSessionData.type === 'static') {
+                passcodeTitleEl.textContent = t.passcodeTitleStatic;
+                passcodeEl.textContent = activeSessionData.secret;
+                timerSVG.classList.add('hidden');
+                if (passcodeTimer) clearInterval(passcodeTimer);
+            } else { // 'none'
+                passcodeTitleEl.textContent = t.passcodeTitleNone;
+                passcodeEl.textContent = t.passcodeSubNone;
+                passcodeEl.style.fontSize = "1.25rem"; // Smaller font for subtitle
+                passcodeEl.style.color = "#374151"; // Gray text
+                timerSVG.classList.add('hidden');
+                if (passcodeTimer) clearInterval(passcodeTimer);
+            }
+        }
         
         // findKeyByEnglishValue
         function findKeyByEnglishValue(value, englishTranslations) {
@@ -685,9 +715,8 @@
 
         // showMessage
         function showMessage(key, type, params = null) {
-            // Clear timers if a new message (especially error) appears
             if (passcodeTimer) clearInterval(passcodeTimer);
-            if (sessionActivePoller) clearInterval(sessionActivePoller);
+            if (sessionPoller) clearInterval(sessionPoller);
 
             let messageText = translations[currentLang][key] || translations['en'][key] || key;
             if (params) {
