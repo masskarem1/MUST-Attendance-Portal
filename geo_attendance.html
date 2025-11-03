@@ -133,6 +133,11 @@
             text-align: right;
         }
         /* --- End of modifications --- */
+        
+        /* [NEW] For hiding the passcode field */
+        .passcode-hidden {
+            display: none;
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-100 via-indigo-200 to-blue-200 flex flex-col items-center justify-center min-h-screen p-0">
@@ -167,8 +172,8 @@
                        required>
             </div>
 
-            <!-- --- [MODIFIED] Passcode field, hidden by default --- -->
-            <div class="mb-6" id="passcodeField" style="display: none;">
+            <!-- --- [MODIFIED] Passcode field (now hidden by default) --- -->
+            <div id="passcodeContainer" class="mb-6 passcode-hidden">
                 <label id="labelPasscode" for="passcode">Session Passcode (4-Digits)</label>
                 <input type="text" id="passcode" name="passcode"
                        inputmode="numeric" pattern="[0-9]{4}">
@@ -203,14 +208,14 @@
                 subTitle: "Misr University for Science & Technology",
                 labelStudentID: "Student ID (Numbers Only)",
                 labelStudentName: "Full Name (Text Only)",
-                labelPasscode: "Session Passcode (4-Digits)", // [NEW]
+                labelPasscode: "Session Passcode (4-Digits)",
                 submitButton_submit: "Submit Attendance",
                 submitButton_checking: "Checking session...",
                 submitButton_gettingLocation: "Getting location...",
                 submitButton_verifying: "Verifying ID & location...",
                 submitButton_submitted: "Already Submitted",
                 submitButton_closed: "Attendance Closed",
-                submitButton_error: "No Session", // Changed from "Error"
+                submitButton_error: "No Session",
                 newcomerYesBtn_yes: "Yes, I'm New",
                 newcomerYesBtn_gettingLocation: "Getting Location...",
                 newcomerYesBtn_registering: "Registering...",
@@ -218,11 +223,11 @@
                 footerText: "© Misr University for Science and Technology",
                 // --- Messages (Keys) ---
                 alreadySubmittedDevice: "You have already submitted attendance for this session or registered as a newcomer.",
-                sessionCheckError: "There is no session available Now", // Changed from "Error: Could not check session status."
+                sessionCheckError: "There is no session available Now",
                 idNumbersOnly: "Error: Student ID must contain only numbers.",
                 nameLettersOnly: "Error: Name must contain only letters and spaces.",
-                passcodeInvalid: "Error: Passcode must be 4 numbers.", // [NEW]
-                passcodeRequired: "Error: Passcode is required for this session.", // [NEW]
+                passcodeRequired: "Error: Passcode is required for this session.", // [MODIFIED]
+                passcodeInvalid: "Error: Passcode must be 4 numbers.",
                 geolocationNotSupported: "Error: Geolocation is not supported by your browser.",
                 permissionDenied: "Error: You must allow location access.",
                 positionUnavailable: "Error: Location information is unavailable.",
@@ -234,10 +239,10 @@
                     2. Go to "Permissions" or "Site settings".<br>
                     3. Set "Location" to "Allow" for this site.<br>
                     4. Tap the 'Submit' button again.`,
-                registerConfirm: "Please ensure ID, Name, and Passcode (if visible) are entered correctly before registering.", // [MODIFIED]
+                registerConfirm: "Please ensure ID, Name, and Passcode (if required) are entered correctly before registering.",
                 registering: "Registering your details...",
                 // --- Server Messages (Keys derived from script output) ---
-                invalidPasscode: "Invalid Passcode.", 
+                invalidPasscode: "Invalid Passcode.",
                 sessionNotActive: "Attendance is not currently active. Check the session times.",
                 invalidId_askNew: "Student ID not found in the list. Are you a new student?",
                 duplicateId_session: "This Student ID has already been recorded for this session.",
@@ -254,14 +259,14 @@
                 subTitle: "جامعة مصر للعلوم والتكنولوجيا",
                 labelStudentID: "رقم الطالب (أرقام فقط)",
                 labelStudentName: "الاسم بالكامل (حروف فقط)",
-                labelPasscode: "رمز الجلسة (٤ أرقام)", 
+                labelPasscode: "رمز الجلسة (٤ أرقام)",
                 submitButton_submit: "تسجيل الحضور",
                 submitButton_checking: "جاري فحص الجلسة...",
                 submitButton_gettingLocation: "جاري تحديد الموقع...",
                 submitButton_verifying: "جاري التحقق من الرقم والموقع...",
                 submitButton_submitted: "تم التسجيل",
                 submitButton_closed: "الحضور مغلق",
-                submitButton_error: "لا توجد جلسة", 
+                submitButton_error: "لا توجد جلسة",
                 newcomerYesBtn_yes: "نعم، أنا جديد",
                 newcomerYesBtn_gettingLocation: "جاري تحديد الموقع...", 
                 newcomerYesBtn_registering: "جاري التسجيل...",
@@ -269,11 +274,11 @@
                 footerText: "© جامعة مصر للعلوم والتكنولوجيا",
                 // --- Messages (Keys) ---
                 alreadySubmittedDevice: "لقد قمت بتسجيل الحضور لهذه الجلسة أو سجلت كطالب جديد بالفعل.",
-                sessionCheckError: "لا توجد جلسة متاحة حالياً", 
+                sessionCheckError: "لا توجد جلسة متاحة حالياً",
                 idNumbersOnly: "خطأ: رقم الطالب يجب أن يحتوي على أرقام فقط.",
                 nameLettersOnly: "خطأ: الاسم يجب أن يحتوي على حروف ومسافات فقط.",
-                passcodeInvalid: "خطأ: رمز الجلسة يجب أن يكون ٤ أرقام.", 
-                passcodeRequired: "خطأ: رمز الجلسة مطلوب لهذه الجلسة.", // [NEW]
+                passcodeRequired: "خطأ: رمز المرور مطلوب لهذه الجلسة.", // [MODIFIED]
+                passcodeInvalid: "خطأ: رمز الجلسة يجب أن يكون ٤ أرقام.",
                 geolocationNotSupported: "خطأ: المتصفح لا يدعم تحديد الموقع.",
                 permissionDenied: "خطأ: يجب السماح بالوصول إلى الموقع.",
                 positionUnavailable: "خطأ: معلومات الموقع غير متاحة.",
@@ -285,10 +290,10 @@
                     ٢. اذهب إلى "الأذونات" أو "إعدادات الموقع".<br>
                     ٣. قم بتعيين "الموقع" إلى "سماح" لهذا الموقع.<br>
                     ٤. اضغط على زر 'Submit' مرة أخرى.`,
-                registerConfirm: "يرجى التأكد من إدخال الرقم والاسم والرمز (إذا كان ظاهراً) بشكل صحيح قبل التسجيل.", // [MODIFIED]
+                registerConfirm: "يرجى التأكد من إدخال الرقم والاسم والرمز (إذا كان مطلوباً) بشكل صحيح قبل التسجيل.",
                 registering: "جاري تسجيل بياناتك...",
                  // --- Server Messages (Keys derived from script output) ---
-                invalidPasscode: "كود الجلسة غير صحيح", 
+                invalidPasscode: "كود الجلسة غير صحيح",
                 sessionNotActive: "Attendance is not currently active. Check the session times.",
                 invalidId_askNew: "رقم الطالب غير موجود بالقائمة. هل أنت طالب جديد؟",
                 duplicateId_session: "تم تسجيل هذا الرقم الطلابي من قبل في هذه الجلسة.",
@@ -309,16 +314,17 @@
         const newcomerYesBtn = document.getElementById('newcomerYesBtn');
         const newcomerNoBtn = document.getElementById('newcomerNoBtn');
         const langSwitchBtn = document.getElementById('langSwitchBtn');
-        const passcodeField = document.getElementById('passcodeField'); // [NEW]
-        const passcodeEl = document.getElementById('passcode'); // [NEW]
+        const passcodeContainer = document.getElementById('passcodeContainer'); // [NEW]
+        const passcodeField = document.getElementById('passcode'); // [NEW]
 
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwCjH23ufU7dh1F1HlgTk_UY8n0wcJxsMJ0TbihPk3zSiIFiX2UdPwmrANHmrjOtm9FKA/exec";
-        let activeSessionName = null;
-        let sessionPasscodeType = 'none'; // [NEW] Default to 'none'
         
-        // [FIX] Define currentLang in the global scope
-        let currentLang = localStorage.getItem('attendanceLang') || 'en';
-
+        // [MODIFIED] Added new global variables
+        let activeSessionName = null;
+        let activeSessionStartTime = null; 
+        let activePasscodeType = null;
+        
+        let currentLang = localStorage.getItem('attendanceLang') || 'en'; // [FIX] Defined globally
 
         // Function to update UI text
         function updateUI(lang) {
@@ -331,7 +337,7 @@
             document.getElementById('subTitle').textContent = t.subTitle;
             document.getElementById('labelStudentID').textContent = t.labelStudentID;
             document.getElementById('labelStudentName').textContent = t.labelStudentName;
-            document.getElementById('labelPasscode').textContent = t.labelPasscode; 
+            document.getElementById('labelPasscode').textContent = t.labelPasscode;
             document.getElementById('newcomerYesBtn').textContent = t.newcomerYesBtn_yes;
             document.getElementById('newcomerNoBtn').textContent = t.newcomerNoBtn;
             document.getElementById('footerText').textContent = t.footerText;
@@ -352,6 +358,7 @@
             }
         });
 
+        // [MODIFIED] DOMContentLoaded
         document.addEventListener('DOMContentLoaded', () => {
             updateUI(currentLang); // Set initial language
 
@@ -360,24 +367,17 @@
             updateUI(currentLang);
             newcomerActionsDiv.style.display = 'none';
 
-            // [MODIFIED] Fetch session data including passcodeType
             fetch(SCRIPT_URL)
                 .then(response => response.json())
                 .then(data => {
                     if (data.result === 'success') {
                         activeSessionName = data.data.sessionName;
-                        sessionPasscodeType = data.data.passcodeType || 'none'; // [NEW] Store the type
+                        activePasscodeType = data.data.passcodeType;
+                        activeSessionStartTime = data.data.startTime; // [NEW] Get start time
 
-                        // [NEW] Show passcode field only if required
-                        if (sessionPasscodeType === 'static' || sessionPasscodeType === 'dynamic') {
-                            passcodeField.style.display = 'block';
-                            passcodeEl.required = true;
-                        } else {
-                            passcodeField.style.display = 'none';
-                            passcodeEl.required = false;
-                        }
+                        // [MODIFIED] Create unique device lock key
+                        const deviceLockKey = activeSessionName + "_" + activeSessionStartTime;
 
-                        const deviceLockKey = activeSessionName;
                         if (localStorage.getItem(deviceLockKey) === 'true') {
                             showMessage('alreadySubmittedDevice', 'error');
                             submitButton.dataset.textKey = 'submitButton_submitted';
@@ -385,38 +385,39 @@
                             submitButton.disabled = false;
                             submitButton.dataset.textKey = 'submitButton_submit';
                         }
+                        
+                        // [NEW] Show/Hide passcode field
+                        if (activePasscodeType === 'static' || activePasscodeType === 'dynamic') {
+                            passcodeContainer.classList.remove('passcode-hidden');
+                            passcodeField.required = true;
+                        } else {
+                            // 'none'
+                            passcodeContainer.classList.add('passcode-hidden');
+                            passcodeField.required = false;
+                        }
+
                     } else {
-                        showMessageFromServer(data.data.message); 
+                        showMessageFromServer(data.data.message);
                         submitButton.dataset.textKey = 'submitButton_closed';
                     }
-                    updateUI(currentLang); 
+                    updateUI(currentLang); // Update button text again
                 })
                 .catch(err => {
+                    console.error("Fetch error on load:", err); // [NEW] Better logging
                     showMessage('sessionCheckError', 'error');
                     submitButton.dataset.textKey = 'submitButton_error';
                     updateUI(currentLang);
                 });
         });
 
+        // [MODIFIED] form submit listener
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             hideNewcomerButtons();
 
             const studentID = document.getElementById('studentID').value;
             const studentName = document.getElementById('studentName').value;
-            
-            // [MODIFIED] Get passcode value, or set to "0000" if not required
-            let passcode = "0000"; 
-            if (sessionPasscodeType === 'static' || sessionPasscodeType === 'dynamic') {
-                passcode = passcodeEl.value;
-                // Client-side validation
-                if (!/^\d{4}$/.test(passcode)) {
-                    showMessage('passcodeRequired', 'error');
-                    return;
-                }
-            } else {
-                passcode = "0000"; // Default value when field is hidden
-            }
+            let passcode = passcodeField.value; // [MODIFIED]
 
             if (!/^\d+$/.test(studentID)) {
                 showMessage('idNumbersOnly', 'error');
@@ -425,6 +426,21 @@
             if (!/^[A-Za-z\s]+$/.test(studentName)) {
                 showMessage('nameLettersOnly', 'error');
                 return;
+            }
+            
+            // [MODIFIED] Passcode validation
+            if (activePasscodeType === 'static' || activePasscodeType === 'dynamic') {
+                if (!passcode) {
+                    showMessage('passcodeRequired', 'error');
+                    return;
+                }
+                if (!/^\d{4}$/.test(passcode)) {
+                    showMessage('passcodeInvalid', 'error');
+                    return;
+                }
+            } else {
+                // If passcode is not required, just send a dummy value
+                passcode = "0000";
             }
 
             submitButton.disabled = true;
@@ -440,21 +456,22 @@
                 return;
             }
 
-            // [MODIFIED] Pass the validated passcode to the success handler
+            // [MODIFIED] Pass the validated passcode to geolocationSuccess
             navigator.geolocation.getCurrentPosition(
-                (position) => geolocationSuccess(position, passcode),
+                (position) => geolocationSuccess(position, passcode), // Passcode included
                 geolocationError,
                 { enableHighAccuracy: true }
             );
         });
 
-        // [MODIFIED] geolocationSuccess now accepts the passcode
-        function geolocationSuccess(position, passcode) {
+        // [MODIFIED] geolocationSuccess
+        function geolocationSuccess(position, passcode) { // Passcode now an argument
             const userLat = position.coords.latitude;
             const userLon = position.coords.longitude;
             const studentID = document.getElementById('studentID').value;
             const studentName = document.getElementById('studentName').value;
-            
+            // 'passcode' is passed in from the submit listener
+
             submitButton.dataset.textKey = 'submitButton_verifying';
             updateUI(currentLang);
 
@@ -464,7 +481,7 @@
             formData.append("studentName", studentName);
             formData.append("latitude", userLat);
             formData.append("longitude", userLon);
-            formData.append("passcode", passcode); // Pass the code
+            formData.append("passcode", passcode); // Send the validated or dummy passcode
 
             fetch(SCRIPT_URL, {
                 method: 'POST',
@@ -472,9 +489,7 @@
             })
             .then(response => response.json())
             .then(data => {
-                // [NEW] Debugging line
-                console.log('Server response:', data);
-
+                console.log("Server response:", data); // [NEW] Better logging
                 if (data.result === "success") {
                     handleSuccessFromServer(data.data.message);
                 } else if (data.result === "invalid_id") {
@@ -484,20 +499,23 @@
                 }
             })
             .catch(error => {
-                // [NEW] Debugging line
-                console.error('Fetch error:', error);
-                showMessage('unknownServerError', 'error');
-            })
+                console.error("Fetch error:", error); // [NEW] Better logging
+                handleErrorFromServer('unknownServerError');
+            });
         }
 
-        // Handlers now use server messages
+        // [MODIFIED] handleSuccessFromServer
         function handleSuccessFromServer(serverMessage) {
             const key = findKeyByEnglishValue(serverMessage, translations.en);
-            showMessage(key || 'success', 'success'); // Fallback to generic key
+            showMessage(key || 'success', 'success');
             form.reset();
-            if (activeSessionName) {
-                localStorage.setItem(activeSessionName, 'true');
+            
+            // [MODIFIED] Use the new unique key to set the lock
+            if (activeSessionName && activeSessionStartTime) {
+                const deviceLockKey = activeSessionName + "_" + activeSessionStartTime;
+                localStorage.setItem(deviceLockKey, 'true');
             }
+            
             submitButton.disabled = true;
             submitButton.dataset.textKey = 'submitButton_submitted';
             updateUI(currentLang);
@@ -505,7 +523,7 @@
 
         function handleInvalidIdFromServer(serverMessage) {
             const key = findKeyByEnglishValue(serverMessage, translations.en);
-            showMessage(key || 'invalidId_askNew', 'error'); // Fallback to generic key
+            showMessage(key || 'invalidId_askNew', 'error');
             showNewcomerButtons();
             submitButton.style.display = 'none';
         }
@@ -523,13 +541,6 @@
               updateUI(currentLang);
         }
         
-        // [NEW] Helper to show translated server messages on load
-        function showMessageFromServer(serverMessage) {
-            const key = findKeyByEnglishValue(serverMessage, translations.en);
-            showMessage(key || 'sessionCheckError', 'error');
-        }
-
-
         // Helper to find translation key from English server message
         function findKeyByEnglishValue(value, englishTranslations) {
             if (!value) return null;
@@ -539,17 +550,26 @@
             if (value.includes("Invalid Passcode")) {
                 return 'invalidPasscode';
             }
+            // Try exact match
             for (const key in englishTranslations) { 
-                // Use .includes() for partial matches from server
-                if (value.includes(englishTranslations[key])) { 
-                    return key; 
-                } 
+                if (englishTranslations[key] === value) { return key; } 
             }
+            // Try partial match
             if (value.includes("already been recorded for this session")) return 'duplicateId_session';
             if (value.includes("not currently active")) return 'sessionNotActive';
             if (value.includes("already been registered as a newcomer")) return 'newcomerDuplicate';
             if (value.includes("Attendance Recorded & Registered as New Student")) return 'newcomerSuccessAndAttendance';
+            
+            // Fallback for script errors
+            if (value.includes("Script Error")) return 'unknownServerError';
+
             return null; 
+        }
+
+        // [NEW] Helper for messages on load
+        function showMessageFromServer(serverMessage) {
+            const key = findKeyByEnglishValue(serverMessage, translations.en);
+            showMessage(key || 'sessionCheckError', 'error');
         }
 
 
@@ -593,8 +613,8 @@
         function showNewcomerButtons() {
             newcomerActionsDiv.style.display = 'flex';
             newcomerYesBtn.disabled = false;
-            newcomerYesBtn.textContent = translations[currentLang].newcomerYesBtn_yes; // Use translation
-            newcomerNoBtn.textContent = translations[currentLang].newcomerNoBtn; // Use translation
+            newcomerYesBtn.textContent = translations[currentLang].newcomerYesBtn_yes;
+            newcomerNoBtn.textContent = translations[currentLang].newcomerNoBtn;
         }
         function hideNewcomerButtons() {
             newcomerActionsDiv.style.display = 'none';
@@ -614,47 +634,51 @@
         newcomerYesBtn.addEventListener('click', () => {
             const studentID = document.getElementById('studentID').value;
             const studentName = document.getElementById('studentName').value;
-            
-            // [MODIFIED] Get passcode value, or set to "0000" if not required
-            let passcode = "0000"; 
-            if (sessionPasscodeType === 'static' || sessionPasscodeType === 'dynamic') {
-                passcode = passcodeEl.value;
-                if (!/^\d{4}$/.test(passcode)) {
-                    showMessage('registerConfirm', 'error'); // Use a generic confirm error
+            let passcode = passcodeField.value; // [MODIFIED]
+
+            // [MODIFIED] Passcode validation
+            if (activePasscodeType === 'static' || activePasscodeType === 'dynamic') {
+                if (!passcode) {
+                    showMessage('registerConfirm', 'error');
                     return;
                 }
+                if (!/^\d{4}$/.test(passcode)) {
+                    showMessage('registerConfirm', 'error');
+                    return;
+                }
+            } else {
+                passcode = "0000"; // Send dummy code
             }
 
             if (!/^\d+$/.test(studentID) || !/^[A-Za-z\s]+$/.test(studentName)) {
                 showMessage('registerConfirm', 'error');
-                showNewcomerButtons();
                 return;
             }
 
             // --- Get location FIRST ---
             newcomerYesBtn.disabled = true;
-            newcomerYesBtn.textContent = translations[currentLang].newcomerYesBtn_gettingLocation; 
+            newcomerYesBtn.textContent = translations[currentLang].newcomerYesBtn_gettingLocation;
             showMessage(''); 
 
             if (!navigator.geolocation) {
                 showMessage('geolocationNotSupported', 'error');
-                newcomerYesBtn.disabled = false; 
+                newcomerYesBtn.disabled = false;
                 newcomerYesBtn.textContent = translations[currentLang].newcomerYesBtn_yes;
                 return;
             }
 
             navigator.geolocation.getCurrentPosition(
                 function(position) { // --- On Location Success ---
-                    newcomerYesBtn.textContent = translations[currentLang].newcomerYesBtn_registering; 
+                    newcomerYesBtn.textContent = translations[currentLang].newcomerYesBtn_registering;
                     showMessage('registering', ''); 
 
                     const formData = new FormData();
                     formData.append("action", "registerNewcomer");
                     formData.append("studentID", studentID);
                     formData.append("studentName", studentName);
-                    formData.append("latitude", position.coords.latitude); 
+                    formData.append("latitude", position.coords.latitude);
                     formData.append("longitude", position.coords.longitude);
-                    formData.append("passcode", passcode); // [NEW]
+                    formData.append("passcode", passcode); // [MODIFIED]
 
                     fetch(SCRIPT_URL, {
                         method: 'POST',
@@ -664,12 +688,16 @@
                     .then(data => {
                         if (data.result === 'success') {
                             const key = findKeyByEnglishValue(data.data.message, translations.en)
-                            showMessage(key || 'newcomerSuccessAndAttendance', 'success'); 
+                            showMessage(key || 'newcomerSuccessAndAttendance', 'success');
                             hideNewcomerButtons();
                             form.reset();
-                            if (activeSessionName) {
-                                localStorage.setItem(activeSessionName, 'true'); // Lock device
+                            
+                            // [MODIFIED] Use unique key to set lock
+                            if (activeSessionName && activeSessionStartTime) {
+                                const deviceLockKey = activeSessionName + "_" + activeSessionStartTime;
+                                localStorage.setItem(deviceLockKey, 'true');
                             }
+                            
                             submitButton.style.display = 'block';
                             submitButton.disabled = true;
                             submitButton.dataset.textKey = 'submitButton_submitted';
@@ -680,7 +708,7 @@
                             newcomerYesBtn.textContent = translations[currentLang].newcomerYesBtn_yes;
                         }
                     })
-                    .catch(error => { 
+                    .catch(error => {
                          showMessage('unknownServerError', 'error');
                          newcomerYesBtn.disabled = false;
                          newcomerYesBtn.textContent = translations[currentLang].newcomerYesBtn_yes;
@@ -688,13 +716,12 @@
 
                 },
                 function(error) { // --- On Location Error ---
-                    geolocationError(error); // Use existing geo error handler
-                    newcomerYesBtn.disabled = false; // Re-enable button
+                    geolocationError(error); 
+                    newcomerYesBtn.disabled = false;
                     newcomerYesBtn.textContent = translations[currentLang].newcomerYesBtn_yes;
                 },
                 { enableHighAccuracy: true }
             );
-            // --- End location getting ---
         });
 
     </script>
