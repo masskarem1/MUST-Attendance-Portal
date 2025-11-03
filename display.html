@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; min-height: 100vh; }
+        body { font-family: 'Inter', sans-serif; position: relative; min-height: 100vh; }
         .glass-card {
             background: rgba(255, 255, 255, 0.6); border-radius: 16px;
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); backdrop-filter: blur(10px);
@@ -100,70 +100,79 @@
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-blue-100 via-indigo-200 to-blue-200 flex flex-col items-center justify-center min-h-screen p-0">
+<!-- [MODIFIED] Removed flex classes */ -->
+<body class="bg-gradient-to-br from-blue-100 via-indigo-200 to-blue-200">
 
-    <div class="glass-card w-full max-w-lg p-8 md:p-12 text-center">
-        
-        <!-- Screen 1: Password Form -->
-        <div id="passwordScreen">
-            <!-- Logo -->
-            <div class="mb-8">
-                <!-- [MODIFIED] Added link to home page -->
-                <a href="./index.html" class="inline-block">
-                    <img src="https://admission.must.edu.eg/lovable-uploads/a51bf950-39e9-4502-bf1f-fcc9e958e555.png" alt="MUST Logo" class="h-28 w-28 mx-auto">
-                </a>
-            </div>
-            <h1 id="mainTitle" class="text-2xl font-bold text-gray-900 mb-2">Passcode Display Screen</h1>
-
-            <form id="passwordForm" class="text-left px-4 sm:px-0">
-                <p id="subTitle" class="text-gray-700 mb-8 text-center">Enter admin password to show the live code.</p>
-                <div class="mb-4">
-                    <label id="labelPassword" for="adminPassword">Admin Password</label>
-                    <input type="password" id="adminPassword" required>
+    <!-- [NEW] Main content wrapper -->
+    <main class="flex flex-col items-center justify-center min-h-screen p-0 pb-16 sm:pb-0">
+        <div class="glass-card w-full max-w-lg p-8 md:p-12 text-center">
+            
+            <!-- Screen 1: Password Form -->
+            <div id="passwordScreen">
+                <!-- Logo -->
+                <div class="mb-8">
+                    <!-- [MODIFIED] Added link to home page -->
+                    <a href="./index.html" class="inline-block">
+                        <img src="https://admission.must.edu.eg/lovable-uploads/a51bf950-39e9-4502-bf1f-fcc9e958e555.png" alt="MUST Logo" class="h-28 w-28 mx-auto">
+                    </a>
                 </div>
-                <button type="submit" id="verifyBtn" class="w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-base disabled:bg-gray-400 shadow-md hover:shadow-lg">
-                    Display Passcode
-                </button>
-            </form>
-        </div>
-        
-        <!-- Screen 2: Passcode Display (starts hidden) -->
-        <div id="passcodeDisplay">
-            <!-- [MODIFIED] Logo Timer Container -->
-            <div class="logo-timer-container mb-4">
-                <a href="./index.html" class="inline-block z-10">
-                    <img src="https://admission.must.edu.eg/lovable-uploads/a51bf950-39e9-4502-bf1f-fcc9e958e555.png" alt="MUST Logo" class="timer-logo">
-                </a>
-                <svg id="timer-svg" viewBox="0 0 100 100">
-                    <circle class="timer-track" r="45" cx="50" cy="50"></circle>
-                    <circle class="timer-progress" r="45" cx="50" cy="50"></circle>
-                </svg>
+                <h1 id="mainTitle" class="text-2xl font-bold text-gray-900 mb-2">Passcode Display Screen</h1>
+
+                <form id="passwordForm" class="text-left px-4 sm:px-0">
+                    <p id="subTitle" class="text-gray-700 mb-8 text-center">Enter admin password to show the live code.</p>
+                    <div class="mb-4">
+                        <label id="labelPassword" for="adminPassword">Admin Password</label>
+                        <input type="password" id="adminPassword" required>
+                    </div>
+                    <button type="submit" id="verifyBtn" class="w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-base disabled:bg-gray-400 shadow-md hover:shadow-lg">
+                        Display Passcode
+                    </button>
+                </form>
             </div>
             
-            <div id="live-passcode-title" class="text-2xl font-semibold text-gray-800"></div>
-            <span id='live-passcode'>....</span>
+            <!-- Screen 2: Passcode Display (starts hidden) -->
+            <div id="passcodeDisplay">
+                <!-- [MODIFIED] Logo Timer Container -->
+                <div class="logo-timer-container mb-4">
+                    <a href="./index.html" class="inline-block z-10">
+                        <img src="https://admission.must.edu.eg/lovable-uploads/a51bf950-39e9-4502-bf1f-fcc9e958e555.png" alt="MUST Logo" class="timer-logo">
+                    </a>
+                    <svg id="timer-svg" viewBox="0 0 100 100">
+                        <circle class="timer-track" r="45" cx="50" cy="50"></circle>
+                        <circle class="timer-progress" r="45" cx="50" cy="50"></circle>
+                    </svg>
+                </div>
+                
+                <div id="live-passcode-title" class="text-2xl font-semibold text-gray-800"></div>
+                <span id='live-passcode'>....</span>
+                
+                <!-- [NEW] QR Code -->
+                <div id="qr-code-container">
+                    <p>Student Attendance Link</p>
+                    <div id="qr-code"></div>
+                </div>
+            </div>
             
-            <!-- [NEW] QR Code -->
-            <div id="qr-code-container">
-                <p>Student Attendance Link</p>
-                <div id="qr-code"></div>
+            <!-- Screen 3: Session Ended Display (starts hidden) -->
+            <div id="sessionEndedDisplay">
+                <div class="mb-8">
+                    <a href="./index.html" class="inline-block">
+                        <img src="https://admission.must.edu.eg/lovable-uploads/a51bf950-39e9-4502-bf1f-fcc9e958e555.png" alt="MUST Logo" class="h-28 w-28 mx-auto">
+                    </a>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-900 mb-2">Session Ended</h1>
+                <p class="text-gray-700 mb-8">The attendance period is over.</p>
             </div>
-        </div>
-        
-        <!-- Screen 3: Session Ended Display (starts hidden) -->
-        <div id="sessionEndedDisplay">
-            <div class="mb-8">
-                <a href="./index.html" class="inline-block">
-                    <img src="https://admission.must.edu.eg/lovable-uploads/a51bf950-39e9-4502-bf1f-fcc9e958e555.png" alt="MUST Logo" class="h-28 w-28 mx-auto">
-                </a>
-            </div>
-            <h1 class="text-2xl font-bold text-gray-900 mb-2">Session Ended</h1>
-            <p class="text-gray-700 mb-8">The attendance period is over.</p>
-        </div>
 
 
-        <div id="message"></div>
-    </div>
+            <div id="message"></div>
+        </div>
+    </main>
+    
+    <!-- [MODIFIED] Footer is now outside main, at the bottom of the body -->
+    <footer class="w-full text-center text-gray-700 text-xs md:text-sm absolute bottom-1">
+        <p>&copy; Misr University for Science and Technology</p>
+    </footer>
 
     <script>
         let passcodeTimer = null; 
