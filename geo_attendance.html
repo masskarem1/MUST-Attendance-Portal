@@ -133,6 +133,11 @@
             text-align: right;
         }
         /* --- End of modifications --- */
+
+        /* [NEW] Helper class to hide elements */
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-100 via-indigo-200 to-blue-200 flex flex-col items-center justify-center min-h-screen p-0">
@@ -160,21 +165,21 @@
                        required>
             </div>
 
-            <div class="mb-4"> <!-- [MODIFIED] Changed margin from mb-6 to mb-4 -->
+            <div class="mb-4">
                  <label id="labelStudentName" for="studentName">Full Name (Text Only)</label>
                 <input type="text" id="studentName" name="studentName"
                        pattern="[A-Za-z\s]+"
                        required>
             </div>
 
-            <!-- --- [NEW FIELD] --- -->
-            <div class="mb-6">
+            <!-- --- [MODIFIED] Passcode field is now hidden by default --- -->
+            <div id="passcodeContainer" class="mb-6 hidden">
                 <label id="labelPasscode" for="passcode">Session Passcode (4-Digits)</label>
                 <input type="text" id="passcode" name="passcode"
-                       inputmode="numeric" pattern="[0-9]{4}"
-                       required>
+                       inputmode="numeric" pattern="[0-9]{4}">
+                       <!-- "required" is now set by JavaScript -->
             </div>
-            <!-- --- [END NEW FIELD] --- -->
+            <!-- --- [END MODIFIED FIELD] --- -->
 
 
             <button type="submit" id="submitButton" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 text-base disabled:bg-gray-400 shadow-md hover:shadow-lg">
@@ -309,9 +314,14 @@
         const newcomerNoBtn = document.getElementById('newcomerNoBtn');
         const langSwitchBtn = document.getElementById('langSwitchBtn');
 
+        // [NEW] Get passcode elements
+        const passcodeContainer = document.getElementById('passcodeContainer');
+        const passcodeField = document.getElementById('passcode');
+
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwCjH23ufU7dh1F1HlgTk_UY8n0wcJxsMJ0TbihPk3zSiIFiX2UdPwmrANHmrjOtm9FKA/exec";
         let activeSessionName = null;
-        let currentLang = localStorage.getItem('attendanceLang') || 'en';
+        let sessionPasscodeType = 'none'; // [NEW] Default to 'none'
+        let currentLang = localStorage.getItem('attendanceLang') || 'en'; // [FIX] Added this line back
 
         // Function to update UI text
         function updateUI(lang) {
@@ -358,6 +368,8 @@
                 .then(data => {
                     if (data.result === 'success') {
                         activeSessionName = data.data.sessionName;
+                        sessionPasscodeType = data.data.passcodeType; // [NEW] Store passcode type
+                        
                         const deviceLockKey = activeSessionName;
 
                         if (localStorage.getItem(deviceLockKey) === 'true') {
@@ -367,6 +379,18 @@
                             submitButton.disabled = false;
                             submitButton.dataset.textKey = 'submitButton_submit';
                         }
+
+                        // --- [NEW] Show/Hide Passcode Field ---
+                        if (sessionPasscodeType === 'static' || sessionPasscodeType === 'dynamic') {
+                            passcodeContainer.classList.remove('hidden'); // Show the field
+                            passcodeField.required = true; // Make it required
+                        } else {
+                            // 'none'
+                            passcodeContainer.classList.add('hidden'); // Keep it hidden
+                            passcodeField.required = false; // Not required
+                        }
+                        // --- [END NEW LOGIC] ---
+
                     } else {
                         showMessageFromServer(data.data.message); // Try to translate server msg
                         submitButton.dataset.textKey = 'submitButton_closed';
@@ -386,7 +410,19 @@
 
             const studentID = document.getElementById('studentID').value;
             const studentName = document.getElementById('studentName').value;
-            const passcode = document.getElementById('passcode').value; // [NEW]
+            
+            // [MODIFIED] Get passcode or set dummy value
+            let passcode;
+            if (sessionPasscodeType === 'none') {
+                passcode = "0000"; // Send dummy code if passcode is off
+            } else {
+                passcode = document.getElementById('passcode').value; // Get real code
+                // [MODIFIED] Validation for visible field
+                if (!/^\d{4}$/.test(passcode)) {
+                    showMessage('passcodeInvalid', 'error');
+                    return;
+                }
+            }
 
             if (!/^\d+$/.test(studentID)) {
                 showMessage('idNumbersOnly', 'error');
@@ -396,11 +432,7 @@
                 showMessage('nameLettersOnly', 'error');
                 return;
             }
-            // [NEW] Passcode validation
-            if (!/^\d{4}$/.test(passcode)) {
-                showMessage('passcodeInvalid', 'error');
-                return;
-            }
+            // [REMOVED] Old passcode validation moved up
 
             submitButton.disabled = true;
             submitButton.dataset.textKey = 'submitButton_gettingLocation';
@@ -427,7 +459,14 @@
             const userLon = position.coords.longitude;
             const studentID = document.getElementById('studentID').value;
             const studentName = document.getElementById('studentName').value;
-            const passcode = document.getElementById('passcode').value; // [NEW]
+            
+            // [MODIFIED] Get passcode or set dummy value
+            let passcode;
+            if (sessionPasscodeType === 'none') {
+                passcode = "0000";
+            } else {
+                passcode = document.getElementById('passcode').value;
+            }
 
             submitButton.dataset.textKey = 'submitButton_verifying';
             updateUI(currentLang);
@@ -438,7 +477,7 @@
             formData.append("studentName", studentName);
             formData.append("latitude", userLat);
             formData.append("longitude", userLon);
-            formData.append("passcode", passcode); // [NEW]
+            formData.append("passcode", passcode); // [MODIFIED] Send passcode (real or dummy)
 
             fetch(SCRIPT_URL, {
                 method: 'POST',
@@ -572,10 +611,23 @@
         newcomerYesBtn.addEventListener('click', () => {
             const studentID = document.getElementById('studentID').value;
             const studentName = document.getElementById('studentName').value;
-            const passcode = document.getElementById('passcode').value; // [NEW]
+            
+            // [MODIFIED] Get passcode or set dummy value
+            let passcode;
+            if (sessionPasscodeType === 'none') {
+                passcode = "0000";
+            } else {
+                passcode = document.getElementById('passcode').value;
+                // Validation
+                if (!/^\d{4}$/.test(passcode)) {
+                    showMessage('registerConfirm', 'error'); // Use a generic error
+                    showNewcomerButtons();
+                    return;
+                }
+            }
 
             // [MODIFIED] Added passcode validation
-            if (!/^\d+$/.test(studentID) || !/^[A-Za-z\s]+$/.test(studentName) || !/^\d{4}$/.test(passcode)) {
+            if (!/^\d+$/.test(studentID) || !/^[A-Za-z\s]+$/.test(studentName)) {
                 showMessage('registerConfirm', 'error');
                 showNewcomerButtons();
                 return;
@@ -653,3 +705,4 @@
     </script>
 </body>
 </html>
+
