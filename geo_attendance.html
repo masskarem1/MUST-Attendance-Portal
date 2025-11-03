@@ -133,11 +133,6 @@
             text-align: right;
         }
         /* --- End of modifications --- */
-
-        /* [NEW] Helper class to hide elements */
-        .hidden {
-            display: none;
-        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-100 via-indigo-200 to-blue-200 flex flex-col items-center justify-center min-h-screen p-0">
@@ -172,12 +167,11 @@
                        required>
             </div>
 
-            <!-- --- [MODIFIED] Passcode field is now hidden by default --- -->
-            <div id="passcodeContainer" class="mb-6 hidden">
+            <!-- --- [MODIFIED] Passcode field, hidden by default --- -->
+            <div class="mb-6" id="passcodeField" style="display: none;">
                 <label id="labelPasscode" for="passcode">Session Passcode (4-Digits)</label>
                 <input type="text" id="passcode" name="passcode"
                        inputmode="numeric" pattern="[0-9]{4}">
-                       <!-- "required" is now set by JavaScript -->
             </div>
             <!-- --- [END MODIFIED FIELD] --- -->
 
@@ -228,6 +222,7 @@
                 idNumbersOnly: "Error: Student ID must contain only numbers.",
                 nameLettersOnly: "Error: Name must contain only letters and spaces.",
                 passcodeInvalid: "Error: Passcode must be 4 numbers.", // [NEW]
+                passcodeRequired: "Error: Passcode is required for this session.", // [NEW]
                 geolocationNotSupported: "Error: Geolocation is not supported by your browser.",
                 permissionDenied: "Error: You must allow location access.",
                 positionUnavailable: "Error: Location information is unavailable.",
@@ -239,10 +234,10 @@
                     2. Go to "Permissions" or "Site settings".<br>
                     3. Set "Location" to "Allow" for this site.<br>
                     4. Tap the 'Submit' button again.`,
-                registerConfirm: "Please ensure ID, Name, and Passcode are entered correctly before registering.", // [MODIFIED]
+                registerConfirm: "Please ensure ID, Name, and Passcode (if visible) are entered correctly before registering.", // [MODIFIED]
                 registering: "Registering your details...",
                 // --- Server Messages (Keys derived from script output) ---
-                invalidPasscode: "Invalid Passcode.", // [NEW]
+                invalidPasscode: "Invalid Passcode.", 
                 sessionNotActive: "Attendance is not currently active. Check the session times.",
                 invalidId_askNew: "Student ID not found in the list. Are you a new student?",
                 duplicateId_session: "This Student ID has already been recorded for this session.",
@@ -259,14 +254,14 @@
                 subTitle: "جامعة مصر للعلوم والتكنولوجيا",
                 labelStudentID: "رقم الطالب (أرقام فقط)",
                 labelStudentName: "الاسم بالكامل (حروف فقط)",
-                labelPasscode: "رمز الجلسة (٤ أرقام)", // [NEW]
+                labelPasscode: "رمز الجلسة (٤ أرقام)", 
                 submitButton_submit: "تسجيل الحضور",
                 submitButton_checking: "جاري فحص الجلسة...",
                 submitButton_gettingLocation: "جاري تحديد الموقع...",
                 submitButton_verifying: "جاري التحقق من الرقم والموقع...",
                 submitButton_submitted: "تم التسجيل",
                 submitButton_closed: "الحضور مغلق",
-                submitButton_error: "لا توجد جلسة", // Changed
+                submitButton_error: "لا توجد جلسة", 
                 newcomerYesBtn_yes: "نعم، أنا جديد",
                 newcomerYesBtn_gettingLocation: "جاري تحديد الموقع...", 
                 newcomerYesBtn_registering: "جاري التسجيل...",
@@ -274,10 +269,11 @@
                 footerText: "© جامعة مصر للعلوم والتكنولوجيا",
                 // --- Messages (Keys) ---
                 alreadySubmittedDevice: "لقد قمت بتسجيل الحضور لهذه الجلسة أو سجلت كطالب جديد بالفعل.",
-                sessionCheckError: "لا توجد جلسة متاحة حالياً", // Changed
+                sessionCheckError: "لا توجد جلسة متاحة حالياً", 
                 idNumbersOnly: "خطأ: رقم الطالب يجب أن يحتوي على أرقام فقط.",
                 nameLettersOnly: "خطأ: الاسم يجب أن يحتوي على حروف ومسافات فقط.",
-                passcodeInvalid: "خطأ: رمز الجلسة يجب أن يكون ٤ أرقام.", // [NEW]
+                passcodeInvalid: "خطأ: رمز الجلسة يجب أن يكون ٤ أرقام.", 
+                passcodeRequired: "خطأ: رمز الجلسة مطلوب لهذه الجلسة.", // [NEW]
                 geolocationNotSupported: "خطأ: المتصفح لا يدعم تحديد الموقع.",
                 permissionDenied: "خطأ: يجب السماح بالوصول إلى الموقع.",
                 positionUnavailable: "خطأ: معلومات الموقع غير متاحة.",
@@ -289,10 +285,10 @@
                     ٢. اذهب إلى "الأذونات" أو "إعدادات الموقع".<br>
                     ٣. قم بتعيين "الموقع" إلى "سماح" لهذا الموقع.<br>
                     ٤. اضغط على زر 'Submit' مرة أخرى.`,
-                registerConfirm: "يرجى التأكد من إدخال الرقم والاسم والرمز بشكل صحيح قبل التسجيل.", // [MODIFIED]
+                registerConfirm: "يرجى التأكد من إدخال الرقم والاسم والرمز (إذا كان ظاهراً) بشكل صحيح قبل التسجيل.", // [MODIFIED]
                 registering: "جاري تسجيل بياناتك...",
                  // --- Server Messages (Keys derived from script output) ---
-                invalidPasscode: "كود الجلسة غير صحيح", // [NEW]
+                invalidPasscode: "كود الجلسة غير صحيح", 
                 sessionNotActive: "Attendance is not currently active. Check the session times.",
                 invalidId_askNew: "رقم الطالب غير موجود بالقائمة. هل أنت طالب جديد؟",
                 duplicateId_session: "تم تسجيل هذا الرقم الطلابي من قبل في هذه الجلسة.",
@@ -313,15 +309,16 @@
         const newcomerYesBtn = document.getElementById('newcomerYesBtn');
         const newcomerNoBtn = document.getElementById('newcomerNoBtn');
         const langSwitchBtn = document.getElementById('langSwitchBtn');
-
-        // [NEW] Get passcode elements
-        const passcodeContainer = document.getElementById('passcodeContainer');
-        const passcodeField = document.getElementById('passcode');
+        const passcodeField = document.getElementById('passcodeField'); // [NEW]
+        const passcodeEl = document.getElementById('passcode'); // [NEW]
 
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwCjH23ufU7dh1F1HlgTk_UY8n0wcJxsMJ0TbihPk3zSiIFiX2UdPwmrANHmrjOtm9FKA/exec";
         let activeSessionName = null;
         let sessionPasscodeType = 'none'; // [NEW] Default to 'none'
-        let currentLang = localStorage.getItem('attendanceLang') || 'en'; // [FIX] Added this line back
+        
+        // [FIX] Define currentLang in the global scope
+        let currentLang = localStorage.getItem('attendanceLang') || 'en';
+
 
         // Function to update UI text
         function updateUI(lang) {
@@ -334,7 +331,7 @@
             document.getElementById('subTitle').textContent = t.subTitle;
             document.getElementById('labelStudentID').textContent = t.labelStudentID;
             document.getElementById('labelStudentName').textContent = t.labelStudentName;
-            document.getElementById('labelPasscode').textContent = t.labelPasscode; // [NEW]
+            document.getElementById('labelPasscode').textContent = t.labelPasscode; 
             document.getElementById('newcomerYesBtn').textContent = t.newcomerYesBtn_yes;
             document.getElementById('newcomerNoBtn').textContent = t.newcomerNoBtn;
             document.getElementById('footerText').textContent = t.footerText;
@@ -363,15 +360,24 @@
             updateUI(currentLang);
             newcomerActionsDiv.style.display = 'none';
 
+            // [MODIFIED] Fetch session data including passcodeType
             fetch(SCRIPT_URL)
                 .then(response => response.json())
                 .then(data => {
                     if (data.result === 'success') {
                         activeSessionName = data.data.sessionName;
-                        sessionPasscodeType = data.data.passcodeType; // [NEW] Store passcode type
-                        
-                        const deviceLockKey = activeSessionName;
+                        sessionPasscodeType = data.data.passcodeType || 'none'; // [NEW] Store the type
 
+                        // [NEW] Show passcode field only if required
+                        if (sessionPasscodeType === 'static' || sessionPasscodeType === 'dynamic') {
+                            passcodeField.style.display = 'block';
+                            passcodeEl.required = true;
+                        } else {
+                            passcodeField.style.display = 'none';
+                            passcodeEl.required = false;
+                        }
+
+                        const deviceLockKey = activeSessionName;
                         if (localStorage.getItem(deviceLockKey) === 'true') {
                             showMessage('alreadySubmittedDevice', 'error');
                             submitButton.dataset.textKey = 'submitButton_submitted';
@@ -379,23 +385,11 @@
                             submitButton.disabled = false;
                             submitButton.dataset.textKey = 'submitButton_submit';
                         }
-
-                        // --- [NEW] Show/Hide Passcode Field ---
-                        if (sessionPasscodeType === 'static' || sessionPasscodeType === 'dynamic') {
-                            passcodeContainer.classList.remove('hidden'); // Show the field
-                            passcodeField.required = true; // Make it required
-                        } else {
-                            // 'none'
-                            passcodeContainer.classList.add('hidden'); // Keep it hidden
-                            passcodeField.required = false; // Not required
-                        }
-                        // --- [END NEW LOGIC] ---
-
                     } else {
-                        showMessageFromServer(data.data.message); // Try to translate server msg
+                        showMessageFromServer(data.data.message); 
                         submitButton.dataset.textKey = 'submitButton_closed';
                     }
-                    updateUI(currentLang); // Update button text again
+                    updateUI(currentLang); 
                 })
                 .catch(err => {
                     showMessage('sessionCheckError', 'error');
@@ -411,17 +405,17 @@
             const studentID = document.getElementById('studentID').value;
             const studentName = document.getElementById('studentName').value;
             
-            // [MODIFIED] Get passcode or set dummy value
-            let passcode;
-            if (sessionPasscodeType === 'none') {
-                passcode = "0000"; // Send dummy code if passcode is off
-            } else {
-                passcode = document.getElementById('passcode').value; // Get real code
-                // [MODIFIED] Validation for visible field
+            // [MODIFIED] Get passcode value, or set to "0000" if not required
+            let passcode = "0000"; 
+            if (sessionPasscodeType === 'static' || sessionPasscodeType === 'dynamic') {
+                passcode = passcodeEl.value;
+                // Client-side validation
                 if (!/^\d{4}$/.test(passcode)) {
-                    showMessage('passcodeInvalid', 'error');
+                    showMessage('passcodeRequired', 'error');
                     return;
                 }
+            } else {
+                passcode = "0000"; // Default value when field is hidden
             }
 
             if (!/^\d+$/.test(studentID)) {
@@ -432,7 +426,6 @@
                 showMessage('nameLettersOnly', 'error');
                 return;
             }
-            // [REMOVED] Old passcode validation moved up
 
             submitButton.disabled = true;
             submitButton.dataset.textKey = 'submitButton_gettingLocation';
@@ -447,27 +440,21 @@
                 return;
             }
 
+            // [MODIFIED] Pass the validated passcode to the success handler
             navigator.geolocation.getCurrentPosition(
-                geolocationSuccess,
+                (position) => geolocationSuccess(position, passcode),
                 geolocationError,
                 { enableHighAccuracy: true }
             );
         });
 
-        function geolocationSuccess(position) {
+        // [MODIFIED] geolocationSuccess now accepts the passcode
+        function geolocationSuccess(position, passcode) {
             const userLat = position.coords.latitude;
             const userLon = position.coords.longitude;
             const studentID = document.getElementById('studentID').value;
             const studentName = document.getElementById('studentName').value;
             
-            // [MODIFIED] Get passcode or set dummy value
-            let passcode;
-            if (sessionPasscodeType === 'none') {
-                passcode = "0000";
-            } else {
-                passcode = document.getElementById('passcode').value;
-            }
-
             submitButton.dataset.textKey = 'submitButton_verifying';
             updateUI(currentLang);
 
@@ -477,7 +464,7 @@
             formData.append("studentName", studentName);
             formData.append("latitude", userLat);
             formData.append("longitude", userLon);
-            formData.append("passcode", passcode); // [MODIFIED] Send passcode (real or dummy)
+            formData.append("passcode", passcode); // Pass the code
 
             fetch(SCRIPT_URL, {
                 method: 'POST',
@@ -485,6 +472,9 @@
             })
             .then(response => response.json())
             .then(data => {
+                // [NEW] Debugging line
+                console.log('Server response:', data);
+
                 if (data.result === "success") {
                     handleSuccessFromServer(data.data.message);
                 } else if (data.result === "invalid_id") {
@@ -494,7 +484,9 @@
                 }
             })
             .catch(error => {
-                handleError('unknownServerError'); // Assume unknown error on fetch fail
+                // [NEW] Debugging line
+                console.error('Fetch error:', error);
+                showMessage('unknownServerError', 'error');
             })
         }
 
@@ -531,17 +523,28 @@
               updateUI(currentLang);
         }
         
+        // [NEW] Helper to show translated server messages on load
+        function showMessageFromServer(serverMessage) {
+            const key = findKeyByEnglishValue(serverMessage, translations.en);
+            showMessage(key || 'sessionCheckError', 'error');
+        }
+
+
         // Helper to find translation key from English server message
         function findKeyByEnglishValue(value, englishTranslations) {
             if (!value) return null;
             if (value.includes("meters away")) {
                  return value.includes("Newcomer") ? 'locationDenied_newcomer' : 'locationDenied';
             }
-            // [NEW] Check for new passcode error
             if (value.includes("Invalid Passcode")) {
                 return 'invalidPasscode';
             }
-            for (const key in englishTranslations) { if (englishTranslations[key] === value) { return key; } }
+            for (const key in englishTranslations) { 
+                // Use .includes() for partial matches from server
+                if (value.includes(englishTranslations[key])) { 
+                    return key; 
+                } 
+            }
             if (value.includes("already been recorded for this session")) return 'duplicateId_session';
             if (value.includes("not currently active")) return 'sessionNotActive';
             if (value.includes("already been registered as a newcomer")) return 'newcomerDuplicate';
@@ -612,21 +615,16 @@
             const studentID = document.getElementById('studentID').value;
             const studentName = document.getElementById('studentName').value;
             
-            // [MODIFIED] Get passcode or set dummy value
-            let passcode;
-            if (sessionPasscodeType === 'none') {
-                passcode = "0000";
-            } else {
-                passcode = document.getElementById('passcode').value;
-                // Validation
+            // [MODIFIED] Get passcode value, or set to "0000" if not required
+            let passcode = "0000"; 
+            if (sessionPasscodeType === 'static' || sessionPasscodeType === 'dynamic') {
+                passcode = passcodeEl.value;
                 if (!/^\d{4}$/.test(passcode)) {
-                    showMessage('registerConfirm', 'error'); // Use a generic error
-                    showNewcomerButtons();
+                    showMessage('registerConfirm', 'error'); // Use a generic confirm error
                     return;
                 }
             }
 
-            // [MODIFIED] Added passcode validation
             if (!/^\d+$/.test(studentID) || !/^[A-Za-z\s]+$/.test(studentName)) {
                 showMessage('registerConfirm', 'error');
                 showNewcomerButtons();
@@ -635,27 +633,27 @@
 
             // --- Get location FIRST ---
             newcomerYesBtn.disabled = true;
-            newcomerYesBtn.textContent = translations[currentLang].newcomerYesBtn_gettingLocation; // Getting location text
-            showMessage(''); // Clear previous error
+            newcomerYesBtn.textContent = translations[currentLang].newcomerYesBtn_gettingLocation; 
+            showMessage(''); 
 
             if (!navigator.geolocation) {
                 showMessage('geolocationNotSupported', 'error');
-                newcomerYesBtn.disabled = false; // Re-enable on error
+                newcomerYesBtn.disabled = false; 
                 newcomerYesBtn.textContent = translations[currentLang].newcomerYesBtn_yes;
                 return;
             }
 
             navigator.geolocation.getCurrentPosition(
                 function(position) { // --- On Location Success ---
-                    newcomerYesBtn.textContent = translations[currentLang].newcomerYesBtn_registering; // Registering text
-                    showMessage('registering', ''); // Show 'Registering...' message
+                    newcomerYesBtn.textContent = translations[currentLang].newcomerYesBtn_registering; 
+                    showMessage('registering', ''); 
 
                     const formData = new FormData();
                     formData.append("action", "registerNewcomer");
                     formData.append("studentID", studentID);
                     formData.append("studentName", studentName);
-                    formData.append("latitude", position.coords.latitude); // Send location
-                    formData.append("longitude", position.coords.longitude);// Send location
+                    formData.append("latitude", position.coords.latitude); 
+                    formData.append("longitude", position.coords.longitude);
                     formData.append("passcode", passcode); // [NEW]
 
                     fetch(SCRIPT_URL, {
@@ -666,7 +664,7 @@
                     .then(data => {
                         if (data.result === 'success') {
                             const key = findKeyByEnglishValue(data.data.message, translations.en)
-                            showMessage(key || 'newcomerSuccessAndAttendance', 'success'); // Use new combined key
+                            showMessage(key || 'newcomerSuccessAndAttendance', 'success'); 
                             hideNewcomerButtons();
                             form.reset();
                             if (activeSessionName) {
@@ -677,15 +675,12 @@
                             submitButton.dataset.textKey = 'submitButton_submitted';
                             updateUI(currentLang);
                         } else {
-                            // Handle specific errors like location denied or invalid passcode
                             handleErrorFromServer(data.data.message || 'unknownServerError');
-                            // Re-enable Yes button on server error
                             newcomerYesBtn.disabled = false;
                             newcomerYesBtn.textContent = translations[currentLang].newcomerYesBtn_yes;
-
                         }
                     })
-                    .catch(error => { // Catch fetch error
+                    .catch(error => { 
                          showMessage('unknownServerError', 'error');
                          newcomerYesBtn.disabled = false;
                          newcomerYesBtn.textContent = translations[currentLang].newcomerYesBtn_yes;
